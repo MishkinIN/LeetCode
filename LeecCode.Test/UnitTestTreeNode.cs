@@ -3,9 +3,10 @@ using LeetCode;
 
 namespace LeecCode.Test
 {
-    public class UnitTestSumRootToLeaf
+    public class UnitTestTreeNode
     {
         private TreeNode bigTree;
+        private TreeNode[] roots;
         [SetUp]
         public void Setup()
         {
@@ -13,10 +14,25 @@ namespace LeecCode.Test
             nums[999] = 1;
             nums[998] = 1;
             bigTree = TreeNode.Create(nums);
+            roots = new TreeNode[7];
+            nums = new int[] { 1 };
+            roots[0] = TreeNode.Create(nums);
+            nums = new int[] { 1, 1 };
+            roots[1] = TreeNode.Create(nums);
+            nums = new int[] { 1, 1, 1 };
+            roots[2] = TreeNode.Create(nums);
+            nums = new int[] { 1, 1, 1, 0, 1, 1 };
+            roots[3] = TreeNode.Create(nums);
+            nums = new int[] { 1, 1, 1, 0, 1, 1, 0 };
+            roots[4] = TreeNode.Create(nums);
+            roots[5] = bigTree;
+            nums = new int[1 + 2 + 4 + 8 + 16 + 32 + 64 + 128 + 256 + 512 + 1024 + 2048];
+            nums[1 + 2 + 4 + 8 + 16 + 32 + 64 + 128 + 256 + 512 + 1024 + 1024] = 1;
+            roots[6] = TreeNode.Create(nums);
         }
 
         [Test]
-        public void Test1()
+        public void SumRootToLeaf()
         {
             {
                 int[] nums = new int[] { 1 };
@@ -83,6 +99,50 @@ namespace LeecCode.Test
                 }
             }
         }
+        [Test]
+        public void IsSymmetric()
+        {
+            TreeNode root = roots[0];
+            Assert.IsTrue(TreeNode.IsSymmetric(root));
+            root = roots[1];
+            Assert.IsFalse(TreeNode.IsSymmetric(root));
+            root = roots[2];
+            Assert.IsTrue(TreeNode.IsSymmetric(root));
+            root = roots[3];
+            Assert.IsFalse(TreeNode.IsSymmetric(root));
+            root = roots[4];
+            Assert.IsTrue(TreeNode.IsSymmetric(root));
+            root = roots[5];
+            Assert.IsFalse(TreeNode.IsSymmetric(root));
+            root = roots[6];
+            for (int i = 0; i < 1000; i++)
+            {
+                Assert.IsFalse(TreeNode.IsSymmetric(root));
+            }
+        }
+         [Test]
+        public void FindTilt()
+        {
+            TreeNode root = roots[0];
+            Assert.AreEqual(0,TreeNode.FindTilt(root));
+            root = roots[1];
+            Assert.AreEqual(1, TreeNode.FindTilt(root));
+            root = roots[2];
+            Assert.AreEqual(0, TreeNode.FindTilt(root));
+            root = roots[3];
+            Assert.AreEqual(2, TreeNode.FindTilt(root));
+            root = roots[4];
+            Assert.AreEqual(2, TreeNode.FindTilt(root));
+            int?[] nums = new int?[3] { 1,2,3};
+            root = TreeNode.Create(nums);
+            Assert.AreEqual(1, TreeNode.FindTilt(root));
+            nums = new int?[] { 4, 2, 9, 3, 5, null, 7 };
+            root = TreeNode.Create(nums);
+            Assert.AreEqual(15, TreeNode.FindTilt(root));
+            nums = new int?[] { 21, 7, 14, 1, 1, 2, 2, 3, 3 };
+            root = TreeNode.Create(nums);
+            Assert.AreEqual(9, TreeNode.FindTilt(root));
 
-    }
+        }
+   }
 }

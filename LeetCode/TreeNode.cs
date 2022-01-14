@@ -84,11 +84,11 @@ namespace LeetCode
             currentLevel.Enqueue(root);
             int i = 1;
             int? val = null;
-            while (i<vals.Length )
+            while (i < vals.Length)
             {
-                if (currentLevel.Count==0)
+                if (currentLevel.Count == 0)
                 {
-                    if (nextLevel.Count==0)
+                    if (nextLevel.Count == 0)
                     {
                         break;
                     }
@@ -154,9 +154,10 @@ namespace LeetCode
                 left = stack.Pop();
                 if (left == null && right == null)
                     continue;
-                if (left == null || right == null || left.val!=right.val)
+                if (left == null || right == null || left.val != right.val)
                     return false;
-                else {
+                else
+                {
                     stack.Push(left.right);
                     stack.Push(right.left);
                     stack.Push(left.left);
@@ -189,7 +190,7 @@ Sum of every tilt : 0 + 0 + 0 + 2 + 7 + 6 = 15
         public static int FindTilt(TreeNode root)
         {
             int tiltSum = 0;
-            if (root==null)
+            if (root == null)
             {
                 return 0;
             }
@@ -198,21 +199,144 @@ Sum of every tilt : 0 + 0 + 0 + 2 + 7 + 6 = 15
         }
         private static (int sum, int tilt, int tiltSum) GetSumAndTilt(TreeNode node, int tiltSum)
         {
-            if (node==null)
+            if (node == null)
             {
                 return (0, 0, tiltSum);
             }
-            if (node.left==null && node.right==null)
+            if (node.left == null && node.right == null)
             {
                 return (node.val, 0, tiltSum);
             }
             var left = GetSumAndTilt(node.left, tiltSum);
-            var right = GetSumAndTilt(node.right,left.tiltSum);
+            var right = GetSumAndTilt(node.right, left.tiltSum);
             var tilt = left.sum - right.sum;
             tilt = tilt < 0 ? -1 * tilt : tilt;
             tiltSum = right.tiltSum + tilt;
             return (node.val + left.sum + right.sum, tilt, tiltSum);
 
+        }
+        /*
+         * You are given the root of a binary search tree (BST) and an integer val.
+         * Find the node in the BST that the node's value equals val 
+         * and return the subtree rooted with that node. 
+         * If such a node does not exist, return null.
+         */
+        public TreeNode SearchBST(TreeNode root, int val)
+        {
+            if (root == null || root.val == val)
+            {
+                return root;
+            }
+            if (root.val < val)
+            {
+                return SearchBST(root.right, val);
+            }
+            else
+                return SearchBST(root.left, val);
+        }
+
+        /* Unique Binary Search Trees II
+         * Given an integer n, return all the structurally unique BST's (binary search trees), 
+         * which has exactly n nodes of unique values from 1 to n. 
+         * eturn the answer in any order*/
+        public static IList<TreeNode> GenerateTrees(int n)
+        {
+            //List<TreeNode> list = new List<TreeNode>();
+            //n++;
+            //for (int i = 1; i < n; i++)
+            //{
+
+            //    foreach (var left in GetChilds(1, i))
+            //    {
+            //        foreach (var right in GetChilds(i+1, n))
+            //        {
+            //            TreeNode node = new TreeNode(i);
+            //            node.left = left; node.right = right;
+            //            list.Add(node);
+            //        }
+            //    }
+            //}
+
+            //list.AddRange(GetTreeNodes(1, n));
+            var list = GetTreeNodes(1, n);
+            return list;
+        }
+        private static Dictionary<int, List<TreeNode>> cache = new Dictionary<int, List<TreeNode>>();
+        private static List<TreeNode> GetTreeNodes(int min, int max)
+        {
+            List<TreeNode> list = new();
+            if (min > max)
+            {
+                list.Add(null);
+                return list;
+            }
+            else if (min == max)
+            {
+                list.Add(new TreeNode(min));
+                return list;
+            }
+            var range = min + max * Int16.MaxValue;
+            if (cache.ContainsKey(range))
+                return cache[range];
+            //{
+            //    for (int i = min; i <=max; i++)
+            //    {
+            //        foreach (var left in GetTreeNodes(min,i-1))
+            //        {
+            //            foreach (var right in GetTreeNodes(i+1,max))
+            //            {
+            //                 list.Add(new TreeNode(i, left, right));
+            //            }
+            //        }
+            //    }
+            //}
+            for (int val = min; val <= max; val++)
+            {
+                var leftList = GetTreeNodes(min, val - 1);
+                var rightList = GetTreeNodes(val + 1, max);
+                foreach (var left in leftList)
+                {
+                    foreach (var right in rightList)
+                    {
+                        list.Add(new TreeNode(val, left, right));
+                    }
+                }
+            }
+            cache.Add(range, list);
+            return list;
+        }
+        private static IEnumerable<TreeNode> GetChilds(int min, int max)
+        {
+            if (min >= max)
+            {
+                yield return null;
+
+            }
+            else
+                for (int i = min; i < max; i++)
+                {
+
+                    foreach (var left in GetChilds(min, i))
+                    {
+                        foreach (var right in GetChilds(i + 1, max))
+                        {
+                            TreeNode child = new TreeNode(i);
+                            child.left = left; child.right = right;
+                            yield return child;
+                        }
+                    }
+                }
+        }
+        public static bool Equals(TreeNode left, TreeNode right)
+        {
+            if (Object.ReferenceEquals(left, right))
+            {
+                return true;
+            }
+            return (left != null && right != null)
+                && left.val == right.val
+                && TreeNode.Equals(left.left, right.left)
+                && TreeNode.Equals(left.right, right.right);
         }
     }
 }

@@ -1,5 +1,8 @@
 using NUnit.Framework;
+using System.Collections.Generic;
+using System.Linq;
 using LeetCode;
+
 
 namespace LeecCode.Test
 {
@@ -40,7 +43,7 @@ namespace LeecCode.Test
                 int target = 1;
                 Assert.AreEqual(target, Solution.SumRootToLeaf(root));
 
-                nums = new int[] { 1 ,1 };
+                nums = new int[] { 1, 1 };
                 root = TreeNode.Create(nums);
                 target = 3;
                 Assert.AreEqual(target, Solution.SumRootToLeaf(root));
@@ -61,7 +64,7 @@ namespace LeecCode.Test
 
                 for (int i = 0; i < 1000; i++)
                 {
-                    Assert.AreEqual(target, Solution.SumRootToLeaf(bigTree)); 
+                    Assert.AreEqual(target, Solution.SumRootToLeaf(bigTree));
                 }
             }
         }
@@ -74,7 +77,7 @@ namespace LeecCode.Test
                 int target = 1;
                 Assert.AreEqual(target, Solution.MySumRootToLeaf(root));
 
-                nums = new int[] { 1 ,1 };
+                nums = new int[] { 1, 1 };
                 root = TreeNode.Create(nums);
                 target = 3;
                 Assert.AreEqual(target, Solution.MySumRootToLeaf(root));
@@ -95,7 +98,7 @@ namespace LeecCode.Test
 
                 for (int i = 0; i < 1000; i++)
                 {
-                    Assert.AreEqual(target, Solution.MySumRootToLeaf(bigTree)); 
+                    Assert.AreEqual(target, Solution.MySumRootToLeaf(bigTree));
                 }
             }
         }
@@ -120,11 +123,11 @@ namespace LeecCode.Test
                 Assert.IsFalse(TreeNode.IsSymmetric(root));
             }
         }
-         [Test]
+        [Test]
         public void FindTilt()
         {
             TreeNode root = roots[0];
-            Assert.AreEqual(0,TreeNode.FindTilt(root));
+            Assert.AreEqual(0, TreeNode.FindTilt(root));
             root = roots[1];
             Assert.AreEqual(1, TreeNode.FindTilt(root));
             root = roots[2];
@@ -133,7 +136,7 @@ namespace LeecCode.Test
             Assert.AreEqual(2, TreeNode.FindTilt(root));
             root = roots[4];
             Assert.AreEqual(2, TreeNode.FindTilt(root));
-            int?[] nums = new int?[3] { 1,2,3};
+            int?[] nums = new int?[3] { 1, 2, 3 };
             root = TreeNode.Create(nums);
             Assert.AreEqual(1, TreeNode.FindTilt(root));
             nums = new int?[] { 4, 2, 9, 3, 5, null, 7 };
@@ -144,5 +147,41 @@ namespace LeecCode.Test
             Assert.AreEqual(9, TreeNode.FindTilt(root));
 
         }
-   }
+        [Test]
+        public void GenerateTrees()
+        {
+           System.Collections.Generic.List<TreeNode> expected = new();
+            int?[] nums = new int?[] { 1, null, 2, null, 3 };
+            expected.Add(TreeNode.Create(nums));
+            nums = new int?[] { 1, null, 3, 2 };
+            expected.Add(TreeNode.Create(nums));
+            nums = new int?[] { 2, 1, 3 };
+            expected.Add(TreeNode.Create(nums));
+            nums = new int?[] { 3, 1, null, null, 2 };
+            expected.Add(TreeNode.Create(nums));
+            nums = new int?[] { 3, 2, null, 1 };
+            expected.Add(TreeNode.Create(nums));
+            IList<TreeNode> actual = TreeNode.GenerateTrees(3);
+            Assert.AreEqual(5, actual.Count);
+            foreach (var item in expected)
+            {
+                TreeNode node = actual.FirstOrDefault(n => TreeNode.Equals(item, n));
+                Assert.IsNotNull(node);
+                actual.Remove(node);
+            }
+            Assert.AreEqual(0, actual.Count);
+            
+        }
+        [Test]
+        public void GenerateTrees_12()
+        {
+           var actual = TreeNode.GenerateTrees(12);
+        }
+        [Test]
+        public void GenerateTrees_12_LeetCode()
+        {
+            var leetCode = new LeetCode.LeetCode();
+            IList<TreeNode> actual = leetCode.GenerateTrees(12);
+        }
+    }
 }

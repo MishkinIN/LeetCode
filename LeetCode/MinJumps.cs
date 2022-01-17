@@ -25,9 +25,10 @@ Notice that you can not jump outside of the array at any time.
     1 <= arr.length <= 5 * 104
     -108 <= arr[i] <= 108
 */
-
+        private struct point { internal int i; internal int val; };
         public static int MinJumps(int[] arr)
         {
+
             switch (arr.Length)
             {
                 case 0:
@@ -53,173 +54,175 @@ Notice that you can not jump outside of the array at any time.
              */
 
             //int arrLenght = arr.Length;
-            int nextColor, startColor = arr[0], endColor = arr[^1], vizited = int.MaxValue;
-            if (startColor == endColor)
+            int color, leftColor = arr[0], rightColor = arr[^1];
+            if (leftColor == rightColor)
             {
                 return 1;
             }
             int[] keys = new int[arr.Length];
             Array.Copy(arr, keys, arr.Length);
             int[] indexes = new int[arr.Length];
-            int i = 0, j, key, index;
+            int i , j;
             // indexes[0] = -1;
             for (i = 1; i < arr.Length; i++)
             {
                 indexes[i] = i;
             }
             Array.Sort(keys, indexes);
-            HashSet<int> leftColors = new HashSet<int>(), leftColorsNextStep = new HashSet<int>();
-
-            HashSet<int> rightColors = new HashSet<int>(), rightColorsNextStep = new HashSet<int>();
-            leftColors.Add(startColor);
-            leftColors.Add(arr[1]);
-            arr[1] = startColor;
-            arr[0] = vizited;
-            rightColors.Add(endColor);
-            rightColors.Add(arr[^2]);
-            arr[^1] = vizited;
-            arr[^2] = endColor;
-            Func<int, bool> isVizited = (index => arr[index] == vizited);
+            List<point> leftPoints = new(), leftPointsNextStep = new(), rightPoints = new(), rightPointsNextStep = new();
             i = 1; j = 1;
+
+            {
+                //i++;
+                if (arr[1] == rightColor)
+                {
+                    return 2;
+                }
+                else if (arr[1] != leftColor)
+                {
+                    leftPoints.Add(new point { i = 1, val = arr[1] });
+                    arr[1] = leftColor;
+                }
+                foreach (var p_c in SearceAll(keys, indexes, leftColor))
+                {
+                    if (p_c > 0)
+                    {
+                        leftPoints.Add(new point { i = p_c, val = arr[p_c] });
+                        arr[p_c] = leftColor;
+                    }
+                }
+                //j++;
+
+                var p = arr.Length - 1;
+                if (arr[p - 1] == leftColor)
+                {
+                    return 2;
+                }
+                else if (arr[p - 1] != rightColor)
+                {
+                    rightPoints.Add(new point { i = p - 1, val = arr[p - 1] });
+                    arr[p - 1] = rightColor;
+                }
+                foreach (var p_c in SearceAll(keys, indexes, rightColor))
+                {
+                    if (p_c < p)
+                    {
+                        rightPoints.Add(new point { i = p_c, val = arr[p_c] });
+                        arr[p_c] = rightColor;
+                    }
+                }
+                arr[p] = rightColor;
+            }
+            HashSet<int> levelColors = new();
             while (i < arr.Length)
             {
-                foreach (var color in leftColors)
+                i++;
+                foreach (var pnt in leftPoints)
                 {
-                    if (color == endColor)
+                    var p = pnt.i;
+                    color = pnt.val;
+                    if (arr[p + 1] == rightColor)
                     {
                         return i + j;
                     }
-                    foreach (var p in SearceAll(keys, color))
+                    else if (arr[p + 1] != leftColor)
                     {
-                        index = indexes[p];
-                        if (!isVizited(index))
+                        leftPointsNextStep.Add(new point { i = p+1, val = arr[p+1] });
+                        arr[p + 1] = leftColor;
+                    }
+                    if (arr[p - 1] == rightColor)
+                    {
+                        return i + j;
+                    }
+                    else if (arr[p - 1] != leftColor)
+                    {
+                        leftPointsNextStep.Add(new point { i = p-1, val = arr[p-1] });
+                        arr[p - 1] = leftColor;
+                    }
+                    if (levelColors.Add(color))
+                    {
+                        foreach (var p_c in SearceAll(keys, indexes, color))
                         {
-                            if (arr[index] == endColor)
+                            if (arr[p_c] == rightColor)
                             {
                                 return i + j;
                             }
-                            if (!(isVizited(index + 1) || arr[index + 1] == startColor))
+                            else if (arr[p_c] != leftColor & p_c != p)
                             {
-                                //nextColor = arr[index + 1];
-                                //if (nextColor == endColor)
-                                //{
-                                //    return i + j + 1;
-                                //}
-                                leftColorsNextStep.Add(arr[index + 1]);
-                                arr[index + 1] = startColor;
+                                leftPointsNextStep.Add(new point { i = p_c, val = arr[p_c] } );
+                                arr[p_c] = leftColor;
                             }
-                            if (!(isVizited(index - 1) || arr[index - 1] == startColor))
-                            {
-                                //nextColor = arr[index - 1];
-                                //if (nextColor == endColor)
-                                //{
-                                //    return i + j + 1;
-                                //}
-                                leftColorsNextStep.Add(arr[index - 1]);
-                                arr[index - 1] = startColor;
-                            }
-                            arr[index] = vizited;
                         }
                     }
+                    //arr[p] = leftColor;
                 }
-                var vs = leftColors;
-                leftColors = leftColorsNextStep;
-                leftColorsNextStep = vs;
-                leftColorsNextStep.Clear();
-                i++;
+                j++;
+                levelColors.Clear();
+                foreach (var pnt in rightPoints)
+                {
+                    var p = pnt.i;
+                    color = pnt.val;
+                    if (arr[p + 1] == leftColor)
+                    {
+                        return i + j;
+                    }
+                    else if (arr[p + 1] != rightColor)
+                    {
+                        rightPointsNextStep.Add(new point { i = p+1, val = arr[p+1] });
+                        arr[p + 1] = rightColor;
+                    }
+                    if (arr[p - 1] == leftColor)
+                    {
+                        return i + j;
+                    }
+                    else if (arr[p - 1] != rightColor)
+                    {
+                        rightPointsNextStep.Add(new point { i = p-1, val = arr[p-1] });
+                        arr[p - 1] = rightColor;
+                    }
+                    if (levelColors.Add(color))
+                    {
+                        foreach (var p_c in SearceAll(keys, indexes, color))
+                        {
+                            if (arr[p_c] == leftColor)
+                            {
+                                return i + j;
+                            }
+                            else if (arr[p_c] != rightColor & p_c != p)
+                            {
+                                rightPointsNextStep.Add(new point { i = p_c, val = arr[p_c] });
+                                arr[p_c] = rightColor;
+                            }
+                        }
+                    }
 
+                    //arr[p] = rightColor;
+                }
+                levelColors.Clear();
+                var points = leftPoints;
+                points.Clear();
+                leftPoints = leftPointsNextStep;
+                leftPointsNextStep = points;
+                points = rightPoints;
+                points.Clear();
+                rightPoints = rightPointsNextStep;
+                rightPointsNextStep = points;
             }
             return i + j;
-
-            //List<KeyValuePair<int, int>> nextStep = new();
-            //Func<List<KeyValuePair<int, int>>, List<KeyValuePair<int, int>>> getNextStep = (step) =>
-            //{
-            //    List<KeyValuePair<int, int>> nextStep = new();
-            //    foreach (var item in step)
-            //    {
-            //        int point = item.Value + 1;
-            //        if (point == arrLenght - 1)
-            //        {
-            //            return null;
-            //        }
-            //        else //if (points[point]>0)
-            //        {
-            //            foreach (var p in SearceAll(keys, arr[point]))
-            //            {
-            //                if (indexes[p] == point)
-            //                {
-            //                    nextStep.Add(KeyValuePair.Create(arr[point], point));
-            //                    indexes[p] = -1;
-            //                    break;
-            //                }
-            //            }
-            //        }
-            //        // Поиск переходов по значению
-            //        key = item.Key;
-            //        foreach (var p in SearceAll(keys, key))
-            //        {
-            //            if (indexes[p] == arrLenght - 1)
-            //            {
-            //                return null;
-            //            }
-            //            else if (indexes[p] > 0)
-            //            {
-            //                if (indexes[p] == item.Value)
-            //                {
-            //                    indexes[p] = -1;
-            //                }
-            //                else
-            //                {
-            //                    nextStep.Add(KeyValuePair.Create(keys[p], indexes[p]));
-            //                    indexes[p] = -1;
-            //                }
-            //            }
-            //        }
-
-            //        point = item.Value - 1;
-            //        if (point > 1)
-            //        {
-            //            {
-            //                foreach (var p in SearceAll(keys, arr[point]))
-            //                {
-            //                    if (indexes[p] == point)
-            //                    {
-            //                        nextStep.Add(KeyValuePair.Create(arr[point], point));
-            //                        indexes[p] = -1;
-            //                        break;
-            //                    }
-            //                }
-            //            }
-            //        }
-            //    }
-            //    return nextStep;
-            //};
-            //// [  0,  1,  2,  3,  4, 5, 6, 7,8,  9]
-            //// [100,-23,-23,404,100,23,23,23,3,404]
-            //List<KeyValuePair<int, int>> leftStep = new();
-            //leftStep.Add(KeyValuePair.Create(arr[0], 0));
-            //for (int nJump = 1; nJump < arrLenght; nJump++)
-            //{
-            //    leftStep = getNextStep(leftStep);
-            //    if (leftStep == null)
-            //    {
-            //        return nJump;
-            //    }
-            //}
-            //return arrLenght - 1;
         }
-        private static IEnumerable<int> SearceAll(int[] nums, int value)
+
+        private static IEnumerable<int> SearceAll(int[] keys, int[] indexes, int value)
         {
-            int point = Array.BinarySearch<int>(nums, value);
+            int point = Array.BinarySearch<int>(keys, value);
             if (point > -1)
             {
-                for (int k = point; k < nums.Length && nums[k] == value; k++)
+                for (int k = point; k < keys.Length && keys[k] == value; k++)
                 {
-                    yield return k;
+                    yield return indexes[k];
                 }
-                for (int k = point - 1; k >= 0 && nums[k] == value; k--)
+                for (int k = point - 1; k >= 0 && keys[k] == value; k--)
                 {
-                    yield return k;
+                    yield return indexes[k];
                 }
             }
         }

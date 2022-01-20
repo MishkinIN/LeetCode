@@ -45,17 +45,17 @@ namespace LeetCode
             if (kMin==kMax) {
                 return kMin;
             }
-            Func<int, int> Fh = k => {
-                int h = 0;
-                foreach (var item in piles) {
-                    h += (item-1) / k;
-                }
-                h += pilesLength;
-                return h;
-            };
+            //Func<int, int> Fh = k => {
+            //    int h = 0;
+            //    foreach (var item in piles) {
+            //        h += (item-1) / k;
+            //    }
+            //    h += pilesLength;
+            //    return h;
+            //};
             while (kMin+1<kMax) {
                 int center = (kMin + kMax) / 2;
-                int hc = Fh(center);
+                int hc = Fh(piles, center);
                 if (hc > h) {
                     kMin = center;
                 }
@@ -63,6 +63,15 @@ namespace LeetCode
                     kMax = center;
             }
             return kMax;
+        }
+        private static int Fh(int[] piles, int k) {
+            int h = 0;
+            foreach (var pile in piles) {
+                h += (pile - 1) / k;
+            }
+            h += piles.Length;
+            return h;
+
         }
     }
 }

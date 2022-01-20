@@ -139,5 +139,22 @@ namespace LeecCode.Test
             }
             return isEquals;
         }
+        [Test]
+        public void MinEatingSpeed() {
+            int[] nums; int h, k;
+            nums = new int[] { 3, 6, 7, 11 };
+            h = 8; k = 4;
+            Assert.AreEqual(k, Solution.MinEatingSpeed(nums, h));
+            nums = new int[] { 30, 11, 23, 4, 20 };
+            h = 5;
+            k = 30;
+            Assert.AreEqual(k, Solution.MinEatingSpeed(nums, h));
+            nums = new int[] { 30, 11, 23, 4, 20 };
+            h = 6;
+            k = 23;
+            Assert.AreEqual(k, Solution.MinEatingSpeed(nums, h));
+
+
+        }
     }
 }

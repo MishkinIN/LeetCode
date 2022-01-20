@@ -105,6 +105,21 @@ namespace LeecCode.Test
             vals = new int[] { 1, 2, 0 };
             Solution.Rotate(nums, 5);
             Assert.IsTrue(Equal(nums, vals));
+            
+            nums = new int[] { 0, 1, 2 };
+            vals = new int[] { 1, 2, 0 };
+            Solution.Rotate(nums, 5);
+            Assert.IsTrue(Equal(nums, vals));
+            
+            nums = new int[] { 0, 1, 2, 3, 4, 5, 6 };
+            vals = new int[] { 4, 5, 6, 0, 1, 2, 3 };
+            Solution.Rotate(nums, 3);
+            Assert.IsTrue(Equal(nums, vals));
+            
+            nums = new int[] { 0, 1, 2, 3, 4, 5, 6, };
+            vals = new int[] {  2, 3, 4, 5, 6, 0, 1, };
+            Solution.Rotate(nums, 5);
+            Assert.IsTrue(Equal(nums, vals));
 
         }
         private bool Equal(int[] left, int[] right)

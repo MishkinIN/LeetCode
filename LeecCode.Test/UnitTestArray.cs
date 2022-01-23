@@ -26,7 +26,7 @@ namespace LeecCode.Test
             hashSet.CopyTo(bigNumsNotContainsDuplicate);
             int[] nums = new int[10_000];
             for (int i = 0; i < nums.Length; i++) {
-                nums[i] = random.Next(-1_000_000_000, 1_000_000_000);
+                nums[i] = random.Next(1, 1_000_000_000);
             }
             nums_10000 = nums;
         }
@@ -196,6 +196,23 @@ namespace LeecCode.Test
             }
             Console.WriteLine($"Width h={testH} MinEatingSpeed have max stepCount={maxStepCount}");
 
+        }
+        [Test]
+        public void MaxProfit() {
+            int[] prices;
+            int expected;
+            prices = new int[] { 7, 1, 5, 3, 6, 4 };
+            expected = 5;
+            Assert.AreEqual(expected, Solution.MaxProfit(prices));
+            prices = new int[] { 7, 6, 4, 3, 1 };
+            expected = 0;
+            Assert.AreEqual(expected, Solution.MaxProfit(prices));
+            prices = new int[] { 7, 1, 5, 3, 6, 8 };
+            expected = 7;
+            Assert.AreEqual(expected, Solution.MaxProfit(prices));
+            prices = new int[] { 7, 11, 5, 7, 6, 10 };
+            expected = 5;
+            Assert.AreEqual(expected, Solution.MaxProfit(prices));
         }
 
     }

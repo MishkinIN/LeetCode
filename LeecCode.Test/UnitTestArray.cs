@@ -221,6 +221,46 @@ namespace LeecCode.Test
             Assert.AreEqual(startPos, Solution.CanCompleteCircuit(gas, cost));
             
         }
-        
+        [Test]
+        public void MatrixReshape() {
+            int[][] mat = new int[2][];
+            mat[0] = new int[] { 1, 2 };
+            mat[1] = new int[] { 3, 4 };
+            var res = Solution.MatrixReshape(mat, 1, 4);
+            res = Solution.MatrixReshape(mat, 4, 1);
+            res = Solution.MatrixReshape(mat, 2, 2);
+        }
+        [Test]
+        public void GeneratePascalTriangle() {
+            var res = Solution.GeneratePascalTriangle(7);
+
+        }
+        [Test]
+        public void IsValidSudoku() {
+            char[][] validSudoku = new char[][]{
+                new char[] {'5', '3', '.', '.', '7', '.', '.', '.', '.'}
+                ,new char[] {'6', '.', '.', '1', '9', '5', '.', '.', '.'}
+                ,new char[] {'.', '9', '8', '.', '.', '.', '.', '6', '.'}
+                ,new char[] {'8', '.', '.', '.', '6', '.', '.', '.', '3'}
+                ,new char[] {'4', '.', '.', '8', '.', '3', '.', '.', '1'}
+                ,new char[] {'7', '.', '.', '.', '2', '.', '.', '.', '6'}
+                ,new char[] {'.', '6', '.', '.', '.', '.', '2', '8', '.'}
+                ,new char[] {'.', '.', '.', '4', '1', '9', '.', '.', '5'}
+                ,new char[] {'.', '.', '.', '.', '8', '.', '.', '7', '9'} };
+            char[][] inValidSudoku = new char[][]{
+                new char[] {'8', '3', '.', '.', '7', '.', '.', '.', '.'}
+                ,new char[] {'6', '.', '.', '1', '9', '5', '.', '.', '.'}
+                ,new char[] {'.', '9', '8', '.', '.', '.', '.', '6', '.'}
+                ,new char[] {'8', '.', '.', '.', '6', '.', '.', '.', '3'}
+                ,new char[] {'4', '.', '.', '8', '.', '3', '.', '.', '1'}
+                ,new char[] {'7', '.', '.', '.', '2', '.', '.', '.', '6'}
+                ,new char[] {'.', '6', '.', '.', '.', '.', '2', '8', '.'}
+                ,new char[] {'.', '.', '.', '4', '1', '9', '.', '.', '5'}
+                ,new char[] {'.', '.', '.', '.', '8', '.', '.', '7', '9'} };
+
+            Assert.IsTrue(Solution.IsValidSudoku(validSudoku));
+            Assert.IsFalse(Solution.IsValidSudoku(inValidSudoku));
+
+        }
     }
 }

@@ -5,14 +5,12 @@ using System.Collections.Generic;
 
 namespace LeecCode.Test
 {
-    public class UnitTestString
-    {
+    public class UnitTestString {
         private string bigPattern;
         private string bigPatternString;
         private string bigNotPatternString;
         [SetUp]
-        public void Setup()
-        {
+        public void Setup() {
             StringBuilder sbBigPattern = new();
             StringBuilder sbBigPatternString = new();
             StringBuilder sbBignotPatternString = new();
@@ -22,9 +20,8 @@ namespace LeecCode.Test
             sbBigPattern.Append(ch);
             sbBigPatternString.Append(word);
             sbBignotPatternString.Append(word);
-            for (int i = 0; i < 100000; i++)
-            {
-                word = char.ConvertFromUtf32((int)'a'+i%28);
+            for (int i = 0; i < 100000; i++) {
+                word = char.ConvertFromUtf32((int)'a' + i % 28);
                 ch = word[0];
                 sbBigPattern.Append(ch);
                 sbBigPatternString.Append(" ");
@@ -42,8 +39,7 @@ namespace LeecCode.Test
             bigNotPatternString = sbBignotPatternString.ToString();
         }
         [Test]
-        public void StrStr()
-        {
+        public void StrStr() {
             string haystack, needle;
             haystack = "";
             needle = "";
@@ -59,8 +55,7 @@ namespace LeecCode.Test
             Assert.AreEqual(4, Solution.StrStr(haystack, needle));
         }
         [Test]
-        public void WordPattern()
-        {
+        public void WordPattern() {
 
             Assert.IsTrue(Solution.WordPattern("q", "ddf"));
             Assert.IsTrue(Solution.WordPattern("abba", "dog cat cat dog"));
@@ -74,11 +69,19 @@ namespace LeecCode.Test
             Assert.IsTrue(Solution.WordPattern("q", "ddf"));
         }
         [Test]
-        public void WordPattert_bigPattern()
-        {
+        public void WordPattert_bigPattern() {
             Assert.IsTrue(Solution.WordPattern(bigPattern, bigPatternString));
             Assert.IsFalse(Solution.WordPattern(bigPattern, bigNotPatternString));
 
+        }
+        [Test]
+        public void ReverseString() {
+            char[] s = new char[] {'h', 'e', 'l', 'l', 'o' };
+            char[] expected = new char[] {'o', 'l', 'l', 'e', 'h'};
+            Solution.ReverseString(s);
+            for (int i = 0; i < s.Length; i++) {
+                Assert.AreEqual(expected[i], s[i]);
+            }
         }
     }
 }

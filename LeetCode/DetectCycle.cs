@@ -43,7 +43,7 @@ namespace LeetCode
 
             if (head==null || head.next == null)
                 return null;
-            int pos = -1, lastDistance = 0, distance;
+            int lastDistance = 0, distance;
             ListNode node = head.next;
             while (node != null)
             {

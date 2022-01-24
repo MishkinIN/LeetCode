@@ -44,19 +44,6 @@ namespace LeetCode {
 
             };
         }
-        static int gcf(int a, int b) {
-            while (b != 0) {
-                int temp = b;
-                b = a % b;
-                a = temp;
-            }
-            return a;
-        }
-
-        static int lcm(int a, int b) {
-            if (b == 1 | a == 1)
-                return 1;
-            return (a / gcf(a, b)) * b;
-        }
+ 
     }
 }

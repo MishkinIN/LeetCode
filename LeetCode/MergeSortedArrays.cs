@@ -27,7 +27,7 @@ namespace LeetCode
             {
                 if (m < 0)
                 {
-                    Array.Copy(nums2, 0, nums1, 0, n);
+                    Array.Copy(nums2, 0, nums1, 0, n+1);
                     break;
                 }
                 if (nums1[m] < nums2[n])

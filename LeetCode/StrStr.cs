@@ -39,5 +39,38 @@ namespace LeetCode
             
         }
 
+        public static void ReverseString(char[] s) {
+            char acc;
+            int left = 0, right = s.Length;
+            for (left = 0; left < right; left++) {
+                acc = s[left];
+                s[left] = s[--right];
+                s[right] = acc;
+            }
+        }
+        public static string ReverseWords(string s) {
+            StringBuilder sb = new();
+            var space = "";
+            foreach (string word in Split(s, ' ')) {
+                sb.Append(space);
+                space = " ";
+                for (int i = word.Length-1; i >=0 ; i--) {
+                    sb.Append(word[i]);
+                }
+            }
+            return sb.ToString();
+        }
+        private static IEnumerable<string> Split(string s, char sep) {
+            int startWord = 0, length = 0;
+            for (int i = 0; i < s.Length; i++) {
+                if (s[i] == sep) {
+                    yield return s.Substring(startWord, length);
+                    startWord = i + 1;
+                    length = -1;
+                }
+                length++;
+            }
+            yield return s.Substring(startWord, length);
+        }
     }
 }

@@ -8,7 +8,7 @@ namespace LeecCode.Test
     public class UnitTestArray {
         private int[] bigNumsContainsDuplicate;
         private int[] bigNumsNotContainsDuplicate;
-        private int[] nums_10000;
+        private int[] piles;
 
         [SetUp]
         public void Setup() {
@@ -26,9 +26,9 @@ namespace LeecCode.Test
             hashSet.CopyTo(bigNumsNotContainsDuplicate);
             int[] nums = new int[10_000];
             for (int i = 0; i < nums.Length; i++) {
-                nums[i] = random.Next(-1_000_000_000, 1_000_000_000);
+                nums[i] = random.Next(1, 1_000_000_000);
             }
-            nums_10000 = nums;
+            piles = nums;
         }
         [Test]
             public void MinJumps() {
@@ -166,12 +166,11 @@ namespace LeecCode.Test
         }
         [Test]
         public void MinEatingSpeed_big() {
-            int[] nums = nums_10000;
             int maxStepCount = 0, testH = 0;
             ;
-            for (int h = nums.Length+1; h < 5 * nums.Length; h+=10) {
+            for (int h = piles.Length+1; h < 5 * piles.Length; h+=10) {
                 {
-                    var result1 = Solution.MinEatingSpeed(nums, h);
+                    var result1 = Solution.MinEatingSpeed(piles, h);
                     if (result1.stepCount > maxStepCount) {
                         maxStepCount = result1.stepCount;
                         testH = h;
@@ -183,11 +182,10 @@ namespace LeecCode.Test
         }
         [Test]
         public void MinEatingSpeed_big_LeetCode() {
-            int[] nums = nums_10000;
             int maxStepCount = 0, testH = 0;
-            for (int h = nums.Length + 1; h < 5 * nums.Length; h += 10) {
+            for (int h = piles.Length + 1; h < 5 * piles.Length; h += 10) {
                 {
-                    var result1 = Solution.MinEatingSpeed_LeetCode(nums, h);
+                    var result1 = Solution.MinEatingSpeed_LeetCode(piles, h);
                     if (result1.stepCount > maxStepCount) {
                         maxStepCount = result1.stepCount;
                         testH = h;
@@ -197,6 +195,32 @@ namespace LeecCode.Test
             Console.WriteLine($"Width h={testH} MinEatingSpeed have max stepCount={maxStepCount}");
 
         }
+        [Test]
+        public void CanCompleteCircuit() {
+            int[] gas, cost;
+            gas = new int[] {1, 2, 3, 4, 5};
+            cost = new int[] { 3, 4, 5, 1, 2 };
+            int startPos = 3;
+            Assert.AreEqual(startPos, Solution.CanCompleteCircuit(gas, cost));
+            
+        }
+        [Test]
+        public void MaxProfit() {
+            int[] prices;
+            int expected;
+            prices = new int[] { 7, 1, 5, 3, 6, 4 };
+            expected = 5;
+            Assert.AreEqual(expected, Solution.MaxProfit(prices));
+            prices = new int[] { 7, 6, 4, 3, 1 };
+            expected = 0;
+            Assert.AreEqual(expected, Solution.MaxProfit(prices));
 
+            prices = new int[] { 1, 6, 4, 5, 7 };
+            expected = 6;
+            Assert.AreEqual(expected, Solution.MaxProfit(prices));
+            prices = new int[] { 11, 7, 1, 4, 2 };
+            expected = 3;
+            Assert.AreEqual(expected, Solution.MaxProfit(prices));
+        }
     }
 }

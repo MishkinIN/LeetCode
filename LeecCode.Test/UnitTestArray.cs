@@ -196,15 +196,6 @@ namespace LeecCode.Test
 
         }
         [Test]
-        public void CanCompleteCircuit() {
-            int[] gas, cost;
-            gas = new int[] {1, 2, 3, 4, 5};
-            cost = new int[] { 3, 4, 5, 1, 2 };
-            int startPos = 3;
-            Assert.AreEqual(startPos, Solution.CanCompleteCircuit(gas, cost));
-            
-        }
-        [Test]
         public void MaxProfit() {
             int[] prices;
             int expected;
@@ -214,13 +205,22 @@ namespace LeecCode.Test
             prices = new int[] { 7, 6, 4, 3, 1 };
             expected = 0;
             Assert.AreEqual(expected, Solution.MaxProfit(prices));
-
-            prices = new int[] { 1, 6, 4, 5, 7 };
-            expected = 6;
+            prices = new int[] { 7, 1, 5, 3, 6, 8 };
+            expected = 7;
             Assert.AreEqual(expected, Solution.MaxProfit(prices));
-            prices = new int[] { 11, 7, 1, 4, 2 };
-            expected = 3;
+            prices = new int[] { 7, 11, 5, 7, 6, 10 };
+            expected = 5;
             Assert.AreEqual(expected, Solution.MaxProfit(prices));
         }
+        [Test]
+        public void CanCompleteCircuit() {
+            int[] gas, cost;
+            gas = new int[] {1, 2, 3, 4, 5};
+            cost = new int[] { 3, 4, 5, 1, 2 };
+            int startPos = 3;
+            Assert.AreEqual(startPos, Solution.CanCompleteCircuit(gas, cost));
+            
+        }
+        
     }
 }

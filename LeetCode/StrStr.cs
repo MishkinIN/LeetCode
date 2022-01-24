@@ -249,7 +249,7 @@ namespace LeetCode
             }
             return false;
         }
-        private static bool AllDefault(ref int[] nums) {
+        private static bool AllDefault(int[] nums) {
             return 
                 nums[0] ==0 && nums[1]==0 && nums[2] ==0 && nums[3] ==0 && nums[4] ==0 && nums[5] ==0 && nums[6] ==0 && nums[7] ==0 && nums[8] ==0 && nums[9]
                 ==0 && nums[10] ==0 && nums[11] ==0 && nums[12] ==0 && nums[13] ==0 && nums[14] ==0 && nums[15] ==0 && nums[16] ==0 && nums[17] ==0 && nums[18] ==0 && nums[19]

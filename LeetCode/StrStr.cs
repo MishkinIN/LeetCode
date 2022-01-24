@@ -180,5 +180,81 @@ namespace LeetCode
             }
             return true;
         }
+        /*
+         * 3. Longest Substring Without Repeating Characters
+         * Medium
+         * Given a string s, find the length of the longest substring without repeating characters.
+         * Constraints:
+
+    0 <= s.length <= 5 * 10^4
+    s consists of English letters, digits, symbols and spaces.
+
+         */
+        public static int LengthOfLongestSubstring(string s) {
+            if (s.Length<2) {
+                return s.Length;
+            }
+            int ls = 0;
+            int left =0, right = 1;
+            SortedSet<char> chars = new();
+            chars.Add(s[left]);
+            while (right<s.Length) {
+                if (chars.Contains(s[right])) {
+                   ls = ls < right - left ? right - left : ls;
+                   while (s[left] != s[right]) {
+                        chars.Remove(s[left++]);
+                    }
+                    left++;
+                }
+                else {
+                    chars.Add(s[right]);
+                }
+                right++;
+            }
+            ls = ls < right - left ? right - left : ls;
+            return ls;
+        }
+        /*
+         * 567. Permutation in String
+         * Medium
+         * Given two strings s1 and s2, return true if s2 contains a permutation of s1, or false otherwise.
+         * In other words, return true if one of s1's permutations is the substring of s2.
+         * Имея две строки s1 и s2, вернуть true, если s2 содержит перестановку s1, или false в противном случае.
+         * Другими словами, вернуть true, если одна из перестановок s1 является подстрокой s2.
+         * Constraints:
+
+    1 <= s1.length, s2.length <= 10^4
+    s1 and s2 consist of lowercase English letters.
+
+         */
+        public static bool CheckInclusion(string s1, string s2) {
+            if (s1.Length > s2.Length) {
+                return false;
+            }
+            int[] chars = new int[26];
+            int start = 0, end = 0;
+            for (; end < s1.Length; end++) {
+                chars[s1[end] - 'a']++;
+                chars[s2[end] - 'a']--;
+            }
+            if (AllDefault(chars)) {
+                return true;
+            }
+            while (end < s2.Length) {
+                chars[s2[end++] - 'a']--;
+                chars[s2[start++] - 'a']++;
+                if (AllDefault(chars)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        private static bool AllDefault(ref int[] nums) {
+            return 
+                nums[0] ==0 && nums[1]==0 && nums[2] ==0 && nums[3] ==0 && nums[4] ==0 && nums[5] ==0 && nums[6] ==0 && nums[7] ==0 && nums[8] ==0 && nums[9]
+                ==0 && nums[10] ==0 && nums[11] ==0 && nums[12] ==0 && nums[13] ==0 && nums[14] ==0 && nums[15] ==0 && nums[16] ==0 && nums[17] ==0 && nums[18] ==0 && nums[19]
+                ==0 && nums[20] ==0 && nums[21] ==0 && nums[22] ==0 && nums[23] ==0 && nums[24] ==0 && nums[25]== 0;
+        }
+
     }
 }

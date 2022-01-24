@@ -102,6 +102,56 @@ namespace LeetCode
             else
                 return !(node.val == node.initValue & node.next == nodes[pos]);
         }
+        /*876. Middle of the Linked List
+         * Easy
+         * Given the head of a singly linked list, return the middle node of the linked list.
+         * If there are two middle nodes, return the second middle node.
+         Constraints:
+
+    The number of nodes in the list is in the range [1, 100].
+    1 <= Node.val <= 100
+
+         */
+        public ListNode MiddleNode(ListNode head) {
+            ListNode middle = head, last = head.next;
+            if (last == null) {
+                return head;
+            }
+            do {
+                middle = middle.next;
+                last = last.next?.next;
+            } while (last != null);
+            return middle;
+        }
+        /*
+         19. Remove Nth Node From End of List
+        Medium
+        Given the head of a linked list, remove the nth node from the end of the list and return its head.
+        Constraints:
+
+    The number of nodes in the list is sz.
+    1 <= sz <= 30
+    0 <= Node.val <= 100
+    1 <= n <= sz
+
+         */
+        public ListNode RemoveNthFromEnd(ListNode head, int n) {
+            var last = head;
+            for (int i = 0; i < n; i++) {
+                last = last.next;
+            }
+            if (last==null) {
+                return head.next;
+            }
+            last = last.next;
+            var node = head;
+            while (last!=null) {
+                node = node.next;
+                last = last.next;
+            }
+            node.next = node.next?.next;
+            return head;
+        }
     }
 
 }

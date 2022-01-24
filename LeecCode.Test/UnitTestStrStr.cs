@@ -2,6 +2,7 @@ using NUnit.Framework;
 using LeetCode;
 using System.Text;
 using System.Collections.Generic;
+using System;
 
 namespace LeecCode.Test
 {
@@ -82,6 +83,24 @@ namespace LeecCode.Test
             for (int i = 0; i < s.Length; i++) {
                 Assert.AreEqual(expected[i], s[i]);
             }
+        }
+        [Test]
+        public void LengthOfLongestSubstring() {
+            var s = "";
+            Assert.AreEqual(0, Solution.LengthOfLongestSubstring(s));
+            s = "a";
+            Assert.AreEqual(1, Solution.LengthOfLongestSubstring(s));
+            s = "abcabcbb";
+            Assert.AreEqual(3, Solution.LengthOfLongestSubstring(s));
+            s = "bbbbb";
+            Assert.AreEqual(1, Solution.LengthOfLongestSubstring(s));
+            s = "pwwkew";
+            Assert.AreEqual(3, Solution.LengthOfLongestSubstring(s));
+            s = "abcdefga";
+            Assert.AreEqual(7, Solution.LengthOfLongestSubstring(s));
+            s = "aaaa123";
+            Assert.AreEqual(4, Solution.LengthOfLongestSubstring(s));
+            Console.WriteLine(Solution.LengthOfLongestSubstring(bigPatternString));
         }
     }
 }

@@ -338,5 +338,36 @@ Sum of every tilt : 0 + 0 + 0 + 2 + 7 + 6 = 15
                 && TreeNode.Equals(left.left, right.left)
                 && TreeNode.Equals(left.right, right.right);
         }
+        /*
+         * 617. Merge Two Binary Trees
+         * Easy
+         * You are given two binary trees root1 and root2.
+         * Imagine that when you put one of them to cover the other, 
+         * some nodes of the two trees are overlapped while the others are not.
+         * You need to merge the two trees into a new binary tree. 
+         * The merge rule is that if two nodes overlap, 
+         * then sum node values up as the new value of the merged node. 
+         * Otherwise, the NOT null node will be used as the node of the new tree.
+         * Return the merged tree.
+         * 
+         * Constraints:
+
+    The number of nodes in both trees is in the range [0, 2000].
+    -10^4 <= Node.val <= 10^4
+
+         */
+        public TreeNode MergeTrees(TreeNode root1, TreeNode root2) {
+            if (root1==null) {
+                return root2;
+            }
+            if (root2==null) {
+                return root1;
+            }
+            var node = new TreeNode(root1.val + root2.val,
+                left: MergeTrees(root1.left, root2.left),
+                right: MergeTrees(root1.right, root2.right));
+            return node;
+        }
+
     }
 }

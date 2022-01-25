@@ -189,6 +189,18 @@ namespace LeetCode {
         public static int Search(int[] nums, int target) {
             return Array.BinarySearch(nums, target) < 0 ? -1 : Array.BinarySearch(nums, target);
         }
- 
+        const int lCount = 26;
+        public static string ConvertToTitle(int columnNumber) {
+            Stack<char> title = new();
+            while (columnNumber > 0) {
+                title.Push((char)('A' + columnNumber % lCount));
+                columnNumber /= lCount;
+            }
+            StringBuilder sb = new();
+            while (title.Count > 0) {
+                sb.Append(title.Pop());
+            }
+            return sb.ToString();
+        }
     }
 }

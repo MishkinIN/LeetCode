@@ -262,5 +262,21 @@ namespace LeecCode.Test
             Assert.IsFalse(Solution.IsValidSudoku(inValidSudoku));
 
         }
+        [Test]
+        public void ValidMountainArray() {
+            int[] arr;
+            arr = new int[] { 1, 3, 2, 0 };
+            Assert.IsTrue(Solution.ValidMountainArray(arr));
+              arr = new int[] {  0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+            Assert.IsTrue(Solution.ValidMountainArray(arr));
+        }
+        [Test]
+        public void FloodFill() {
+            int[][] image = new int[][] {
+                new int[]{ 0,0,0},
+                new int[]{ 1,0,0},
+            };
+            Solution.FloodFill(image, sr:1, sc:0, newColor:2);
+        }
     }
 }

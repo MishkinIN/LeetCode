@@ -278,5 +278,42 @@ namespace LeecCode.Test
             };
             Solution.FloodFill(image, sr:1, sc:0, newColor:2);
         }
+        [Test]
+        public void UpdateMatrix() {
+            int[][] mat = new int[][]{
+                new int[] {'5', '3', '.', '.', '7', '.', '.', '.', '.'}
+                ,new int[] {'6', '.', '.', '1', '9', '5', '.', '.', '.'}
+                ,new int[] {'.', '9', '8', '.', '.', '.', '.', '6', '.'}
+                ,new int[] {'8', '.', '.', '.', '6', '.', '.', '.', '3'}
+                ,new int[] {'4', '.', '.', '8', '.', '3', '.', '.', '1'}
+                ,new int[] {'7', '.', '.', '.', '2', '.', '.', '.', '6'}
+                ,new int[] {'.', '6', '.', '.', '.', '.', '2', '8', '.'}
+                ,new int[] {'.', '.', '.', '4', '1', '9', '.', '.', '5'}
+                ,new int[] {'.', '.', '.', '.', '8', '.', '.', '7', '9'} };
+
+            mat = new int[][]{
+                new int[] {0,0,0}
+                ,new int[] {0,1,0}
+                ,new int[] {0,0,0}
+            };
+
+            var matrix = Solution.UpdateMatrix(mat);
+            Assert.AreEqual(0, matrix[0][2]);
+            Assert.AreEqual(1, matrix[1][1]);
+            Assert.AreEqual(0, matrix[2][2]);
+
+            mat = new int[][]{
+                new int[] {0}
+                ,new int[] {0}
+                ,new int[] {0}
+                ,new int[] {0}
+            };
+
+            matrix = Solution.UpdateMatrix(mat);
+            Assert.AreEqual(0, matrix[0][0]);
+            Assert.AreEqual(0, matrix[1][0]);
+            Assert.AreEqual(0, matrix[2][0]);
+            Assert.AreEqual(0, matrix[3][0]);
+        }
     }
 }

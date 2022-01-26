@@ -124,31 +124,26 @@ namespace LeetCode {
         /// <param name="s">s.Length>1</param>
         /// <returns></returns>
         public static bool IsValid(string s) {
-            byte a = 1, b = 2, c = 4;
-            var stack = new Stack<byte>(10000);
+            var stack = new Stack<char>();
             foreach (var ch in s) {
                 switch (ch) {
                     case '(':
-                        stack.Push(a);
-                        break;
                     case '{':
-                        stack.Push(b);
-                        break;
                     case '[':
-                        stack.Push(c);
+                        stack.Push(ch);
                         break;
                     case ')':
-                        if (stack.Count == 0 || stack.Pop() != a) {
+                        if (stack.Count == 0 || stack.Pop() != '(') {
                             return false;
                         }
                         break;
                     case '}':
-                        if (stack.Count == 0 || stack.Pop() != b) {
+                        if (stack.Count == 0 || stack.Pop() !='{') {
                             return false;
                         }
                         break;
                     case ']':
-                        if (stack.Count == 0 || stack.Pop() != c) {
+                        if (stack.Count == 0 || stack.Pop() != '[') {
                             return false;
                         }
                         break;

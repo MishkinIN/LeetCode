@@ -183,5 +183,184 @@ namespace LeecCode.Test
             var leetCode = new LeetCode.LeetCode();
             IList<TreeNode> actual = leetCode.GenerateTrees(12);
         }
+        [Test]
+        public void GetAllElements() {
+            int?[] lNums = new int?[] { };
+            int?[] rNums = new int?[] { };
+
+            lNums = new int?[] { 8, 3,null,2, null, 1};
+            rNums = new int?[] { };
+            TreeNode left = TreeNode.Create(lNums);
+            TreeNode rigth = TreeNode.Create(rNums);
+            var actual = TreeNode.GetAscendingAllElements(left, rigth);
+            Assert.AreEqual(4, actual.Count);
+            int lastVal = int.MinValue;
+            foreach (var item in actual) {
+                Assert.IsTrue(lastVal <= item);
+                lastVal = item;
+            }
+
+            lNums = new int?[] { 8, null, 9, null, 10, null, 11 };
+            rNums = new int?[] { };
+            left = TreeNode.Create(lNums);
+            rigth = TreeNode.Create(rNums);
+            actual = TreeNode.GetAscendingAllElements(left, rigth);
+            Assert.AreEqual(4, actual.Count);
+            lastVal = int.MinValue;
+            foreach (var item in actual) {
+                Assert.IsTrue(lastVal <= item);
+                lastVal = item;
+            }
+            lNums = new int?[] { 8, 3, null, 2, 5, 1, null, null, 7, null, null, 6 };
+            rNums = new int?[] { };
+            left = TreeNode.Create(lNums);
+            rigth = TreeNode.Create(rNums);
+            var expectedCount = 0;
+            foreach (var item in lNums) {
+                if (item.HasValue) {
+                    expectedCount++;
+                }
+            }
+            foreach (var item in rNums) {
+                if (item.HasValue) {
+                    expectedCount++;
+                }
+            }
+            actual = TreeNode.GetAscendingAllElements(left, rigth);
+            Assert.AreEqual(expectedCount, actual.Count);
+            lastVal = int.MinValue;
+            foreach (var item in actual) {
+                Assert.IsTrue(lastVal <= item);
+                lastVal = item;
+            }
+
+            lNums = new int?[] { 1, 0, 3 };
+            rNums = new int?[] { };
+            left = TreeNode.Create(lNums);
+            rigth = TreeNode.Create(rNums);
+            actual = TreeNode.GetAscendingAllElements(left, rigth);
+            Assert.AreEqual(lNums.Length + rNums.Length, actual.Count);
+            lastVal = int.MinValue;
+            foreach (var item in actual) {
+                Assert.IsTrue(lastVal <= item);
+                lastVal = item;
+            }
+
+            lNums = new int?[] { };
+            rNums = new int?[] { 1, 0, 3 };
+            left = TreeNode.Create(lNums);
+            rigth = TreeNode.Create(rNums);
+            actual = TreeNode.GetAscendingAllElements(left, rigth);
+            Assert.AreEqual(lNums.Length + rNums.Length, actual.Count);
+            lastVal = int.MinValue;
+            foreach (var item in actual) {
+                Assert.IsTrue(lastVal <= item);
+                lastVal = item;
+            }
+
+            lNums = new int?[] { };
+            rNums = new int?[] { };
+            left = TreeNode.Create(lNums);
+            rigth = TreeNode.Create(rNums);
+            actual = TreeNode.GetAscendingAllElements(left, rigth);
+            Assert.AreEqual(lNums.Length + rNums.Length, actual.Count);
+            lastVal = int.MinValue;
+            foreach (var item in actual) {
+                Assert.IsTrue(lastVal <= item);
+                lastVal = item;
+            }
+
+            lNums = new int?[] { 2, 1, 4 };
+            rNums = new int?[] { 1, 0, 3 };
+            left = TreeNode.Create(lNums);
+            rigth = TreeNode.Create(rNums);
+            actual = TreeNode.GetAscendingAllElements(left, rigth);
+            Assert.AreEqual(lNums.Length + rNums.Length, actual.Count);
+            lastVal = int.MinValue;
+            foreach (var item in actual) {
+                Assert.IsTrue(lastVal <= item);
+                lastVal = item;
+            }
+
+            lNums = new int?[] { 1, null, 8 };
+            rNums = new int?[] { 8, 1 };
+            left = TreeNode.Create(lNums);
+            rigth = TreeNode.Create(rNums);
+            actual = TreeNode.GetAscendingAllElements(left, rigth);
+            Assert.AreEqual(lNums.Length + rNums.Length-1, actual.Count);
+            lastVal = int.MinValue;
+            foreach (var item in actual) {
+                Assert.IsTrue(lastVal <= item);
+                lastVal = item;
+            }
+            lNums = new int?[] {99, 90, null, 8, null, 7, 85, null, null, null, 87 };
+            rNums = new int?[] {};
+            left = TreeNode.Create(lNums);
+            rigth = TreeNode.Create(rNums);
+            actual = TreeNode.GetAscendingAllElements(left, rigth);
+            expectedCount = 0;
+            foreach (var item in lNums) {
+                if (item.HasValue) {
+                    expectedCount++;
+                }
+            }
+            foreach (var item in rNums) {
+                if (item.HasValue) {
+                    expectedCount++;
+                }
+            }
+            Assert.AreEqual(expectedCount, actual.Count);
+            lastVal = int.MinValue;
+            foreach (var item in actual) {
+                Assert.IsTrue(lastVal <= item);
+                lastVal = item;
+            }
+            lNums = System.Array.Empty<int?>();
+            rNums = new int?[] { 50, 2, 73, null, 34, 58, 80, 21, null, null, 64, 74, 92, 10, null, null, 68, null, null, 89, 100, null, null, 66, null, 84 };
+            left = TreeNode.Create(lNums);
+            rigth = TreeNode.Create(rNums);
+            actual = TreeNode.GetAscendingAllElements(left, rigth);
+            expectedCount = 0;
+            foreach (var item in lNums) {
+                if (item.HasValue) {
+                    expectedCount++;
+                }
+            }
+            foreach (var item in rNums) {
+                if (item.HasValue) {
+                    expectedCount++;
+                }
+            }
+            Assert.AreEqual(expectedCount, actual.Count);
+            lastVal = int.MinValue;
+            foreach (var item in actual) {
+                Assert.IsTrue(lastVal <= item);
+                lastVal = item;
+            }
+
+            lNums = new int?[] {99, 90, null, 8, null, 7, 85, null, null, null, 87 };
+            rNums = new int?[] {50, 2, 73, null, 34, 58, 80, 21, null, null, 64, 74, 92, 10, null, null, 68, null, null, 89, 100, null, null, 66, null, 84 };
+            left = TreeNode.Create(lNums);
+            rigth = TreeNode.Create(rNums);
+            actual = TreeNode.GetAscendingAllElements(left, rigth);
+            expectedCount = 0;
+            foreach (var item in lNums) {
+                if (item.HasValue) {
+                    expectedCount++;
+                }
+            }
+            foreach (var item in rNums) {
+                if (item.HasValue) {
+                    expectedCount++;
+                }
+            }
+            Assert.AreEqual(expectedCount, actual.Count);
+            lastVal = int.MinValue;
+            foreach (var item in actual) {
+                Assert.IsTrue(lastVal <= item);
+                lastVal = item;
+            }
+        }
+
     }
 }

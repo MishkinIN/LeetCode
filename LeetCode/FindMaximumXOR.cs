@@ -27,39 +27,74 @@ namespace LeetCode {
             }
 
             int a = nums[^1];
-            int mask = GetMask(a);
-            int pattern = mask ^ mask >> 1;
-            return GetBestXOR(nums, pattern, 0, mask >> 1);
+            int a_mask = GetMask(a);
+            int pattern = a_mask ^ a_mask >> 1;
+            return GetBestXOR(nums, pattern, 0, a_mask >> 1, a_mask);
         }
 
-        private static int GetBestXOR(int[] nums, int fi_pattern, int si_pattern, int mask) {
-            var fi = getInterval(nums, fi_pattern, mask);
-            var si = getInterval(nums, si_pattern, mask);
+        private static int GetBestXOR(int[] nums, int fi_pattern, int si_pattern, int step_mask, int a_mask) {
+            var fi = getInterval(nums, fi_pattern, step_mask);
+            var si = getInterval(nums, si_pattern, step_mask);
             if (IsEmpty(si)) {
                 if (IsEmpty(fi)) {
                     return 0;
                 }
-                var xor1 = GetBestXOR(nums, fi_pattern | mask ^ mask >> 1, 0, mask >> 1);
-                var xor2 = GetBestXOR(nums, fi_pattern, mask ^ mask >> 1, mask >> 1);
-                return Math.Max(xor1, xor2);
-               
+                var xor1 = GetBestXOR(nums, fi_pattern | (step_mask ^ (step_mask >> 1)), fi_pattern, step_mask >> 1, a_mask);
+                return xor1;
+
             }
             if (IsEmpty(fi)) {
                 if (IsEmpty(si)) {
                     return 0;
                 }
-                fi_pattern = fi_pattern >> 1;
-                si_pattern = fi_pattern >> 1;
-                mask = mask >> 1;
-                return GetBestXOR(nums, fi_pattern, si_pattern, mask);
+                var xor1 = GetBestXOR(nums, si_pattern | (step_mask ^ (step_mask >> 1)), si_pattern, step_mask >> 1, a_mask);
+                return xor1;
             }
             if (fi.max - fi.min == 1 & si.max - si.min == 1) {
                 return nums[fi.min] ^ nums[si.min];
             }
             {
-                var xor1 = GetBestXOR(nums, fi_pattern | mask ^ mask >> 1, 0, mask >> 1);
-                var xor2 = GetBestXOR(nums, fi_pattern, mask ^ mask >> 1, mask >> 1);
-                return Math.Max(xor1, xor2);
+                if (fi.max - fi.min == 1) {
+                    var a = nums[fi.min];
+                    var b = GetBestPair(nums, a, si_pattern,step_mask);
+                    return a ^ b;
+                }
+                if (si.max - si.min == 1) {
+                    var a = nums[si.min];
+                    var b = GetBestPair(nums, a, fi_pattern, step_mask);
+                    return a ^ b;
+                }
+                var xor1 = GetBestXOR(nums, fi_pattern , si_pattern, step_mask >> 1, a_mask);
+                var xor2 = GetBestXOR(nums, fi_pattern, si_pattern | (step_mask ^ (step_mask >> 1)), step_mask >> 1, a_mask);
+                var xor3 = GetBestXOR(nums, fi_pattern | (step_mask ^ (step_mask >> 1)), si_pattern, step_mask >> 1, a_mask);
+                var xor4 = GetBestXOR(nums, fi_pattern | (step_mask ^ (step_mask >> 1)), si_pattern | (step_mask ^ (step_mask >> 1)), step_mask >> 1, a_mask);
+                return Math.Max(Math.Max(xor1, xor2), Math.Max(xor3, xor4));
+            }
+        }
+        private static int GetBestPair(int[] nums, int a, int pattern, int step_mask) {
+            if ((a & (step_mask ^ (step_mask >> 1))) > 0) {
+                var fi = getInterval(nums, pattern, step_mask>>1);
+                if (IsEmpty(fi)) {
+                    pattern |= (step_mask ^ step_mask >> 1);
+                }
+                else if (fi.max - fi.min == 1) {
+                    return nums[fi.min];
+                }
+                return GetBestPair(nums, a, pattern, step_mask >> 1);
+            }
+            else {
+                var fi = getInterval(nums, pattern | (step_mask ^ step_mask >> 1), step_mask >> 1);
+                if (IsEmpty(fi)) {
+                    //pattern = pattern | (step_mask ^ step_mask >> 1);
+                }
+                else if (fi.max - fi.min == 1) {
+                    return nums[fi.min];
+                }
+                else {
+                    pattern |= (step_mask ^ step_mask >> 1);
+                }
+                return GetBestPair(nums, a, pattern, step_mask >> 1);
+
             }
         }
         private static (int min, int max) getInterval(int[] nums, int pattern, int mask) {

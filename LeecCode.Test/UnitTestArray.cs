@@ -315,5 +315,37 @@ namespace LeecCode.Test
             Assert.AreEqual(0, matrix[2][0]);
             Assert.AreEqual(0, matrix[3][0]);
         }
+        [Test]
+        public void FindMaximumXOR() {
+            int[] nums;
+            int expected;
+            nums = new int[] { 3, 10 };
+            expected = 3^10;
+            Assert.AreEqual(expected, Solution.FindMaximumXOR(nums));
+            nums = new int[] { 3, 10, 5 };
+            expected = 15;
+            Assert.AreEqual(expected, Solution.FindMaximumXOR(nums));
+            nums = new int[] { 0b0, 0b1, 0b11, 0b111, 0b01 };
+            expected = 0b111;
+            Assert.AreEqual(expected, Solution.FindMaximumXOR(nums));
+            nums = new int[] { 0b111, 0b111, 0b111 };
+            expected = 0;
+            Assert.AreEqual(expected, Solution.FindMaximumXOR(nums));
+            nums = new int[] { 0b110, 0b111, 0b111 };
+            expected = 0b1;
+            Assert.AreEqual(expected, Solution.FindMaximumXOR(nums));
+            nums = new int[] { 0b101, 0b111, 0b111 };
+            expected = 0b10;
+            Assert.AreEqual(expected, Solution.FindMaximumXOR(nums));
+            nums = new int[] { 0b111, 0b111, 0b111 };
+            expected = 0;
+            Assert.AreEqual(expected, Solution.FindMaximumXOR(nums));
+            nums = new int[] { 3, 10, 5, 25, 2, 8 };
+            expected = 28;
+            Assert.AreEqual(expected, Solution.FindMaximumXOR(nums));
+            nums = new int[] { 14, 70, 53, 83, 49, 91, 36, 80, 92, 51, 66, 70 };
+            expected = 127;
+            Assert.AreEqual(expected, Solution.FindMaximumXOR(nums));
+        }
     }
 }

@@ -467,6 +467,246 @@ Sum of every tilt : 0 + 0 + 0 + 2 + 7 + 6 = 15
                 isInitialized = false;
             }
         }
+        public static int MaxDepth(TreeNode root) {
+            if (root == null)
+                return 0;
+            return Dept(root);
+        }
+        private static int Dept(TreeNode node) {
+            TreeNode grandChield = node.left?.left;
+            int dept_ll = grandChield == null ? 1 : Dept(grandChield) + 2;
+            grandChield = node.left?.right;
+            int dept_lr = grandChield == null ? 1 : Dept(grandChield) + 2;
+            grandChield = node.right?.left;
+            int dept_rl = grandChield == null ? 1 : Dept(grandChield) + 2;
+            grandChield = node.right?.right;
+            int dept_rr = grandChield == null ? 1 : Dept(grandChield) + 2;
+            int dept = Math.Max(
+                Math.Max(dept_ll, dept_lr),
+                Math.Max(dept_rl, dept_rr));
+            if (dept == 1 && !(node.left == null && node.right == null)) {
+                return 2;
+            }
+            return dept;
+        }
+        public static TreeNode InvertTree(TreeNode root) {
+            if (root == null) {
+                return null;
+            }
+            var left = InvertTree(root.right);
+            root.right = InvertTree(root.left);
+            root.left = left;
+            return root;
+        }
+        public static bool HasPathSum(TreeNode root, int targetSum) {
+            if (root == null) {
+                return false;
+            }
+            if (root.left == null && root.right == null) {
+                return root.val == targetSum;
+            }
+            return HasPathSum(root.left, targetSum - root.val)
+                || HasPathSum(root.right, targetSum - root.val);
+        }
+        /*
+         * 701. Insert into a Binary Search Tree
+         * Medium
+         * You are given the root node of a binary search tree (BST) and a value to insert into the tree. 
+         * Return the root node of the BST after the insertion. 
+         * It is guaranteed that the new value does not exist in the original BST.
+         * Notice that there may exist multiple valid ways for the insertion, as long as the tree remains a BST after insertion.
+         * You can return any of them.
+         * Constraints:
 
+    The number of nodes in the tree will be in the range [0, 10^4].
+    -10^8 <= Node.val <= 10^8
+    All the values Node.val are unique.
+    -10^8 <= val <= 10^8
+    It's guaranteed that val does not exist in the original BST.
+
+         */
+        public static TreeNode InsertIntoBST(TreeNode root, int val) {
+            if (root == null) {
+                return new TreeNode(val);
+            }
+            return Insert(root, val);
+        }
+        private static TreeNode Insert(TreeNode bstNode, int val) {
+            if (bstNode.val < val) {
+                if (bstNode.right == null) {
+                    bstNode.right = new TreeNode(val);
+                    return bstNode;
+                }
+                bstNode.right = Insert(bstNode.right, val);
+                return bstNode;
+            }
+            else if (bstNode.val > val) {
+                if (bstNode.left == null) {
+                    bstNode.left = new TreeNode(val);
+                    return bstNode;
+                }
+                bstNode.left = Insert(bstNode.left, val);
+                return bstNode;
+            }
+            else
+                throw new InvalidOperationException();
+        }
+        private struct BSTValidateResult {
+            public readonly bool isValid;
+            public readonly int leftValue;
+            public readonly int rightValue;
+            public BSTValidateResult(bool valid, int lv, int rv) {
+                this.isValid = valid;
+                this.leftValue = lv;
+                this.rightValue = rv;
+            }
+        }
+        private static TreeNode Insert_I(TreeNode bstNode, int val) {
+            if (bstNode.val < val) {
+                if (bstNode.right == null) {
+                    bstNode.right = new TreeNode(val);
+                    return bstNode;
+
+                }
+                //else if (bstNode.right.val > val) {
+                //    TreeNode root = new TreeNode(val,
+                //        left: bstNode,
+                //        right: bstNode.right
+                //        );
+                //    bstNode.right = null;
+                //    return root;
+                //}
+                //else
+                //    return Insert(bstNode.right, val);
+                bstNode.right = Insert(bstNode.right, val);
+                return bstNode;
+            }
+            else if (bstNode.val > val) {
+                if (bstNode.left == null) {
+                    bstNode.left = new TreeNode(val);
+                    return bstNode;
+                }
+                //else if (bstNode.left.val < val) {
+                //    TreeNode root = new TreeNode(val,
+                //        right: bstNode,
+                //        left: bstNode.left
+                //        );
+                //    bstNode.left = null;
+                //    return root;
+                //}
+                //else
+                //    return Insert(bstNode.left, val);
+                bstNode.left = Insert(bstNode.left, val);
+                return bstNode;
+            }
+            else
+                throw new InvalidOperationException();
+        }
+        public static bool IsValidBST(TreeNode root) {
+            if (root == null)
+                throw new ArgumentNullException();
+            return IsValidLeft(root.left, root.val) && IsValidRight(root.right, root.val);
+        }
+
+        public static bool IsValidLeft(TreeNode node, int parentVal) {
+            if (node == null) {
+                return true;
+            }
+            if (node.val>= parentVal) {
+                return false;
+            }
+            return IsValidLeft(node.left, node.val) 
+                && IsValidLeft(node.right, parentVal) 
+                && IsValidRight(node.right, node.val);
+        }
+        public static bool IsValidRight(TreeNode node, int parentVal) {
+            if (node == null ) {
+                return true;
+            }
+            if (node.val<= parentVal) {
+                return false;
+            }
+            return IsValidRight(node.left, parentVal)
+                && IsValidLeft(node.left, node.val)
+                && IsValidRight(node.right, node.val);
+        }
+
+        public bool IsValidBST() {
+            return IsValidBST_LC(this, null, null);
+
+        }
+
+        private static bool IsValidBST_LC(TreeNode node, int? min, int? max) {
+            if (node == null) {
+                return true;
+            }
+
+            if ((max != null && node.val >= max)
+               || (min != null && node.val <= min)) {
+                return false;
+            }
+
+            return IsValidBST_LC(node.left, min, node.val) && IsValidBST_LC(node.right, node.val, max);
+
+        }
+
+        public static bool IsValidBST_I(TreeNode root) {
+            if (root == null)
+                throw new ArgumentNullException();
+            var validate = ValidateBST(root);
+            return validate.isValid;
+        }
+        private static BSTValidateResult ValidateBST(TreeNode node) {
+            if (node.left == null & node.right == null) {
+                return new BSTValidateResult(true, node.val, node.val);
+            }
+            if (node.left == null ^ node.right == null) {
+                if (node.left == null) {
+                    var _validate = ValidateBST(node.right);
+                    var validate = new BSTValidateResult(
+                        valid: _validate.isValid & node.val < _validate.leftValue,
+                        lv: node.val,
+                        rv: _validate.rightValue);
+                    return validate;
+                }
+                if (node.right == null) {
+                    var _validate = ValidateBST(node.left);
+                    var validate = new BSTValidateResult(
+                        valid: _validate.isValid & node.val > _validate.rightValue,
+                        lv: _validate.leftValue,
+                        rv: node.val);
+                    return validate;
+                }
+            }
+            {
+                var l_validate = ValidateBST(node.left);
+                var r_validate = ValidateBST(node.right);
+                var validate = new BSTValidateResult(
+                            valid: r_validate.isValid & l_validate.isValid
+                            && node.val > l_validate.rightValue
+                            && node.val < r_validate.leftValue,
+                            lv: l_validate.leftValue,
+                            rv: r_validate.rightValue);
+                return validate;
+            }
+        }
+        /*
+         * 653. Two Sum IV - Input is a BST
+         * Easy
+         * Given the root of a Binary Search Tree and a target number k, 
+         * return true if there exist two elements in the BST such that their sum is equal to the given target.
+         * Constraints:
+
+    The number of nodes in the tree is in the range [1, 10^4].
+    -10^4 <= Node.val <= 10^4
+    root is guaranteed to be a valid binary search tree.
+    -10^5 <= k <= 10^5
+
+         */
+        public static bool FindTarget(TreeNode root, int k) {
+            throw new NotImplementedException();
+
+        }
+        
     }
 }

@@ -28,9 +28,49 @@ namespace LeetCode
 
 
          */
-
-        //public int OrangesRotting(int[][] grid) {
-
-        //}
+        private const int maxGridLenght = 32;
+        public static int OrangesRotting(int[][] grid) {
+            int m = grid.Length;
+            int n = grid[0].Length;
+            HashSet<int> fresh = new HashSet<int>(m*n);
+            HashSet<int> rotten = new HashSet<int>(m*n);
+            HashSet<int> vs;
+            for (int i = 0; i < m; i++) {
+                for (int j = 0; j < n; j++) {
+                    if (grid[i][j]==1) {
+                        fresh.Add(i* maxGridLenght + j);
+                    }
+                    else if (grid[i][j] == 2) {
+                        rotten.Add(i* maxGridLenght + j);
+                    }
+                }
+            }
+            int timeInterval = 0;
+            while (rotten.Count>0 && fresh.Count>0) {
+                vs = new HashSet<int>(m * n);
+                foreach (var item in rotten) {
+                    int i = item / 32, j = item % 32;
+                    if (fresh.Contains(item + maxGridLenght)) { 
+                        vs.Add(item+32);
+                        fresh.Remove(item + maxGridLenght);
+                    }
+                    if (fresh.Contains(item- maxGridLenght)) {
+                        vs.Add(item- maxGridLenght);
+                        fresh.Remove(item - maxGridLenght);
+                    }
+                    if (fresh.Contains(item+1)) {
+                        vs.Add(item + 1);
+                        fresh.Remove(item + 1);
+                    }
+                    if (fresh.Contains(item-1)) {
+                        vs.Add(item - 1);
+                        fresh.Remove(item -1 );
+                    }
+                }
+                rotten = vs;
+                timeInterval++;
+            }
+            return fresh.Count > 0 ? -1 : timeInterval;
+        }
     }
 }

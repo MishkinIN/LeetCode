@@ -393,80 +393,6 @@ Sum of every tilt : 0 + 0 + 0 + 2 + 7 + 6 = 15
             Center,
             Right,
         }
-        private class EnumeratorIterativeInorder : IEnumerator<int>, IDisposable {
-            const int maxStackCount = 50_000;
-            private Stack<TreeNode> stack;
-            private TreeNode node;
-            private readonly TreeNode root;
-            private bool isInitialized = false;
-            public EnumeratorIterativeInorder(TreeNode tree) {
-                stack = new();
-                root = tree ?? throw new ArgumentNullException();
-                Reset();
-            }
-            public int Current {
-                get {
-                    if (node != null) {
-                        return node.val;
-                    }
-                    else
-                        throw new InvalidOperationException();
-                }
-            }
-
-            object IEnumerator.Current => Current;
-
-            public void Dispose() {
-                node = null;
-                stack.Clear();
-                stack = null;
-            }
-
-            private void DownLeft() {
-                if (stack.Count > maxStackCount) {
-                    throw new StackOverflowException($"Size of TreeNode elements more than {maxStackCount}");
-                }
-                while (node.left != null) {
-                    stack.Push(node);
-                    node = node.left;
-                }
-            }
-            public bool MoveNext() {
-                if (stack == null) {
-                    throw new ObjectDisposedException(nameof(EnumeratorIterativeInorder));
-                }
-
-                if (isInitialized) {
-                    node = node.right;
-                    while (stack.Count > 0 || node != null) {
-                        if (node != null) {
-                            stack.Push(node);
-                            node = node.left;
-                        }
-                        else {
-                            node = stack.Pop();
-                            return true;
-                        }
-                    }
-                    return false;
-                }
-                else {
-                    node = root;
-                    while (node.left != null) {
-                        stack.Push(node);
-                        node = node.left;
-                    }
-                    isInitialized = true;
-                    return true;
-                }
-            }
-
-            public void Reset() {
-                stack.Clear();
-                node = null;
-                isInitialized = false;
-            }
-        }
         public static int MaxDepth(TreeNode root) {
             if (root == null)
                 return 0;
@@ -612,18 +538,18 @@ Sum of every tilt : 0 + 0 + 0 + 2 + 7 + 6 = 15
             if (node == null) {
                 return true;
             }
-            if (node.val>= parentVal) {
+            if (node.val >= parentVal) {
                 return false;
             }
-            return IsValidLeft(node.left, node.val) 
-                && IsValidLeft(node.right, parentVal) 
+            return IsValidLeft(node.left, node.val)
+                && IsValidLeft(node.right, parentVal)
                 && IsValidRight(node.right, node.val);
         }
         public static bool IsValidRight(TreeNode node, int parentVal) {
-            if (node == null ) {
+            if (node == null) {
                 return true;
             }
-            if (node.val<= parentVal) {
+            if (node.val <= parentVal) {
                 return false;
             }
             return IsValidRight(node.left, parentVal)
@@ -690,24 +616,7 @@ Sum of every tilt : 0 + 0 + 0 + 2 + 7 + 6 = 15
                 return validate;
             }
         }
-        /*
-         * 653. Two Sum IV - Input is a BST
-         * Easy
-         * Given the root of a Binary Search Tree and a target number k, 
-         * return true if there exist two elements in the BST such that their sum is equal to the given target.
-         * Constraints:
 
-    The number of nodes in the tree is in the range [1, 10^4].
-    -10^4 <= Node.val <= 10^4
-    root is guaranteed to be a valid binary search tree.
-    -10^5 <= k <= 10^5
-
-         */
-        public static bool FindTarget(TreeNode root, int k) {
-            throw new NotImplementedException();
-
-        }
-        
         /*
          * 102. Binary Tree Level Order Traversal
          * Medium
@@ -743,10 +652,10 @@ Sum of every tilt : 0 + 0 + 0 + 2 + 7 + 6 = 15
             List<TreeNode> nextQueue = new();
             foreach (var item in lvlQueue) {
                 lvlVals.Add(item.val);
-                if (item.left!=null) {
+                if (item.left != null) {
                     nextQueue.Add(item.left);
                 }
-                if (item.right!=null) {
+                if (item.right != null) {
                     nextQueue.Add(item.right);
                 }
             }
@@ -755,29 +664,10 @@ Sum of every tilt : 0 + 0 + 0 + 2 + 7 + 6 = 15
             if (nextQueue.Count > 0) {
                 TreeToLevelOrder_List(lists, nextQueue);
             }
-         }
-         private static void TreeToLevelOrder_Stack(Stack<IList<int>> lists, List<TreeNode> lvlQueue) {
-            List<int> lvlVals = new();
-            lists.Add(lvlVals);
-            List<TreeNode> nextQueue = new();
-            foreach (var item in lvlQueue) {
-                lvlVals.Add(item.val);
-                if (item.left!=null) {
-                    nextQueue.Add(item.left);
-                }
-                if (item.right!=null) {
-                    nextQueue.Add(item.right);
-                }
-            }
-            lvlQueue.Clear();
-            lvlQueue = null;
-            if (nextQueue.Count > 0) {
-                TreeToLevelOrder_List(lists, nextQueue);
-            }
-         }
-       private static void TreeToLevelOrder_Recursion(List<IList<int>> lists, int lvl, TreeNode node) {
+        }
+        private static void TreeToLevelOrder_Recursion(List<IList<int>> lists, int lvl, TreeNode node) {
             IList<int> lvlVals;
-            if (lists.Count>lvl) {
+            if (lists.Count > lvl) {
                 lvlVals = lists[lvl];
             }
             else {
@@ -792,5 +682,133 @@ Sum of every tilt : 0 + 0 + 0 + 2 + 7 + 6 = 15
                 TreeToLevelOrder_Recursion(lists, lvl + 1, node.right);
             }
         }
+        /*
+        * 653. Two Sum IV - Input is a BST
+        * Easy
+        * Given the root of a Binary Search Tree and a target number k, 
+        * return true if there exist two elements in the BST such that their sum is equal to the given target.
+        * Constraints:
+
+   The number of nodes in the tree is in the range [1, 10^4].
+   -10^4 <= Node.val <= 10^4
+   root is guaranteed to be a valid binary search tree.
+   -10^5 <= k <= 10^5
+
+        */
+        public static bool FindTarget(TreeNode bst, int k) {
+            throw new NotImplementedException();
+
+        }
+
+        public class TreeNodeCursor {
+            private Stack<TreeNode> stack = new Stack<TreeNode>();
+            private TreeNode root;
+            public TreeNodeCursor(TreeNode root) {
+                this.root = root;
+            }
+            public bool LeftDown() {
+                throw new NotImplementedException();
+            }
+            public bool RightDown() {
+                throw new NotImplementedException();
+
+            }
+            public TreeNode Current {
+                get; private set;
+            }
+            public bool StepNext() {
+                throw new NotImplementedException();
+            }
+            public bool StepPrevious() {
+                throw new NotImplementedException();
+            }
+            public bool Find(int val) {
+                var node = root;
+                do {
+                    if (Current.val < val) {
+
+                    }
+                    else {
+
+                    } 
+                } while (true);
+            }
+
+        }
+        private class EnumeratorIterativeInorder : IEnumerator<int>, IDisposable {
+            const int maxStackCount = 50_000;
+            private Stack<TreeNode> stack;
+            private TreeNode node;
+            private readonly TreeNode root;
+            private bool isInitialized = false;
+            public EnumeratorIterativeInorder(TreeNode tree) {
+                stack = new();
+                root = tree ?? throw new ArgumentNullException();
+                Reset();
+            }
+            public int Current {
+                get {
+                    if (node != null) {
+                        return node.val;
+                    }
+                    else
+                        throw new InvalidOperationException();
+                }
+            }
+
+            object IEnumerator.Current => Current;
+
+            public void Dispose() {
+                node = null;
+                stack.Clear();
+                stack = null;
+            }
+
+            private void DownLeft() {
+                if (stack.Count > maxStackCount) {
+                    throw new StackOverflowException($"Size of TreeNode elements more than {maxStackCount}");
+                }
+                while (node.left != null) {
+                    stack.Push(node);
+                    node = node.left;
+                }
+            }
+            public bool MoveNext() {
+                if (stack == null) {
+                    throw new ObjectDisposedException(nameof(EnumeratorIterativeInorder));
+                }
+
+                if (isInitialized) {
+                    node = node.right;
+                    while (stack.Count > 0 || node != null) {
+                        if (node != null) {
+                            stack.Push(node);
+                            node = node.left;
+                        }
+                        else {
+                            node = stack.Pop();
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+                else {
+                    node = root;
+                    while (node.left != null) {
+                        stack.Push(node);
+                        node = node.left;
+                    }
+                    isInitialized = true;
+                    return true;
+                }
+            }
+
+            public void Reset() {
+                stack.Clear();
+                node = null;
+                isInitialized = false;
+            }
+        }
+
     }
 }

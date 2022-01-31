@@ -45,15 +45,15 @@ namespace LeecCode.Test
             ListNode l1 = ListNode.Create(new int[] { 1, 2, 4 });
             ListNode l2 = ListNode.Create(new int[] { 1, 3, 4 });
             ListNode l3 = ListNode.Create(new int[] { 1, 1, 2, 3, 4, 4 });
-            Assert.IsTrue(Solution.MergeTwoLists(l1, l2).AreEquals(l3));
-            Assert.IsTrue(Solution.MergeTwoLists(null, null) == null);
+            Assert.IsTrue(ListNode.MergeTwoLists(l1, l2).AreEquals(l3));
+            Assert.IsTrue(ListNode.MergeTwoLists(null, null) == null);
             l2 = ListNode.Create(new int[] { 0 });
-            Assert.IsTrue(Solution.MergeTwoLists(null, l2) == l2);
+            Assert.IsTrue(ListNode.MergeTwoLists(null, l2) == l2);
 
             l1 = ListNode.Create(new int[] { 1, 2, 4, 6 });
             l2 = ListNode.Create(new int[] { 3, 4 });
             l3 = ListNode.Create(new int[] { 1, 2, 3, 4, 4, 6 });
-            Assert.IsTrue(Solution.MergeTwoLists(l1, l2).AreEquals(l3));
+            Assert.IsTrue(ListNode.MergeTwoLists(l1, l2).AreEquals(l3));
         }
         [Test]
         public void DetectCycle()

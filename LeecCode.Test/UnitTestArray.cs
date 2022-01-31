@@ -135,7 +135,28 @@ namespace LeecCode.Test
             Assert.IsTrue(Equal(nums, vals));
 
         }
-        private bool Equal(int[] left, int[] right) {
+        [Test]
+        public void RotateArray_Large() {
+            int[] expected = largeNums;
+            var nums = new int[expected.Length];
+            Array.Copy(expected, nums, nums.Length);
+            sw.Restart();
+            Solution.Rotate(largeNums, largeNums.Length/2);
+            sw.Stop();
+            Console.WriteLine($"Time to calculate Solution.Rotate is {sw.Elapsed}");
+        }
+        [Test]
+        public void RotateArray_lc_Large() {
+            int[] expected = largeNums;
+            var nums = new int[expected.Length];
+            Array.Copy(expected, nums, nums.Length);
+            sw.Restart();
+            Solution.Rotate_lc(largeNums, largeNums.Length/2);
+            sw.Stop();
+            Console.WriteLine($"Time to calculate Solution.Rotate is {sw.Elapsed}");
+        }
+
+        public static bool Equal(int[] left, int[] right) {
             if (left == right) {
                 return true;
             }

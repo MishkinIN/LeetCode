@@ -467,6 +467,89 @@ Sum of every tilt : 0 + 0 + 0 + 2 + 7 + 6 = 15
                 isInitialized = false;
             }
         }
+        /*
+         * 102. Binary Tree Level Order Traversal
+         * Medium
+         * Given the root of a binary tree, return the level order traversal of its nodes' values. 
+         * (i.e., from left to right, level by level).
+         * Constraints:
+    The number of nodes in the tree is in the range [0, 10^5].
+    -1000 <= Node.val <= 1000
 
+         */
+        public static IList<IList<int>> LevelOrder(TreeNode root) {
+            List<IList<int>> lists = new List<IList<int>>();
+            if (root == null)
+                return lists;
+            //int lvl = 0;
+            //TreeToLevelOrder_Recursion(lists, lvl, root);
+            List<TreeNode> lvlQueue = new();
+            lvlQueue.Add(root);
+            TreeToLevelOrder_List(lists, lvlQueue);
+            return lists;
+        }
+        public static IList<IList<int>> LevelOrder_recursion(TreeNode root) {
+            List<IList<int>> lists = new List<IList<int>>();
+            if (root == null)
+                return lists;
+            int lvl = 0;
+            TreeToLevelOrder_Recursion(lists, lvl, root);
+            return lists;
+        }
+        private static void TreeToLevelOrder_List(List<IList<int>> lists, List<TreeNode> lvlQueue) {
+            List<int> lvlVals = new();
+            lists.Add(lvlVals);
+            List<TreeNode> nextQueue = new();
+            foreach (var item in lvlQueue) {
+                lvlVals.Add(item.val);
+                if (item.left!=null) {
+                    nextQueue.Add(item.left);
+                }
+                if (item.right!=null) {
+                    nextQueue.Add(item.right);
+                }
+            }
+            lvlQueue.Clear();
+            lvlQueue = null;
+            if (nextQueue.Count > 0) {
+                TreeToLevelOrder_List(lists, nextQueue);
+            }
+         }
+         private static void TreeToLevelOrder_Stack(Stack<IList<int>> lists, List<TreeNode> lvlQueue) {
+            List<int> lvlVals = new();
+            lists.Add(lvlVals);
+            List<TreeNode> nextQueue = new();
+            foreach (var item in lvlQueue) {
+                lvlVals.Add(item.val);
+                if (item.left!=null) {
+                    nextQueue.Add(item.left);
+                }
+                if (item.right!=null) {
+                    nextQueue.Add(item.right);
+                }
+            }
+            lvlQueue.Clear();
+            lvlQueue = null;
+            if (nextQueue.Count > 0) {
+                TreeToLevelOrder_List(lists, nextQueue);
+            }
+         }
+       private static void TreeToLevelOrder_Recursion(List<IList<int>> lists, int lvl, TreeNode node) {
+            IList<int> lvlVals;
+            if (lists.Count>lvl) {
+                lvlVals = lists[lvl];
+            }
+            else {
+                lvlVals = new List<int>();
+                lists.Add(lvlVals);
+            }
+            lvlVals.Add(node.val);
+            if (node.left != null) {
+                TreeToLevelOrder_Recursion(lists, lvl + 1, node.left);
+            }
+            if (node.right != null) {
+                TreeToLevelOrder_Recursion(lists, lvl + 1, node.right);
+            }
+        }
     }
 }

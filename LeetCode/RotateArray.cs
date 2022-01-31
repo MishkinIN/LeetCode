@@ -21,7 +21,33 @@ namespace LeetCode {
                 return;
             }
             int nLength = nums.Length;
+            int shift = k % nLength;
+            if (shift == 0)
+                return;
+            int n = nums.Length - shift;
+            int[] shiftNums = new int[n];
+            Array.Copy(nums, 0, shiftNums, 0, n);
+            Array.Copy(nums, n, nums, 0, shift);
+            Array.Copy(shiftNums, 0, nums, shift, n);
+        }
+        public static void Rotate_lc(int[] nums, int k) {
+            var length = nums.Length;
+            k %= length;
+            var arr = new int[length];
+            for (int j = 0; j < length; j++) {
+                arr[(j + k) % length] = nums[j];
+            }
+            Array.Copy(arr, 0, nums, 0, length);
+            
+        }
+            public static void Rotate_I(int[] nums, int k) {
+            if (nums.Length < 2) {
+                return;
+            }
+            int nLength = nums.Length;
             int i = nLength - 1, _j = i, shift = k % nLength, j = _j - shift;
+            if (shift == 0)
+                return;
             ;
             int acc = nums[_j];
             //int _lcm = lcm(shift, nLength);

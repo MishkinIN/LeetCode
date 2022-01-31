@@ -377,6 +377,21 @@ namespace LeecCode.Test
             }
         }
         [Test]
+        public void InsertIntoBST()
+        {
+            int?[] nums = { 4, 2, 7, 1, 3 };
+            var root = TreeNode.Create(nums);
+            var bst = TreeNode.InsertIntoBST(root, 5);
+            Assert.IsTrue(bst.IsValidBST());
+        }
+       [Test]
+        public void IsValidBST()
+        {
+            int?[] nums = { 5,1,4,null,null,3,6 };
+            var root = TreeNode.Create(nums);
+            var valid = TreeNode.IsValidBST(root);
+            Assert.IsFalse(valid);
+        [Test]
         public void LevelOrder() {
             int?[] nums = { 3, 9, 20, null, null, 15, 7 };
             int[][] expecteds = {
@@ -437,5 +452,10 @@ namespace LeecCode.Test
             }
         }
 
+            nums = new int?[] { 5,4,6,null,null,3,7 };
+            root = TreeNode.Create(nums);
+            valid = TreeNode.IsValidBST(root);
+            Assert.IsFalse(valid);
+        }
     }
 }

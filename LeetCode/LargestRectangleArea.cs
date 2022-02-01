@@ -19,7 +19,7 @@ namespace LeetCode {
 
          */
 
-        public record _Interval(int min, int max) {
+        public record Interval_r(int min, int max) {
             public int Lenght => max - min;
             //public int Area => (max - min) * value;
             public bool Contains(int index) {
@@ -60,15 +60,16 @@ namespace LeetCode {
                 vs[i] = i;
             }
             Array.Sort(heights, vs);
-            SortedSet<Interval> intervals = new SortedSet<Interval>(new IntervalComparer());
-            intervals.Add(new Interval(0, heights.Length));
+            SortedSet<Interval> intervals = new(new IntervalComparer()) {
+                new Interval(0, heights.Length)
+            };
             int maxRectangleArea = 0;
             for (int i = 0; i < heights.Length; i++) {
                 var value = heights[i];
                 var index = vs[i];
                 var interval = intervals.GetViewBetween(new Interval(0, 0), new Interval(index, index))
                     .Max;
-                maxRectangleArea = Math.Max(maxRectangleArea, interval.Lenght * value);
+                maxRectangleArea = System.Math.Max(maxRectangleArea, interval.Lenght * value);
                 intervals.Remove(interval);
                 {
                     if (index - interval.min > 0) {
@@ -88,8 +89,9 @@ namespace LeetCode {
                 vs[i] = i;
             }
             Array.Sort(heights, vs);
-            List<Interval> intervalList = new List<Interval>();
-            intervalList.Add(new Interval(0, heights.Length/*, int.MaxValue*/));
+            List<Interval> intervalList = new() {
+                new Interval(0, heights.Length/*, int.MaxValue*/)
+            };
             int maxRectangleArea = 0;
             for (int i = 0; i < heights.Length; i++) {
                 var value = heights[i];
@@ -104,7 +106,7 @@ namespace LeetCode {
                 if (rightInterval.Lenght > 0) {
                     intervalList.Add(rightInterval);
                 }
-                maxRectangleArea = Math.Max(maxRectangleArea, (interval.Lenght * value));
+                maxRectangleArea = System.Math.Max(maxRectangleArea, (interval.Lenght * value));
                 intervalList.Remove(interval);
                 //}
 
@@ -116,8 +118,9 @@ namespace LeetCode {
         public static int LargestRectangleArea_II(int[] heights) {
             var bars = heights.Select((v, i) => new Bar(v, i)).ToArray();
             Array.Sort(bars);
-            List<_Interval> intervalList = new List<_Interval>();
-            intervalList.Add(new _Interval(0, heights.Length/*, int.MaxValue*/));
+            List<Interval_r> intervalList = new() {
+                new Interval_r(0, heights.Length/*, int.MaxValue*/)
+            };
             int maxRectangleArea = 0;
             foreach (var bar in bars) {
                 foreach (var interval in intervalList.Where(il => il.Contains(bar.Index)).ToArray()) {
@@ -134,7 +137,7 @@ namespace LeetCode {
                     if (rightInterval.Lenght > 0) {
                         intervalList.Add(rightInterval);
                     }
-                    maxRectangleArea = Math.Max(maxRectangleArea, (interval.Lenght * bar.Value));
+                    maxRectangleArea = System.Math.Max(maxRectangleArea, (interval.Lenght * bar.Value));
                     intervalList.Remove(interval);
                     //}
 

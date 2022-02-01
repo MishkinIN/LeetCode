@@ -11,7 +11,7 @@ namespace LeecCode.Test
         private int[] bigNumsNotContainsDuplicate;
         private int[] piles;
         private int[] largeNums;
-        private Stopwatch sw = new Stopwatch();
+        private readonly Stopwatch sw = new ();
 
         [SetUp]
         public void Setup() {

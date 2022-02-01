@@ -23,7 +23,7 @@ namespace LeetCode
                 {
                     if (n<numsN.Length-1)
                     {
-                        return Math.Min(numsM[m + 1], numsN[n + 1]);
+                        return System.Math.Min(numsM[m + 1], numsN[n + 1]);
                     }
                     else
                     {
@@ -61,7 +61,7 @@ namespace LeetCode
                         return GetMedian(numsN[n1], GetNext(numsM, m1, numsN, n1));
                     }
                     stepM1 /= 2;
-                    n1 = Math.Min(medianIndex1 - (m1 - stepM1),n-1);
+                    n1 = System.Math.Min(medianIndex1 - (m1 - stepM1),n-1);
                     m1 = medianIndex1 - n1;
                 }
                 if(numsM[m1] - numsN[n1] < 0)
@@ -71,7 +71,7 @@ namespace LeetCode
                         return GetMedian(numsM[m1], GetNext(numsM, m1, numsN, n1));
                     }
                     stepN1 /= 2;
-                    m1 = Math.Min(medianIndex1 - (n1 - stepN1), m-1);
+                    m1 = System.Math.Min(medianIndex1 - (n1 - stepN1), m-1);
                     n1 = medianIndex1 - m1;
                 }
                 if (numsM[m1] - numsN[n1]==0)
@@ -87,7 +87,7 @@ namespace LeetCode
                 }
             }
 
-            return GetMedian(Math.Max(numsM[m1], numsN[n1]), GetNext(numsM, m1, numsN, n1));
+            return GetMedian(System.Math.Max(numsM[m1], numsN[n1]), GetNext(numsM, m1, numsN, n1));
         }
     }
 }

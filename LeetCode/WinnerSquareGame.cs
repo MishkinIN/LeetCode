@@ -44,9 +44,8 @@ namespace LeetCode {
                 default:
                     break;
             }
-            HashSet<int> losers = new HashSet<int>(new int[] { 2, 5, 7, 10, 12, 15 });
+            HashSet<int> losers = new(new int[] { 2, 5, 7, 10, 12, 15 });
             int step = 17, nextSquare = 5;
-            int firstSerieStep = 15;
             int sq = nextSquare * nextSquare;
             while (true) {
                 bool isFoundWinner = false;
@@ -81,7 +80,6 @@ namespace LeetCode {
                     }
                 }
                 if (!isFoundWinner) {
-                    firstSerieStep = step;
                     losers.Add(step);
                 }
                 step++;
@@ -89,7 +87,7 @@ namespace LeetCode {
             }
         }
         private static void LogLosers(HashSet<int> losers) {
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new();
             foreach (int i in losers) {
                 sb.Append($"{i},");
             }

@@ -38,28 +38,18 @@ namespace LeetCode {
         private const ulong _8 = 0x10000000;
         private const ulong _9 = 0x100000000;
         private static ulong Convert(char ch) {
-            switch (ch) {
-                case '1':
-                    return _1;
-                case '2':
-                    return _2;
-                case '3':
-                    return _3;
-                case '4':
-                    return _4;
-                case '5':
-                    return _5;
-                case '6':
-                    return _6;
-                case '7':
-                    return _7;
-                case '8':
-                    return _8;
-                case '9':
-                    return _9;
-                default:
-                    return _0;
-            }
+            return ch switch {
+                '1' => _1,
+                '2' => _2,
+                '3' => _3,
+                '4' => _4,
+                '5' => _5,
+                '6' => _6,
+                '7' => _7,
+                '8' => _8,
+                '9' => _9,
+                _ => _0,
+            };
         }
         public static bool IsValidSudoku(char[][] board) {
             ulong uniqueMask = ~(_1 + _2 + _3 + _4 + _5 + _6 + _7 + _8 + _9);

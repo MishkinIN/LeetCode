@@ -40,7 +40,7 @@ namespace LeetCode {
                 v0 = v1;
                 v1 = arr[i];
                 d1 = v1 - v0;
-                hasMax = hasMax | d1 < 0;
+                hasMax |= d1 < 0;
                 isValid = (hasMax & d1 < 0)
                     || (!hasMax & d1 > 0);
                 if (!isValid) {

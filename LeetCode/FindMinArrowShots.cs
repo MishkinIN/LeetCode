@@ -60,8 +60,8 @@ namespace LeetCode
         }
         private static void Union(int[] one, int[] other)
         {
-            one[0] = Math.Max(one[0], other[0]);
-            one[1] = Math.Min(one[1], other[1]);
+            one[0] = System.Math.Max(one[0], other[0]);
+            one[1] = System.Math.Min(one[1], other[1]);
         }
         private static bool IsEmpty(int[] vs)
         {

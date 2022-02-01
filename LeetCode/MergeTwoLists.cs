@@ -10,7 +10,7 @@ namespace LeetCode
     {
         public static ListNode MergeTwoLists(ListNode l1, ListNode l2)
         {
-            ListNode temp = new ListNode(-1);
+            ListNode temp = new(-1);
             ListNode head = temp;
             while (l1 != null && l2 != null)
             {
@@ -26,7 +26,7 @@ namespace LeetCode
                 }
                 temp = temp.next;
             }
-            temp.next = (l1 != null) ? l1 : l2;
+            temp.next = l1 ?? l2;
             return head.next;
 
             //if (l1 == null)

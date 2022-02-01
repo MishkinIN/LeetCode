@@ -19,8 +19,8 @@ namespace LeetCode {
             this.right = right;
         }
         public static TreeNode Create(int[] vals) {
-            Queue<TreeNode> currentLevel = new Queue<TreeNode>();
-            Queue<TreeNode> nextLevel = new Queue<TreeNode>();
+            Queue<TreeNode> currentLevel = new();
+            Queue<TreeNode> nextLevel = new();
             TreeNode root = default, node = default;
 
             for (int i = 0; i < vals.Length;) {
@@ -63,15 +63,14 @@ namespace LeetCode {
             return root;
         }
         public static TreeNode Create(int?[] vals) {
-            Queue<TreeNode> currentLevel = new Queue<TreeNode>();
-            Queue<TreeNode> nextLevel = new Queue<TreeNode>();
+            Queue<TreeNode> currentLevel = new();
+            Queue<TreeNode> nextLevel = new();
             if (vals == null || vals.Length == 0 || !vals[0].HasValue)
                 return null;
-            TreeNode root = new TreeNode(vals[0].Value), node = default, left, right;
+            TreeNode root = new(vals[0].Value), left, right;
 
             currentLevel.Enqueue(root);
             int i = 1;
-            int? val = null;
             while (i < vals.Length) {
                 if (currentLevel.Count == 0) {
                     if (nextLevel.Count == 0) {
@@ -82,8 +81,8 @@ namespace LeetCode {
                     nextLevel = sw;
                 }
                 else {
-                    node = currentLevel.Dequeue();
-                    val = vals[i++];
+                    TreeNode node = currentLevel.Dequeue();
+                    int? val = vals[i++];
                     if (val.HasValue) {
                         left = new TreeNode(val.Value);
                         nextLevel.Enqueue(left);
@@ -122,7 +121,7 @@ namespace LeetCode {
                 return true;
             if (left == null || right == null)
                 return false;
-            Stack<TreeNode> stack = new Stack<TreeNode>(2000);
+            Stack<TreeNode> stack = new(2000);
             stack.Push(left.right);
             stack.Push(right.left);
             stack.Push(left.left);
@@ -229,7 +228,7 @@ Sum of every tilt : 0 + 0 + 0 + 2 + 7 + 6 = 15
             var list = GetTreeNodes(1, n);
             return list;
         }
-        private static Dictionary<int, List<TreeNode>> cache = new Dictionary<int, List<TreeNode>>();
+        private static readonly Dictionary<int, List<TreeNode>> cache = new();
         private static List<TreeNode> GetTreeNodes(int min, int max) {
             List<TreeNode> list = new();
             if (min > max) {
@@ -277,9 +276,10 @@ Sum of every tilt : 0 + 0 + 0 + 2 + 7 + 6 = 15
 
                     foreach (var left in GetChilds(min, i)) {
                         foreach (var right in GetChilds(i + 1, max)) {
-                            TreeNode child = new TreeNode(i);
-                            child.left = left;
-                            child.right = right;
+                            TreeNode child = new(i) {
+                                left = left,
+                                right = right
+                            };
                             yield return child;
                         }
                     }
@@ -339,49 +339,46 @@ Sum of every tilt : 0 + 0 + 0 + 2 + 7 + 6 = 15
             List<int> list = new();
             if (!(root1 == null & root2 == null)) {
                 if (root1 == null) {
-                    using (IEnumerator<int> en = new EnumeratorIterativeInorder(root2)) {
-                        while (en.MoveNext()) {
-                            list.Add(en.Current);
-                        }
+                    using IEnumerator<int> en = new EnumeratorIterativeInorder(root2);
+                    while (en.MoveNext()) {
+                        list.Add(en.Current);
                     }
                 }
                 else if (root2 == null) {
-                    using (IEnumerator<int> en = new EnumeratorIterativeInorder(root1)) {
+                    using IEnumerator<int> en = new EnumeratorIterativeInorder(root1);
 
-                        while (en.MoveNext()) {
-                            list.Add(en.Current);
-                        }
+                    while (en.MoveNext()) {
+                        list.Add(en.Current);
                     }
                 }
                 else {
 
-                    using (IEnumerator<int> en2 = new EnumeratorIterativeInorder(root2))
-                    using (IEnumerator<int> en1 = new EnumeratorIterativeInorder(root1)) {
+                    using IEnumerator<int> en2 = new EnumeratorIterativeInorder(root2);
+                    using IEnumerator<int> en1 = new EnumeratorIterativeInorder(root1);
 
-                        bool en1_moved = en1.MoveNext();
-                        bool en2_moved = en2.MoveNext();
-                        do {
-                            if (en1.Current < en2.Current) {
-                                list.Add(en1.Current);
-                                en1_moved = en1.MoveNext();
-                            }
-                            else {
-                                list.Add(en2.Current);
-                                en2_moved = en2.MoveNext();
-                            }
-                        } while (en1_moved & en2_moved);
-                        if (en1_moved) {
-                            do {
-                                list.Add(en1.Current);
-                                en1_moved = en1.MoveNext();
-                            } while (en1_moved);
+                    bool en1_moved = en1.MoveNext();
+                    bool en2_moved = en2.MoveNext();
+                    do {
+                        if (en1.Current < en2.Current) {
+                            list.Add(en1.Current);
+                            en1_moved = en1.MoveNext();
                         }
                         else {
-                            do {
-                                list.Add(en2.Current);
-                                en2_moved = en2.MoveNext();
-                            } while (en2_moved);
+                            list.Add(en2.Current);
+                            en2_moved = en2.MoveNext();
                         }
+                    } while (en1_moved & en2_moved);
+                    if (en1_moved) {
+                        do {
+                            list.Add(en1.Current);
+                            en1_moved = en1.MoveNext();
+                        } while (en1_moved);
+                    }
+                    else {
+                        do {
+                            list.Add(en2.Current);
+                            en2_moved = en2.MoveNext();
+                        } while (en2_moved);
                     }
 
                 }
@@ -530,7 +527,7 @@ Sum of every tilt : 0 + 0 + 0 + 2 + 7 + 6 = 15
         }
         public static bool IsValidBST(TreeNode root) {
             if (root == null)
-                throw new ArgumentNullException();
+                throw new ArgumentNullException(nameof(root));
             return IsValidLeft(root.left, root.val) && IsValidRight(root.right, root.val);
         }
 
@@ -578,7 +575,7 @@ Sum of every tilt : 0 + 0 + 0 + 2 + 7 + 6 = 15
 
         public static bool IsValidBST_I(TreeNode root) {
             if (root == null)
-                throw new ArgumentNullException();
+                throw new ArgumentNullException(nameof(root));
             var validate = ValidateBST(root);
             return validate.isValid;
         }
@@ -628,7 +625,7 @@ Sum of every tilt : 0 + 0 + 0 + 2 + 7 + 6 = 15
 
          */
         public static IList<IList<int>> LevelOrder(TreeNode root) {
-            List<IList<int>> lists = new List<IList<int>>();
+            List<IList<int>> lists = new();
             if (root == null)
                 return lists;
             //int lvl = 0;
@@ -639,7 +636,7 @@ Sum of every tilt : 0 + 0 + 0 + 2 + 7 + 6 = 15
             return lists;
         }
         public static IList<IList<int>> LevelOrder_recursion(TreeNode root) {
-            List<IList<int>> lists = new List<IList<int>>();
+            List<IList<int>> lists = new();
             if (root == null)
                 return lists;
             int lvl = 0;
@@ -660,7 +657,6 @@ Sum of every tilt : 0 + 0 + 0 + 2 + 7 + 6 = 15
                 }
             }
             lvlQueue.Clear();
-            lvlQueue = null;
             if (nextQueue.Count > 0) {
                 TreeToLevelOrder_List(lists, nextQueue);
             }
@@ -701,8 +697,8 @@ Sum of every tilt : 0 + 0 + 0 + 2 + 7 + 6 = 15
         }
 
         public class TreeNodeCursor {
-            private Stack<TreeNode> stack = new Stack<TreeNode>();
-            private TreeNode root;
+            private readonly Stack<TreeNode> stack = new();
+            private readonly TreeNode root;
             public TreeNodeCursor(TreeNode root) {
                 this.root = root;
             }
@@ -723,7 +719,6 @@ Sum of every tilt : 0 + 0 + 0 + 2 + 7 + 6 = 15
                 throw new NotImplementedException();
             }
             public bool Find(int val) {
-                var node = root;
                 do {
                     if (Current.val < val) {
 
@@ -743,7 +738,7 @@ Sum of every tilt : 0 + 0 + 0 + 2 + 7 + 6 = 15
             private bool isInitialized = false;
             public EnumeratorIterativeInorder(TreeNode tree) {
                 stack = new();
-                root = tree ?? throw new ArgumentNullException();
+                root = tree ?? throw new ArgumentNullException(nameof(tree));
                 Reset();
             }
             public int Current {

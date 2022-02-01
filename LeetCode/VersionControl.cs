@@ -7,7 +7,11 @@ using System.Threading.Tasks;
 namespace LeetCode {
 
     public class VersionControl {
+#pragma warning disable IDE0060 // Удалите неиспользуемый параметр
+#pragma warning disable CA1822 // Пометьте члены как статические
         public bool IsBadVersion(int version) { return true; }
+#pragma warning restore CA1822 // Пометьте члены как статические
+#pragma warning restore IDE0060 // Удалите неиспользуемый параметр
         /*
          * 278. First Bad Version
          * Easy

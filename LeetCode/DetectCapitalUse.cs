@@ -47,7 +47,7 @@ Given a string word, return true if the usage of capitals in it is right.
                     return true;
             }
             else
-                throw new ArgumentOutOfRangeException();
+                throw new ArgumentOutOfRangeException(nameof(word));
             return false;
         }
     }

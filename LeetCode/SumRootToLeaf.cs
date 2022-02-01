@@ -65,7 +65,7 @@ namespace LeetCode
             TreeNode node = root;
             Int32 weight = node.val & 0b1;
 
-            WtNode wtNode = new WtNode(node: node, wt: weight);
+            WtNode wtNode = new(node: node, wt: weight);
             bool is_wtNodeFromStack = false;
             int i = 0;
             WtNode[] stack = new WtNode[1000];
@@ -79,7 +79,7 @@ namespace LeetCode
                         break;
                     }
                     wtNode = stack[i];
-                    weight = weight >> 1;
+                    weight >>= 1;
                     is_wtNodeFromStack = true;
                 }
                 else
@@ -107,7 +107,7 @@ namespace LeetCode
                             sum += weight;
                             if (sum < 0)
                             {
-                                throw new ArgumentOutOfRangeException($"The sum of weights is not fit in a 32-bits integer.");
+                                throw new ArgumentOutOfRangeException(nameof(root), $"The sum of weights is not fit in a 32-bits integer.");
                             }
                             wtNode = wtNode with { wt = ~wtNode.wt };
                         }
@@ -133,7 +133,7 @@ namespace LeetCode
             weight = weight << 1 | (val & 0b1);
             if (weight < 0)
             {
-                throw new ArgumentOutOfRangeException($"Weight for node more than 2**31-1.");
+                throw new ArgumentOutOfRangeException(nameof(weight),$"Weight for node more than 2**31-1.");
             }
             return weight;
         }

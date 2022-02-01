@@ -22,16 +22,16 @@ namespace LeetCode {
 
          */
         public static int Fib(int n) {
-             return _Fib(n).fib;
+             return GetFib(n).fib;
         }
-        private static (int fib, int prev) _Fib( int n) {
+        private static (int fib, int prev) GetFib( int n) {
             switch (n) {
                 case 0:
                     return (0, 0) ;
                 case 1:
                     return (1,0);
                 default:
-                    var prev = _Fib( n - 1);
+                    var prev = GetFib( n - 1);
                     return (prev.fib + prev.prev, prev.fib);
             }
         }
@@ -48,9 +48,9 @@ namespace LeetCode {
 
         */
         public static int Tribonacci(int n) {
-            return _Tribonacci(n).n2;
+            return GetTribonacci(n).n2;
         }
-        private static (int n, int n1, int n2) _Tribonacci(int n) {
+        private static (int n, int n1, int n2) GetTribonacci(int n) {
             switch (n) {
                 case 0:
                     return (0, 0, 0);
@@ -61,7 +61,7 @@ namespace LeetCode {
                 case 3:
                     return (1, 1, 2);
                 default:
-                    var p = _Tribonacci(n - 1);
+                    var p = GetTribonacci(n - 1);
                     return (p.n1, p.n2 , p.n+p.n1+p.n2);
             }
         }

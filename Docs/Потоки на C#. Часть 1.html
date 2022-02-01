@@ -1,0 +1,2714 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru-ru" lang="ru-ru">
+<head>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <!-- base href="http://microsin.net/programming/pc/threading-in-csharp-part-1-getting-started.html" -->
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <meta name="robots" content="index, follow" />
+    <meta name="keywords" content="thread, C#, background, foreground" />
+
+    <meta name="author" content="microsin" />
+    <meta name="description" content="Замечательное руководство по применению многопоточности на C#, часть 1 Введение." />
+
+    <title>Потоки на C#. Часть 1: введение | pc | programming</title>
+    <link rel="stylesheet" href="%D0%9F%D0%BE%D1%82%D0%BE%D0%BA%D0%B8%20%D0%BD%D0%B0%20C%23.%20%D0%A7%D0%B0%D1%81%D1%82%D1%8C%201_files/style.css" type="text/css" />
+    <link rel="stylesheet" href="%D0%9F%D0%BE%D1%82%D0%BE%D0%BA%D0%B8%20%D0%BD%D0%B0%20C%23.%20%D0%A7%D0%B0%D1%81%D1%82%D1%8C%201_files/spoiler.css" type="text/css" />
+    <link rel="stylesheet" href="%D0%9F%D0%BE%D1%82%D0%BE%D0%BA%D0%B8%20%D0%BD%D0%B0%20C%23.%20%D0%A7%D0%B0%D1%81%D1%82%D1%8C%201_files/acesearch.css" type="text/css" />
+    <style type="text/css">
+        <!--
+
+        .sp-head-click a {
+            font-size: 11px;
+            font-style: normal;
+            color: #000000 !important;
+        }
+
+        .sp-head {
+            border: 0px #ccc solid;
+            font-weight: bold;
+            -webkit-border-radius: 8px;
+            -moz-border-radius: 8px;
+            -khtml-border-radius: 8px;
+            border-radius: 8px;
+            width: 85%;
+            background-color: #f0f0f0;
+            text-shadow: 0 -1px 1px rgba(0,0,0,0.25);
+            box-shadow: 0 0 5px rgba(0,0,0,0.6);
+            -moz-box-shadow: 0 0 5px rgba(0,0,0,0.6);
+            -webkit-box-shadow: 0 0 5px rgba(0,0,0,0.6);
+        }
+
+        .sp-body {
+            font-size: 11px;
+            font-weight: normal;
+            background: #FFFDDD;
+            border: 1px #ccc solid;
+            -webkit-border-radius: 7px;
+            -moz-border-radius: 7px;
+            -khtml-border-radius: 7px;
+            border-radius: 7px;
+            width: 95%;
+            font-style: italic;
+            padding: 10px
+        }
+
+        -->
+    </style>
+    <link rel="stylesheet" type="text/css" href="%D0%9F%D0%BE%D1%82%D0%BE%D0%BA%D0%B8%20%D0%BD%D0%B0%20C%23.%20%D0%A7%D0%B0%D1%81%D1%82%D1%8C%201_files/style_002.css" />
+    <link rel="stylesheet" type="text/css" href="%D0%9F%D0%BE%D1%82%D0%BE%D0%BA%D0%B8%20%D0%BD%D0%B0%20C%23.%20%D0%A7%D0%B0%D1%81%D1%82%D1%8C%201_files/comment_style.css" />
+
+
+    <link rel="stylesheet" href="%D0%9F%D0%BE%D1%82%D0%BE%D0%BA%D0%B8%20%D0%BD%D0%B0%20C%23.%20%D0%A7%D0%B0%D1%81%D1%82%D1%8C%201_files/system.css" type="text/css" />
+    <link rel="stylesheet" href="%D0%9F%D0%BE%D1%82%D0%BE%D0%BA%D0%B8%20%D0%BD%D0%B0%20C%23.%20%D0%A7%D0%B0%D1%81%D1%82%D1%8C%201_files/general.css" type="text/css" />
+    <link rel="stylesheet" href="%D0%9F%D0%BE%D1%82%D0%BE%D0%BA%D0%B8%20%D0%BD%D0%B0%20C%23.%20%D0%A7%D0%B0%D1%81%D1%82%D1%8C%201_files/template_css.css" type="text/css" />
+    <!-- <link rel="shortcut"   href="/templates/microsin/images/favicon16x16-8b.gif" type="image/x-icon"/> -->
+    <link rel="shortcut icon" href="http://microsin.net/templates/microsin/images/favicon16x16-8b.gif" />
+    <meta http-equiv="Content-Language" content="en" />
+    <style type="text/css" id="ya_share_style">
+        .b-share-popup-wrap {
+            z-index: 1073741823;
+            position: absolute;
+            width: 500px
+        }
+
+        .b-share-popup {
+            position: absolute;
+            z-index: 1073741823;
+            border: 1px solid #888;
+            background: #FFF;
+            color: #000
+        }
+
+        .b-share-popup-wrap .b-share-popup_down {
+            top: 0
+        }
+
+        .b-share-popup-wrap .b-share-popup_up {
+            bottom: 0
+        }
+
+        .b-share-popup-wrap_state_hidden {
+            position: absolute !important;
+            top: -9999px !important;
+            right: auto !important;
+            bottom: auto !important;
+            left: -9999px !important;
+            visibility: hidden !important
+        }
+
+        .b-share-popup, x:nth-child(1) {
+            border: 0;
+            padding: 1px !important
+        }
+
+        @media all and (resolution=0) {
+            .b-share-popup, x:nth-child(1), x:-o-prefocus {
+                padding: 0 !important;
+                border: 1px solid #888
+            }
+        }
+
+        .b-share-popup__i {
+            display: -moz-inline-box;
+            display: inline-block;
+            padding: 5px 0 !important;
+            overflow: hidden;
+            vertical-align: top;
+            white-space: nowrap;
+            visibility: visible;
+            background: #FFF;
+            -webkit-box-shadow: 0 2px 9px rgba(0,0,0,.6);
+            -moz-box-shadow: 0 2px 9px rgba(0,0,0,.6);
+            box-shadow: 0 2px 9px rgba(0,0,0,.6)
+        }
+
+        .b-share-popup__item {
+            font: 1em/1.25em Arial,sans-serif;
+            display: block;
+            padding: 5px 15px !important;
+            white-space: nowrap;
+            background: #FFF
+        }
+
+        .b-share-popup__item, a.b-share-popup__item:link, a.b-share-popup__item:visited {
+            text-decoration: none !important;
+            border: 0 !important
+        }
+
+        a.b-share-popup__item {
+            cursor: pointer
+        }
+
+            a.b-share-popup__item .b-share-popup__item__text {
+                display: inline;
+                text-decoration: underline;
+                color: #1A3DC1
+            }
+
+            a.b-share-popup__item:hover {
+                word-spacing: 0
+            }
+
+                a.b-share-popup__item:hover .b-share-popup__item__text {
+                    color: red;
+                    cursor: pointer
+                }
+
+        .b-share-popup__icon {
+            display: -moz-inline-box;
+            display: inline-block;
+            margin: -3px 0 0;
+            padding: 0 5px 0 0 !important;
+            vertical-align: middle
+        }
+
+        .b-share-popup__icon_input {
+            width: 21px;
+            height: 16px;
+            margin-top: -6px;
+            padding: 0 !important
+        }
+
+        .b-share-popup__icon__input {
+            margin-right: 0;
+            margin-left: 2px;
+            vertical-align: top
+        }
+
+        .b-share-popup__spacer {
+            display: block;
+            padding-top: 10px !important
+        }
+
+        .b-share-popup__header {
+            font: 86%/1em Verdana,sans-serif;
+            display: block;
+            padding: 10px 15px 5px !important;
+            color: #999
+        }
+
+        .b-share-popup__header_first {
+            padding-top: 5px !important
+        }
+
+        .b-share-popup__input {
+            font: 86%/1em Verdana,sans-serif;
+            display: block;
+            padding: 5px 15px !important;
+            color: #999;
+            text-align: left
+        }
+
+        .b-share-popup__input__input {
+            font: 1em/1em Verdana,sans-serif;
+            display: block;
+            width: 10px;
+            margin: 5px 0 0;
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+            resize: none;
+            text-align: left;
+            direction: ltr
+        }
+
+        .b-share-popup_down .b-share-popup_with-link .b-share-popup__input_link {
+            position: absolute;
+            top: 5px;
+            right: 0;
+            left: 0
+        }
+
+        .b-share-popup_up .b-share-popup_with-link .b-share-popup__input_link {
+            position: absolute;
+            right: 0;
+            bottom: 5px;
+            left: 0
+        }
+
+        .b-share-popup_down .b-share-popup_with-link {
+            padding-top: 55px !important
+        }
+
+        .b-share-popup_up .b-share-popup_with-link {
+            padding-bottom: 55px !important
+        }
+
+        .b-share-popup_down .b-share-popup_expandable .b-share-popup__main {
+            padding-bottom: 25px !important
+        }
+
+        .b-share-popup_up .b-share-popup_expandable .b-share-popup__main {
+            padding-top: 25px !important
+        }
+
+        .b-share-popup_down .b-share-popup_yandexed {
+            padding-bottom: 10px !important
+        }
+
+        .b-share-popup_up .b-share-popup_yandexed {
+            padding-top: 10px !important
+        }
+
+        .b-share-popup__yandex {
+            position: absolute;
+            right: 4px;
+            bottom: 2px;
+            font: 78.125%/1em Verdana,sans-serif;
+            padding: 3px !important;
+            background: 0 0
+        }
+
+        a.b-share-popup__yandex:link, a.b-share-popup__yandex:visited {
+            color: #C6C5C5;
+            text-decoration: none
+        }
+
+            a.b-share-popup__yandex:link:hover, a.b-share-popup__yandex:visited:hover {
+                color: red;
+                text-decoration: underline
+            }
+
+        .b-share-popup_up .b-share-popup__yandex {
+            top: 2px;
+            bottom: auto
+        }
+
+        .b-share-popup_expandable .b-share-popup__yandex {
+            right: auto;
+            left: 4px
+        }
+
+        .b-share-popup_to-right .b-share-popup_expandable .b-share-popup__yandex {
+            right: 4px;
+            left: auto
+        }
+
+        .b-share-popup__expander .b-share-popup__item {
+            position: absolute;
+            bottom: 5px;
+            font: 86%/1em Verdana,sans-serif;
+            margin: 10px 0 0;
+            padding: 5px 10px !important;
+            cursor: pointer;
+            color: #999;
+            background: 0 0
+        }
+
+        .b-share-popup_to-right, .b-share-popup_to-right .b-share-popup__expander {
+            direction: rtl
+        }
+
+            .b-share-popup_to-right .b-share-popup__expander .b-share-popup__icon {
+                padding: 0 0 0 5px !important
+            }
+
+        .b-share-popup_up .b-share-popup__expander .b-share-popup__item {
+            top: -5px;
+            bottom: auto
+        }
+
+        .b-share-popup__expander .b-share-popup__item:hover .b-share-popup__item__text {
+            text-decoration: underline
+        }
+
+        .b-share-popup__expander .b-ico_action_rarr, .b-share-popup_to-right .b-share-popup__expander .b-ico_action_larr, .b-share-popup_full .b-share-popup__expander .b-ico_action_larr, .b-share-popup_to-right .b-share-popup_full .b-share-popup__expander .b-ico_action_rarr, .b-share-popup__expander .b-share-popup__item__text_collapse, .b-share-popup_full .b-share-popup__item__text_expand {
+            display: none
+        }
+
+        .b-share-popup_to-right .b-share-popup__expander .b-ico_action_rarr, .b-share-popup_full .b-share-popup__item__text_collapse, .b-share-popup_full .b-share-popup__expander .b-ico_action_rarr, .b-share-popup_to-right .b-share-popup_full .b-share-popup__expander .b-ico_action_larr {
+            display: inline
+        }
+
+        .b-ico_action_rarr, .b-ico_action_larr {
+            width: 8px;
+            height: 7px;
+            border: 0
+        }
+
+        .b-share-popup__main, .b-share-popup__extra {
+            direction: ltr;
+            vertical-align: bottom;
+            text-align: left
+        }
+
+        .b-share-popup_down .b-share-popup__main, .b-share-popup_down .b-share-popup__extra {
+            vertical-align: top
+        }
+
+        .b-share-popup__main {
+            display: -moz-inline-stack;
+            display: inline-block
+        }
+
+        .b-share-popup__extra {
+            display: none;
+            margin: 0 -10px 0 0
+        }
+
+        .b-share-popup_full .b-share-popup__extra {
+            display: -moz-inline-stack;
+            display: inline-block
+        }
+
+        .b-share-popup_to-right .b-share-popup__extra {
+            margin: 0 0 0 -10px
+        }
+
+        .b-share-popup__tail {
+            position: absolute;
+            width: 21px;
+            height: 10px;
+            margin: 0 0 0 -11px
+        }
+
+        .b-share-popup_down .b-share-popup__tail {
+            top: -10px;
+            background: url("//yastatic.net/share/static/b-share-popup_down__tail.gif") 0 0 no-repeat
+        }
+
+        .b-share-popup_up .b-share-popup__tail {
+            bottom: -10px;
+            background: url("//yastatic.net/share/static/b-share-popup_up__tail.gif") 0 0 no-repeat
+        }
+
+        .b-share-popup_down .b-share-popup__tail, x:nth-child(1) {
+            top: -9px;
+            background-image: url("//yastatic.net/share/static/b-share-popup_down__tail.png")
+        }
+
+        .b-share-popup_up .b-share-popup__tail, x:nth-child(1) {
+            bottom: -9px;
+            background-image: url("//yastatic.net/share/static/b-share-popup_up__tail.png")
+        }
+
+        @media all and (resolution=0) {
+            .b-share-popup_down .b-share-popup__tail, x:nth-child(1), x:-o-prefocus {
+                top: -10px;
+                background-image: url("//yastatic.net/share/static/b-share-popup_down__tail.gif")
+            }
+
+            .b-share-popup_up .b-share-popup__tail, x:nth-child(1), x:-o-prefocus {
+                bottom: -10px;
+                background-image: url("//yastatic.net/share/static/b-share-popup_up__tail.gif")
+            }
+        }
+
+        .b-share-popup .b-share-popup_show_form_mail, .b-share-popup .b-share-popup_show_form_html {
+            padding: 0 !important
+        }
+
+            .b-share-popup .b-share-popup_show_form_mail .b-share-popup__main, .b-share-popup .b-share-popup_show_form_html .b-share-popup__main, .b-share-popup .b-share-popup_show_form .b-share-popup__main, .b-share-popup .b-share-popup_show_form_mail .b-share-popup__extra, .b-share-popup .b-share-popup_show_form_html .b-share-popup__extra, .b-share-popup .b-share-popup_show_form .b-share-popup__extra {
+                height: 15px;
+                padding: 0 !important;
+                overflow: hidden;
+                visibility: hidden
+            }
+
+        .b-share-popup_show_form_mail .b-share-popup__expander, .b-share-popup_show_form_html .b-share-popup__expander, .b-share-popup_show_form .b-share-popup__expander, .b-share-popup_show_form_mail .b-share-popup__input_link, .b-share-popup_show_form_html .b-share-popup__input_link, .b-share-popup_show_form .b-share-popup__input_link {
+            display: none
+        }
+
+        .b-share-popup__form {
+            position: relative;
+            display: none;
+            overflow: hidden;
+            padding: 5px 0 0 !important;
+            margin: 0 0 -15px;
+            white-space: normal
+        }
+
+        .b-share-popup_show_form_mail .b-share-popup__form_mail, .b-share-popup_show_form_html .b-share-popup__form_html, .b-share-popup_show_form .b-share-popup__form {
+            display: block
+        }
+
+        .b-share-popup__form__link {
+            padding: 5px !important;
+            margin: 0 0 5px 10px;
+            text-decoration: underline;
+            cursor: pointer;
+            color: #1A3DC1
+        }
+
+        .b-share-popup__form__link, .b-share-popup__form__button {
+            font: 86%/1.4545em Verdana,sans-serif;
+            float: left;
+            display: inline
+        }
+
+        .b-share-popup__form__button {
+            margin: 5px 0 0 15px
+        }
+
+        .b-share-popup__form__close {
+            font: 86%/1.4545em Verdana,sans-serif;
+            float: right;
+            display: inline;
+            padding: 5px !important;
+            margin: 0 10px 5px 0;
+            cursor: pointer;
+            color: #999
+        }
+
+        a.b-share-popup__form__link:hover, a.b-share-popup__form__close:hover {
+            text-decoration: underline;
+            color: red
+        }
+
+        .b-share-popup_font_fixed .b-share-popup__item {
+            font-size: 12.8px
+        }
+
+        .b-share-popup_font_fixed .b-share-popup__header, .b-share-popup_font_fixed .b-share-popup__input, .b-share-popup_font_fixed .b-share-popup__expander .b-share-popup__item, .b-share-popup_font_fixed .b-share-popup__form__link, .b-share-popup_font_fixed .b-share-popup__form__button, .b-share-popup_font_fixed .b-share-popup__form__close {
+            font-size: 11px
+        }
+
+        .b-share-popup_font_fixed .b-share-popup__yandex {
+            font-size: 10px
+        }
+
+        .b-share-form-button {
+            font: 86%/17px Verdana,Arial,sans-serif;
+            display: -moz-inline-box;
+            display: inline-block;
+            position: relative;
+            height: 19px;
+            margin: 0 3px;
+            padding: 0 4px;
+            cursor: default;
+            white-space: nowrap;
+            text-decoration: none !important;
+            color: #000 !important;
+            border: none;
+            outline: none;
+            background: url("//yastatic.net/share/static/b-share-form-button.png") 0 -20px repeat-x
+        }
+
+            .b-share-form-button:link:hover, .b-share-form-button:visited:hover {
+                color: #000 !important
+            }
+
+        .b-share-form-button__before, .b-share-form-button__after {
+            position: absolute;
+            width: 3px;
+            height: 19px;
+            background: url("//yastatic.net/share/static/b-share-form-button.png")
+        }
+
+        .b-share-form-button__before {
+            margin-left: -7px
+        }
+
+        .b-share-form-button__after {
+            margin-left: 4px;
+            background-position: -3px 0
+        }
+
+        .b-share-form-button::-moz-focus-inner {
+            border: none
+        }
+
+        button.b-share-form-button .b-share-form-button__before, button.b-share-form-button .b-share-form-button__after {
+            margin-top: -1px
+        }
+
+        @-moz-document url-prefix() {
+            button.b-share-form-button .b-share-form-button__after {
+                margin-top: -2px;
+                margin-left: 6px
+            }
+
+            button.b-share-form-button .b-share-form-button__before {
+                margin-top: -2px;
+                margin-left: -9px
+            }
+        }
+
+        SPAN.b-share-form-button:hover, .b-share-form-button_state_hover {
+            background-position: 0 -60px
+        }
+
+            SPAN.b-share-form-button:hover .b-share-form-button__before, .b-share-form-button_state_hover .b-share-form-button__before {
+                background-position: 0 -40px
+            }
+
+            SPAN.b-share-form-button:hover .b-share-form-button__after, .b-share-form-button_state_hover .b-share-form-button__after {
+                background-position: -3px -40px
+            }
+
+        .b-share-form-button_state_pressed, .b-share-form-button_state_pressed .b-share-form-button_share {
+            background-position: 0 -100px !important
+        }
+
+            .b-share-form-button_state_pressed .b-share-form-button__before {
+                background-position: 0 -80px !important
+            }
+
+            .b-share-form-button_state_pressed .b-share-form-button__after {
+                background-position: -3px -80px !important
+            }
+
+        button.b-share-form-button_state_pressed {
+            overflow: visible
+        }
+
+        .b-share-form-button_icons {
+            position: relative;
+            padding: 0;
+            background-position: 0 -20px !important
+        }
+
+            .b-share-form-button_icons .b-share-form-button__before {
+                left: 0;
+                margin-left: -3px;
+                background-position: 0 0 !important
+            }
+
+            .b-share-form-button_icons .b-share-form-button__after {
+                z-index: -1;
+                margin-left: 0;
+                background-position: -3px 0 !important
+            }
+
+            .b-share-form-button_icons .b-share__handle {
+                padding: 2px !important
+            }
+
+            .b-share-form-button_icons .b-share__handle_more {
+                position: relative;
+                padding-right: 6px !important;
+                margin-right: -4px
+            }
+
+            .b-share-form-button_icons .b-share-icon {
+                opacity: .5;
+                background-image: url("//yastatic.net/share/static/b-share-icon_size_14.png")
+            }
+
+            .b-share-form-button_icons A.b-share__handle:hover .b-share-icon {
+                opacity: 1
+            }
+
+        .b-share {
+            font: 86%/1.4545em Arial,sans-serif;
+            display: -moz-inline-box;
+            display: inline-block;
+            padding: 1px 3px 1px 4px !important;
+            vertical-align: middle
+        }
+
+            .b-share .b-share-form-button {
+                font-size: 1em
+            }
+
+        .b-share__text .b-share-icon {
+            margin: 0 5px 0 0;
+            border: none
+        }
+
+        .b-share__text {
+            margin-right: 5px
+        }
+
+        .b-share__handle {
+            float: left;
+            height: 16px;
+            padding: 5px 3px 5px 2px !important;
+            cursor: pointer;
+            text-align: left;
+            text-decoration: none !important
+        }
+
+        .b-share__handle_cursor_default {
+            cursor: default
+        }
+
+        .b-share__handle .b-share-form-button {
+            margin-top: -2px
+        }
+
+        .b-share__hr {
+            display: none;
+            float: left;
+            width: 1px;
+            height: 26px;
+            margin: 0 3px 0 2px
+        }
+
+        a.b-share__handle:hover .b-share__text {
+            text-decoration: underline;
+            color: red
+        }
+
+        .b-share_bordered {
+            padding: 0 2px 0 3px !important;
+            border: 1px solid #E4E4E4;
+            -moz-border-radius: 5px;
+            -webkit-border-radius: 5px;
+            border-radius: 5px
+        }
+
+            .b-share_bordered .b-share__hr {
+                display: inline;
+                background: #E4E4E4
+            }
+
+        .b-share_link {
+            margin: -8px 0
+        }
+
+        a.b-share_link {
+            margin: 0
+        }
+
+        .b-share_link .b-share__text {
+            text-decoration: underline;
+            color: #1A3DC1
+        }
+
+        .b-share-form-button_share {
+            padding-left: 26px !important;
+            vertical-align: top
+        }
+
+            .b-share-form-button_share .b-share-form-button__before {
+                margin-left: -29px
+            }
+
+            .b-share-form-button_share .b-share-form-button__icon {
+                position: absolute;
+                width: 20px;
+                height: 17px;
+                margin: 1px 0 0 -23px;
+                background: url("//yastatic.net/share/static/b-share-form-button_share__icon.png") 0 0 no-repeat
+            }
+
+        .b-share-pseudo-link {
+            border-bottom: 1px dotted;
+            cursor: pointer;
+            text-decoration: none !important
+        }
+
+        .b-share_font_fixed {
+            font-size: 11px
+        }
+
+        .b-share__handle_more {
+            font-size: 9px;
+            margin-top: -1px;
+            color: #7B7B7B
+        }
+
+        A.b-share__handle_more:hover {
+            color: #000
+        }
+
+        .b-share__group {
+            float: left
+        }
+
+        .b-share-icon {
+            float: left;
+            display: inline;
+            overflow: hidden;
+            width: 16px;
+            height: 16px;
+            padding: 0 !important;
+            vertical-align: top;
+            border: 0;
+            background: url("//yastatic.net/share/static/b-share-icon.png") 0 99px no-repeat
+        }
+
+        .b-share-icon_vkontakte, .b-share-icon_custom {
+            background-position: 0 0
+        }
+
+        .b-share-icon_yaru, .b-share-icon_yaru_photo, .b-share-icon_yaru_wishlist {
+            background-position: 0 -17px
+        }
+
+        .b-share-icon_lj {
+            background-position: 0 -34px
+        }
+
+        .b-share-icon_twitter {
+            background-position: 0 -51px
+        }
+
+        .b-share-icon_facebook {
+            background-position: 0 -68px
+        }
+
+        .b-share-icon_moimir {
+            background-position: 0 -85px
+        }
+
+        .b-share-icon_friendfeed {
+            background-position: 0 -102px
+        }
+
+        .b-share-icon_mail {
+            background-position: 0 -119px
+        }
+
+        .b-share-icon_html {
+            background-position: 0 -136px
+        }
+
+        .b-share-icon_postcard {
+            background-position: 0 -153px
+        }
+
+        .b-share-icon_odnoklassniki {
+            background-position: 0 -170px
+        }
+
+        .b-share-icon_blogger {
+            background-position: 0 -187px
+        }
+
+        .b-share-icon_delicious {
+            background-position: 0 -221px
+        }
+
+        .b-share-icon_gbuzz {
+            background-position: 0 -238px
+        }
+
+        .b-share-icon_linkedin {
+            background-position: 0 -255px
+        }
+
+        .b-share-icon_myspace {
+            background-position: 0 -272px
+        }
+
+        .b-share-icon_evernote {
+            background-position: 0 -289px
+        }
+
+        .b-share-icon_digg {
+            background-position: 0 -306px
+        }
+
+        .b-share-icon_juick {
+            background-position: 0 -324px
+        }
+
+        .b-share-icon_moikrug {
+            background-position: 0 -341px
+        }
+
+        .b-share-icon_yazakladki {
+            background-position: 0 -358px
+        }
+
+        .b-share-icon_liveinternet {
+            background-position: 0 -375px
+        }
+
+        .b-share-icon_tutby {
+            background-position: 0 -392px
+        }
+
+        .b-share-icon_diary {
+            background-position: 0 -409px
+        }
+
+        .b-share-icon_gplus {
+            background-position: 0 -426px
+        }
+
+        .b-share-icon_pocket {
+            background-position: 0 -443px
+        }
+
+        .b-share-icon_surfingbird {
+            background-position: 0 -460px
+        }
+
+        .b-share-icon_pinterest {
+            background-position: 0 -477px
+        }
+
+        .b-share-icon_renren {
+            background-position: 0 0
+        }
+
+        .b-share-icon_renren, .b-share-icon_sina_weibo {
+            background: url("//yastatic.net/share/static/b-share-icon__china.png") no-repeat
+        }
+
+        .b-share-icon_sina_weibo {
+            background-position: -18px 0
+        }
+
+        .b-share-icon_qzone {
+            background-position: -36px 0
+        }
+
+        .b-share-icon_qzone, .b-share-icon_tencent_weibo {
+            background: url("//yastatic.net/share/static/b-share-icon__china.png") no-repeat
+        }
+
+        .b-share-icon_tencent_weibo {
+            background-position: -54px 0
+        }
+
+        .b-share_theme_dark .b-share-icon {
+            background: url("//yastatic.net/share/static/b-share-icons__theme_dark.png") 99px 0 no-repeat
+        }
+
+        .b-share_theme_dark .b-share-icon_odnoklassniki {
+            background-position: -4px -3px
+        }
+
+        .b-share_theme_dark .b-share-icon_vkontakte {
+            background-position: -24px -3px
+        }
+
+        .b-share_theme_dark .b-share-icon_twitter {
+            background-position: -44px -3px
+        }
+
+        .b-share_theme_dark .b-share-icon_facebook {
+            background-position: -64px -3px
+        }
+
+        .b-share_theme_dark .b-share-icon_lj {
+            background-position: -85px -3px
+        }
+
+        .b-share_theme_dark .b-share-icon_yaru {
+            background-position: -105px -3px
+        }
+
+        .b-share_theme_dark .b-share-popup .b-share-icon_odnoklassniki, .b-share_theme_dark .b-share-icon_odnoklassniki:hover {
+            background-position: -4px -28px
+        }
+
+        .b-share_theme_dark .b-share-popup .b-share-icon_vkontakte, .b-share_theme_dark .b-share-icon_vkontakte:hover {
+            background-position: -24px -28px
+        }
+
+        .b-share_theme_dark .b-share-popup .b-share-icon_twitter, .b-share_theme_dark .b-share-icon_twitter:hover {
+            background-position: -44px -28px
+        }
+
+        .b-share_theme_dark .b-share-popup .b-share-icon_facebook, .b-share_theme_dark .b-share-icon_facebook:hover {
+            background-position: -64px -28px
+        }
+
+        .b-share_theme_dark .b-share-popup .b-share-icon_lj, .b-share_theme_dark .b-share-icon_lj:hover {
+            background-position: -85px -28px
+        }
+
+        .b-share_theme_dark .b-share-popup .b-share-icon_yaru, .b-share_theme_dark .b-share-icon_yaru:hover {
+            background-position: -105px -28px
+        }
+
+        .b-share_theme_dark .b-share-form-button_share .b-share-form-button__icon {
+            background-image: url("//yastatic.net/share/static/b-share-form-button_share__icon_dark.png")
+        }
+
+        .b-share_theme_dark .b-share-form-button {
+            color: #fff !important;
+            opacity: .8
+        }
+
+            .b-share_theme_dark .b-share__handle:hover .b-share-form-button, .b-share_theme_dark .b-share-form-button:hover {
+                opacity: 1;
+                cursor: pointer
+            }
+
+        .b-share_theme_dark .b-share-form-button, .b-share_theme_dark .b-share-form-button__before, .b-share_theme_dark .b-share-form-button__after {
+            background: 0 0
+        }
+
+        .b-share_theme_dark .b-share-popup__i {
+            background-color: #333;
+            border-radius: 10px;
+            -webkit-box-shadow: 0 2px 9px rgba(255,255,255,.6);
+            -moz-box-shadow: 0 2px 9px rgba(255,255,255,.6);
+            box-shadow: 0 2px 9px rgba(255,255,255,.6)
+        }
+
+        .b-share_theme_dark .b-share__text {
+            color: #AAA
+        }
+
+        .b-share_theme_dark .b-share-popup {
+            color: #AAA;
+            border-radius: 10px;
+            background-color: #333;
+            background-color: rgba(50,50,50,.3)
+        }
+
+        .b-share_theme_dark .b-share-popup__item {
+            background: 0 0;
+            color: #ccc
+        }
+
+        .b-share_theme_dark .b-share-popup .b-share-popup__item__text {
+            color: #ccc
+        }
+
+        .b-share_theme_counter .b-share {
+            display: inline-block;
+            vertical-align: middle;
+            white-space: nowrap
+        }
+
+        .b-share-counter {
+            font: 14px Arial,sans-serif;
+            line-height: 18px;
+            display: none;
+            float: left;
+            margin: 3px 6px 3px 3px;
+            color: #fff
+        }
+
+        .b-share_theme_counter .b-share_type_small .b-share-counter {
+            font-size: 11px;
+            line-height: 14px;
+            margin: 2px 6px 2px 1px
+        }
+
+        .b-share_theme_counter .b-share-btn__counter .b-share-counter {
+            display: block
+        }
+
+        .b-share-btn__counter {
+            text-decoration: none
+        }
+
+        .b-share_theme_counter .b-share-btn__wrap {
+            position: relative;
+            float: left;
+            margin-left: 5px
+        }
+
+        .b-share_theme_counter .b-share_type_small .b-share-btn__wrap {
+            margin-left: 4px
+        }
+
+        .b-share_theme_counter .b-share-btn__wrap:first-child {
+            margin-left: 0
+        }
+
+        .b-share_theme_counter .b-share__link {
+            display: inline-block;
+            cursor: pointer;
+            -webkit-border-radius: 3px;
+            border-radius: 3px
+        }
+
+        .b-share_theme_counter .b-share_type_small .b-share__link {
+            -webkit-border-radius: 2px;
+            border-radius: 2px
+        }
+
+        .b-share_theme_counter .b-share-icon {
+            display: block;
+            float: left;
+            width: 24px;
+            height: 24px;
+            background-image: url("//yastatic.net/share/static/b-share_counter_large.png");
+            background-position: -20px 0
+        }
+
+        .b-share_theme_counter .b-share_type_small .b-share-icon {
+            width: 18px;
+            height: 18px;
+            background-image: url("//yastatic.net/share/static/b-share_counter_small.png")
+        }
+
+        .b-share_theme_counter .b-share-icon_facebook {
+            background-position: 0 0
+        }
+
+        .b-share_theme_counter .b-share-btn__facebook {
+            background-color: #3c5a98
+        }
+
+            .b-share_theme_counter .b-share-btn__facebook:hover {
+                background-color: #30487a
+            }
+
+            .b-share_theme_counter .b-share-btn__facebook:active {
+                border-top: 2px solid #24365a;
+                background-color: #334d81
+            }
+
+        .b-share_theme_counter .b-share-icon_moimir {
+            background-position: 0 -29px
+        }
+
+        .b-share_theme_counter .b-share-btn__moimir {
+            background-color: #226eb7
+        }
+
+            .b-share_theme_counter .b-share-btn__moimir:hover {
+                background-color: #1b5892
+            }
+
+            .b-share_theme_counter .b-share-btn__moimir:active {
+                border-top: 2px solid #14426d;
+                background-color: #1d5e9c
+            }
+
+        .b-share_theme_counter .b-share-icon_vkontakte {
+            background-position: 0 -58px
+        }
+
+        .b-share_theme_counter .b-share-btn__vkontakte {
+            background-color: #48729e
+        }
+
+            .b-share_theme_counter .b-share-btn__vkontakte:hover {
+                background-color: #3a5b7e
+            }
+
+            .b-share_theme_counter .b-share-btn__vkontakte:active {
+                border-top: 2px solid #2b445e;
+                background-color: #3d6186
+            }
+
+        .b-share_theme_counter .b-share-icon_twitter {
+            background-position: 0 -87px
+        }
+
+        .b-share_theme_counter .b-share-btn__twitter {
+            background-color: #00aced
+        }
+
+            .b-share_theme_counter .b-share-btn__twitter:hover {
+                background-color: #008abe
+            }
+
+            .b-share_theme_counter .b-share-btn__twitter:active {
+                border-top: 2px solid #00668d;
+                background-color: #0092ca
+            }
+
+        .b-share_theme_counter .b-share-icon_odnoklassniki {
+            background-position: 0 -116px
+        }
+
+        .b-share_theme_counter .b-share-btn__odnoklassniki {
+            background-color: #ff9f4d
+        }
+
+            .b-share_theme_counter .b-share-btn__odnoklassniki:hover {
+                background-color: #cc7f3e
+            }
+
+            .b-share_theme_counter .b-share-btn__odnoklassniki:active {
+                border-top: 2px solid #975e2e;
+                background-color: #d98742
+            }
+
+        .b-share_theme_counter .b-share-icon_gplus {
+            background-position: 0 -145px
+        }
+
+        .b-share_theme_counter .b-share-btn__gplus {
+            background-color: #c25234
+        }
+
+            .b-share_theme_counter .b-share-btn__gplus:hover {
+                background-color: #9b422a
+            }
+
+            .b-share_theme_counter .b-share-btn__gplus:active {
+                border-top: 2px solid #73311f;
+                background-color: #a5462c
+            }
+
+        .b-share_theme_counter .b-share-icon_yaru {
+            background-position: 0 -174px
+        }
+
+        .b-share_theme_counter .b-share-btn__yaru {
+            background-color: #d83933
+        }
+
+            .b-share_theme_counter .b-share-btn__yaru:hover {
+                background-color: #ad2e29
+            }
+
+            .b-share_theme_counter .b-share-btn__yaru:active {
+                border-top: 2px solid #80221e;
+                background-color: #b8312b
+            }
+
+        .b-share_theme_counter .b-share-icon_pinterest {
+            background-position: 0 -203px
+        }
+
+        .b-share_theme_counter .b-share-btn__pinterest {
+            background-color: #cd1e27
+        }
+
+            .b-share_theme_counter .b-share-btn__pinterest:hover {
+                background-color: #a4181f
+            }
+
+            .b-share_theme_counter .b-share-btn__pinterest:active {
+                border-top: 2px solid #7b1217;
+                background-color: #ae1921
+            }
+
+        .b-share_theme_counter .b-share__link:active {
+            height: 22px
+        }
+
+        .b-share_theme_counter .b-share_type_small .b-share__link:active {
+            height: 16px
+        }
+
+        .b-share_theme_counter .b-share__link:active .b-share-icon, .b-share_theme_counter .b-share__link:active .b-share-counter {
+            position: relative;
+            top: -1px
+        }
+
+        .b-share_theme_counter .b-share__link::after {
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            content: "";
+            background-image: url(data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==)
+        }
+
+        .b-share_theme_counter .b-share__handle {
+            height: auto;
+            padding: 0 !important
+        }
+    </style>
+    <meta http-equiv="origin-trial" content="AxujKG9INjsZ8/gUq8+dTruNvk7RjZQ1oFhhgQbcTJKDnZfbzSTE81wvC2Hzaf3TW4avA76LTZEMdiedF1vIbA4AAABueyJvcmlnaW4iOiJodHRwczovL2ltYXNkay5nb29nbGVhcGlzLmNvbTo0NDMiLCJmZWF0dXJlIjoiVHJ1c3RUb2tlbnMiLCJleHBpcnkiOjE2NTI3NzQ0MDAsImlzVGhpcmRQYXJ0eSI6dHJ1ZX0=" />
+    <meta http-equiv="origin-trial" content="Azuce85ORtSnWe1MZDTv68qpaW3iHyfL9YbLRy0cwcCZwVnePnOmkUJlG8HGikmOwhZU22dElCcfrfX2HhrBPAkAAAB7eyJvcmlnaW4iOiJodHRwczovL2RvdWJsZWNsaWNrLm5ldDo0NDMiLCJmZWF0dXJlIjoiVHJ1c3RUb2tlbnMiLCJleHBpcnkiOjE2NTI3NzQ0MDAsImlzU3ViZG9tYWluIjp0cnVlLCJpc1RoaXJkUGFydHkiOnRydWV9" />
+    <meta http-equiv="origin-trial" content="A16nvcdeoOAqrJcmjLRpl1I6f3McDD8EfofAYTt/P/H4/AWwB99nxiPp6kA0fXoiZav908Z8etuL16laFPUdfQsAAACBeyJvcmlnaW4iOiJodHRwczovL2dvb2dsZXRhZ3NlcnZpY2VzLmNvbTo0NDMiLCJmZWF0dXJlIjoiVHJ1c3RUb2tlbnMiLCJleHBpcnkiOjE2NTI3NzQ0MDAsImlzU3ViZG9tYWluIjp0cnVlLCJpc1RoaXJkUGFydHkiOnRydWV9" />
+    <meta http-equiv="origin-trial" content="AxBHdr0J44vFBQtZUqX9sjiqf5yWZ/OcHRcRMN3H9TH+t90V/j3ENW6C8+igBZFXMJ7G3Pr8Dd13632aLng42wgAAACBeyJvcmlnaW4iOiJodHRwczovL2dvb2dsZXN5bmRpY2F0aW9uLmNvbTo0NDMiLCJmZWF0dXJlIjoiVHJ1c3RUb2tlbnMiLCJleHBpcnkiOjE2NTI3NzQ0MDAsImlzU3ViZG9tYWluIjp0cnVlLCJpc1RoaXJkUGFydHkiOnRydWV9" />
+    <meta http-equiv="origin-trial" content="A88BWHFjcawUfKU3lIejLoryXoyjooBXLgWmGh+hNcqMK44cugvsI5YZbNarYvi3roc1fYbHA1AVbhAtuHZflgEAAAB2eyJvcmlnaW4iOiJodHRwczovL2dvb2dsZS5jb206NDQzIiwiZmVhdHVyZSI6IlRydXN0VG9rZW5zIiwiZXhwaXJ5IjoxNjUyNzc0NDAwLCJpc1N1YmRvbWFpbiI6dHJ1ZSwiaXNUaGlyZFBhcnR5Ijp0cnVlfQ==" />
+    <meta http-equiv="origin-trial" content="A8FHS1NmdCwGqD9DwOicnHHY+y27kdWfxKa0YHSGDfv0CSpDKRHTQdQmZVPDUdaFWUsxdgVxlwAd6o+dhJykPA0AAACWeyJvcmlnaW4iOiJodHRwczovL2RvdWJsZWNsaWNrLm5ldDo0NDMiLCJmZWF0dXJlIjoiQ29udmVyc2lvbk1lYXN1cmVtZW50IiwiZXhwaXJ5IjoxNjQzMTU1MTk5LCJpc1N1YmRvbWFpbiI6dHJ1ZSwiaXNUaGlyZFBhcnR5Ijp0cnVlLCJ1c2FnZSI6InN1YnNldCJ9" />
+    <meta http-equiv="origin-trial" content="A8zdXi6dr1hwXEUjQrYiyYQGlU3557y5QWDnN0Lwgj9ePt66XMEvNkVWOEOWPd7TP9sBQ25X0Q15Lr1Nn4oGFQkAAACceyJvcmlnaW4iOiJodHRwczovL2dvb2dsZXN5bmRpY2F0aW9uLmNvbTo0NDMiLCJmZWF0dXJlIjoiQ29udmVyc2lvbk1lYXN1cmVtZW50IiwiZXhwaXJ5IjoxNjQzMTU1MTk5LCJpc1N1YmRvbWFpbiI6dHJ1ZSwiaXNUaGlyZFBhcnR5Ijp0cnVlLCJ1c2FnZSI6InN1YnNldCJ9" />
+    <meta http-equiv="origin-trial" content="A4/Htern2udN9w3yJK9QgWQxQFruxOXsXL7cW60DyCl0EZFGCSme/J33Q/WzF7bBkVvhEWDlcBiUyZaim5CpFQwAAACceyJvcmlnaW4iOiJodHRwczovL2dvb2dsZXRhZ3NlcnZpY2VzLmNvbTo0NDMiLCJmZWF0dXJlIjoiQ29udmVyc2lvbk1lYXN1cmVtZW50IiwiZXhwaXJ5IjoxNjQzMTU1MTk5LCJpc1N1YmRvbWFpbiI6dHJ1ZSwiaXNUaGlyZFBhcnR5Ijp0cnVlLCJ1c2FnZSI6InN1YnNldCJ9" />
+    <link rel="preload" href="%D0%9F%D0%BE%D1%82%D0%BE%D0%BA%D0%B8%20%D0%BD%D0%B0%20C%23.%20%D0%A7%D0%B0%D1%81%D1%82%D1%8C%201_files/integrator_002.js" as="script" />
+    <link rel="preload" href="%D0%9F%D0%BE%D1%82%D0%BE%D0%BA%D0%B8%20%D0%BD%D0%B0%20C%23.%20%D0%A7%D0%B0%D1%81%D1%82%D1%8C%201_files/integrator.js" as="script" />
+    <link rel="preload" href="%D0%9F%D0%BE%D1%82%D0%BE%D0%BA%D0%B8%20%D0%BD%D0%B0%20C%23.%20%D0%A7%D0%B0%D1%81%D1%82%D1%8C%201_files/integrator_002.js" as="script" />
+    <link rel="preload" href="%D0%9F%D0%BE%D1%82%D0%BE%D0%BA%D0%B8%20%D0%BD%D0%B0%20C%23.%20%D0%A7%D0%B0%D1%81%D1%82%D1%8C%201_files/integrator.js" as="script" />
+    <link rel="preload" href="%D0%9F%D0%BE%D1%82%D0%BE%D0%BA%D0%B8%20%D0%BD%D0%B0%20C%23.%20%D0%A7%D0%B0%D1%81%D1%82%D1%8C%201_files/integrator_002.js" as="script" />
+    <link rel="preload" href="%D0%9F%D0%BE%D1%82%D0%BE%D0%BA%D0%B8%20%D0%BD%D0%B0%20C%23.%20%D0%A7%D0%B0%D1%81%D1%82%D1%8C%201_files/integrator.js" as="script" />
+</head>
+
+<body aria-hidden="false" topmargin="0" rightmargin="0" leftmargin="0" bottommargin="0">
+    <a name="top" id="top"></a>
+    <table style="height: auto !important;" width="780" cellspacing="0" cellpadding="0" border="0" align="center">
+        <tbody>
+            <tr height="20">
+                <td>&nbsp;</td>
+                <td width="100%">&nbsp;</td>
+                <td>&nbsp;</td>
+            </tr>
+            <tr style="height: auto !important;">
+                <td valign="top" background="%D0%9F%D0%BE%D1%82%D0%BE%D0%BA%D0%B8%20%D0%BD%D0%B0%20C%23.%20%D0%A7%D0%B0%D1%81%D1%82%D1%8C%201_files/shad_left.gif">
+                    <img src="%D0%9F%D0%BE%D1%82%D0%BE%D0%BA%D0%B8%20%D0%BD%D0%B0%20C%23.%20%D0%A7%D0%B0%D1%81%D1%82%D1%8C%201_files/shad_top_left.gif" width="11" height="17" border="0" />
+                </td>
+                <td style="height: auto !important;" width="100%" valign="top">
+                    <table style="height: auto !important;" width="100%" cellspacing="1" border="0" bgcolor="#000000">
+                        <tbody>
+                            <tr>
+                                <td width="100%">
+                                    <table width="100%" cellspacing="0" cellpadding="0" border="0">
+                                        <tbody>
+                                            <tr>
+                                                <td class="pathway" valign="center" align="left">
+                                                    <img src="%D0%9F%D0%BE%D1%82%D0%BE%D0%BA%D0%B8%20%D0%BD%D0%B0%20C%23.%20%D0%A7%D0%B0%D1%81%D1%82%D1%8C%201_files/arrow.png" hspace="5" />
+                                                    <span class="breadcrumbs pathway">
+                                                        <a href="http://microsin.net/programming/index.html" class="pathway">Программирование</a>
+                                                        <img src="%D0%9F%D0%BE%D1%82%D0%BE%D0%BA%D0%B8%20%D0%BD%D0%B0%20C%23.%20%D0%A7%D0%B0%D1%81%D1%82%D1%8C%201_files/arrow.png" alt="" />
+                                                        <a href="http://microsin.net/programming/pc/index.html" class="pathway">PC</a>
+                                                        <img src="%D0%9F%D0%BE%D1%82%D0%BE%D0%BA%D0%B8%20%D0%BD%D0%B0%20C%23.%20%D0%A7%D0%B0%D1%81%D1%82%D1%8C%201_files/arrow.png" alt="" />
+                                                        Потоки на C#. Часть 1: введение
+                                                    </span>
+
+                                                </td>
+                                                <td class="pathway" valign="center" align="right">Tue, February 01 2022&nbsp;&nbsp;
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr height="80">
+                                <td width="100%" bgcolor="#54647A" background="%D0%9F%D0%BE%D1%82%D0%BE%D0%BA%D0%B8%20%D0%BD%D0%B0%20C%23.%20%D0%A7%D0%B0%D1%81%D1%82%D1%8C%201_files/logo_bar_logo.jpg" align="left"></td>
+                            </tr>
+                            <tr>
+                                <td width="100%" bgcolor="#AFC6DB" background="%D0%9F%D0%BE%D1%82%D0%BE%D0%BA%D0%B8%20%D0%BD%D0%B0%20C%23.%20%D0%A7%D0%B0%D1%81%D1%82%D1%8C%201_files/but_bar_back.gif">
+
+                                    <div class="moduletable_topmenu">
+                                        <table width="100%" cellspacing="1" cellpadding="0" border="0">
+                                            <tbody>
+                                                <tr>
+                                                    <td nowrap="nowrap"><span class="mainlevel">| </span><a href="http://microsin.net/" class="mainlevel">Главная</a><span class="mainlevel">  | </span><a href="http://microsin.net/mycontacts.html" class="mainlevel">Контакты</a><span class="mainlevel">  | </span><a href="http://microsin.net/adminstuff/index.html" class="mainlevel">Администрирование</a><span class="mainlevel">  | </span><a href="http://microsin.net/programming/index.html" class="mainlevel" id="active_menu">Программирование</a><span class="mainlevel">  | </span><a href="http://microsin.net/Ssyilki/index.html" class="mainlevel">Ссылки</a><span class="mainlevel">  | </span></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+
+                                </td>
+                            </tr>
+                            <tr style="height: auto !important;">
+                                <td style="height: auto !important;" width="100%" bgcolor="#FFFFFF">
+                                    <div style="width: 100%; height: auto; clear: both; text-align: center;" class="google-auto-placed"></div>
+                                    <table style="border-collapse: collapse; height: auto !important;" id="AutoNumber1" width="100%" cellspacing="0" cellpadding="4" border="0">
+                                        <tbody>
+                                            <tr style="height: auto !important;">
+                                                <!-- LEFT Modules -->
+
+                                                <td style="height: auto !important;" valign="top">
+                                                    <!-- Top Modules -->
+                                                    <div class="nopad" style="height: auto !important;">
+                                                        <table class="contentpaneopen">
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td class="contentheading" width="100%">Потоки на C#. Часть 1: введение
+                                                                    </td>
+
+                                                                    <td class="buttonheading" width="100%" align="right">
+<a href="http://microsin.net/programming/pc/threading-in-csharp-part-1-getting-started/Pechat.html" title="Печать" onclick="window.open(this.href,'win2','status=no,toolbar=no,scrollbars=yes,titlebar=no,menubar=no,resizable=yes,width=640,height=480,directories=no,location=no'); return false;" rel="nofollow">
+    <img src="%D0%9F%D0%BE%D1%82%D0%BE%D0%BA%D0%B8%20%D0%BD%D0%B0%20C%23.%20%D0%A7%D0%B0%D1%81%D1%82%D1%8C%201_files/printButton.png" alt="Печать" /></a>
+                                                                    </td>
+
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+
+                                                        <table class="contentpaneopen" style="height: auto !important;">
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td valign="top">
+<span class="small">Добавил(а) microsin
+</span>
+&nbsp;&nbsp;
+                                                                    </td>
+                                                                </tr>
+
+
+
+                                                                <tr style="height: auto !important;">
+                                                                    <td style="height: auto !important;" valign="top">
+<p>
+    <strong>C#</strong> поддерживает параллельное выполнение кода с помощью многопоточной среды (multithreading). Каждый поток (<strong>thread</strong>)
+    имеет независимую обработку алгоритма своей программы, и он может
+    выполнять его одновременно (параллельно) с работой других потоков.
+</p>
+
+
+
+<p>
+    Клиентское приложение C# (Console, WPF или Windows Forms) запускается
+    в одном потоке, который создается автоматически библиотекой CLR (Common
+    Language Runtime) и операционной системой (главный поток, поток
+    "main"), и многопоточность обеспечивается созданием дополнительных
+    потоков. Ниже приведен простой пример создания потоков и результат их
+    вывода.
+</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+    <pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">using</span> <span style="color: #0000ff; font-weight: bold;">System</span>;</pre>
+    <pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">using</span> <span style="color: #0000ff; font-weight: bold;">System.Threading</span>;
+</pre>
+    <pre style="margin: 0; line-height: 125%;">&nbsp;</pre>
+    <pre style="margin: 0; line-height: 125%;">...</pre>
+    <pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">class</span> <span style="color: #0000ff; font-weight: bold;">ThreadTest</span>
+{
+   <span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Main</span>()
+   {
+      <span style="color: #408080; font-style: italic;">// Создание нового потока из тела подпрограммы WriteY:</span>
+      Thread t = <span style="color: #008000; font-weight: bold;">new</span> Thread (WriteY);
+      <span style="color: #408080; font-style: italic;">// Запуск потока:</span>
+      t.Start();
+      <span style="color: #408080; font-style: italic;">// Вместе с работающим потоком внутри WriteY() также будем</span>
+      <span style="color: #408080; font-style: italic;">// выполнять что-нибудь в главном потоке приложения:</span>
+      <span style="color: #008000; font-weight: bold;">for</span> (<span style="color: #b00040;">int</span> i = <span style="color: #666666;">0</span>; i &lt; <span style="color: #666666;">1000</span>; i++)
+         Console.Write (<span style="color: #ba2121;">"x"</span>);
+  }
+ 
+  <span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">WriteY</span>()
+  {
+  <span style="color: #008000; font-weight: bold;">for</span> (<span style="color: #b00040;">int</span> i = <span style="color: #666666;">0</span>; i &lt; <span style="color: #666666;">1000</span>; i++)
+         Console.Write (<span style="color: #ba2121;">"y"</span>);
+  }
+}
+</pre>
+</div>
+<p>
+<span style="color: #808080;">Примечание: все примеры, показанные
+здесь, подразумевают импорт в код пространств имен System и
+System.Threading (добавляются директивой using в начале модуля кода
+*.cs).
+</span>
+</p>
+<p>Вывод этого примера:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #000000; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #ffffff;">xxxxxxxxxxxxxxxxyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxyyyyyyyyyyyyy
+yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy
+yyyyyyyyyyyyyxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+...
+</span></pre>
+</div>
+<p>
+    В этом примере главный поток создает новый поток t, который выполняет
+    свой цикл, в котором печатает символ "y". Одновременно главный поток
+    печатает символ "x":
+</p>
+<p>
+    <img src="%D0%9F%D0%BE%D1%82%D0%BE%D0%BA%D0%B8%20%D0%BD%D0%B0%20C%23.%20%D0%A7%D0%B0%D1%81%D1%82%D1%8C%201_files/CSharp-Threading-NewThread.png" alt="CSharp Threading NewThread" /></p>
+<p>
+    Когда поток запущен, его свойство IsAlive будет возвращать true, пока
+    этот поток не завершится. Поток завершится, когда делегат, переданный
+    конструктору Thread (в данном примере делегат это подпрограмма WriteY),
+    завершит свое выполнение (т. е. выполнит возврат из тела своей
+    подпрограммы). После своего завершения поток не может перезапуститься.
+</p>
+<p>
+    Библиотека CLR назначает каждому потоку свой стек в памяти, так что
+    локальные для этого потока переменные сохраняются отдельно от других
+    данных в программе (и отдельно от других потоков) - до момента
+    завершения потока. В следующем примере мы определим метод с локальной
+    переменной, затем вызовем этот метод в главном потоке и в новом
+    создаваемом потоке:
+</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+    <pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Main</span>()
+{
+    <span style="color: #008000; font-weight: bold;">new</span> <span style="color: #0000ff;">Thread</span> (Go).Start();   <span style="color: #408080; font-style: italic;">// Вызов Go() в новом потоке.</span>
+   Go();                      <span style="color: #408080; font-style: italic;">// Вызов Go() в основном потоке приложения.</span>
+}
+</pre>
+    <pre style="margin: 0; line-height: 125%;"> </pre>
+    <pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Go</span>()
+{
+    <span style="color: #408080; font-style: italic;">// Декларирование и использование локальной переменной cycles:</span>
+    <span style="color: #008000; font-weight: bold;">for</span> (<span style="color: #b00040;">int</span> cycles = <span style="color: #666666;">0</span>; cycles &lt; <span style="color: #666666;">5</span>; cycles++)
+      Console.Write (<span style="color: #ba2121;">'?'</span>);
+}
+</pre>
+</div>
+<p>Вывод:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #000000; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+    <pre style="margin: 0; line-height: 125%;"><span style="color: #ffffff;">??????????
+</span></pre>
+</div>
+<p>
+    Отдельная копия переменной cycles создается в отдельном стеке памяти
+    каждого потока, и в результате в консоль было выведено 5+5=10 символов
+    "?".
+</p>
+<p>Потоки могут совместно использовать какие-либо данные, если они имеют общую ссылку на один и тот же экземпляр объекта. Пример:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+    <pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">class</span> <span style="color: #0000ff; font-weight: bold;">ThreadTest</span>
+{
+    <span style="color: #b00040;">bool</span> done;
+ 
+    <span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Main</span>()
+   {
+      ThreadTest tt = <span style="color: #008000; font-weight: bold;">new</span> ThreadTest();   <span style="color: #408080; font-style: italic;">// Создание общего экземпляра</span>
+    <span style="color: #008000; font-weight: bold;">new</span> <span style="color: #0000ff;">Thread</span> (tt.Go).Start();
+      tt.Go();
+   }
+ 
+    <span style="color: #408080; font-style: italic;">// Обратите внимание, что Go теперь метод экземпляра:</span>
+    <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Go</span>() 
+   {
+    <span style="color: #008000; font-weight: bold;">if</span> (!done)
+      {
+         done = <span style="color: #008000; font-weight: bold;">true</span>;
+         Console.WriteLine (<span style="color: #ba2121;">"Done"</span>);
+      }
+   }
+}
+</pre>
+</div>
+<p>
+    Из-за того, что оба потока вызвали Go() на одном и том же экземпляре
+    ThreadTest, они используют общее поле (переменную) done. В результате
+    сообщение "Done" будет выведено только один раз, а не дважды:
+</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #000000; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+    <pre style="margin: 0; line-height: 125%;"><span style="color: #ffffff;">Done
+</span></pre>
+</div>
+<p>
+    Статические поля предоставляют другой способ предоставить общие
+    данные для нескольких потоков. Вот еще один пример с переменной done в
+    качестве статического поля (подробнее про ключевое слово static на C#
+    см. статью [2]):
+</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+    <pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">class</span> <span style="color: #0000ff; font-weight: bold;">ThreadTest</span>
+{
+    <span style="color: #408080; font-style: italic;">// Статические поля класса могут использоваться совместно</span>
+    <span style="color: #408080; font-style: italic;">// всеми потоками этого класса:</span>
+    <span style="color: #008000; font-weight: bold;">static</span> <span style="color: #b00040;">bool</span> done;
+ 
+    <span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Main</span>()
+   {
+    <span style="color: #008000; font-weight: bold;">new</span> <span style="color: #0000ff;">Thread</span> (Go).Start();
+      Go();
+   }
+</pre>
+    <pre style="margin: 0; line-height: 125%;">&nbsp;</pre>
+    <pre style="margin: 0; line-height: 125%;">   <span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Go</span>()
+   {
+    <span style="color: #008000; font-weight: bold;">if</span> (!done)
+      {
+         done = <span style="color: #008000; font-weight: bold;">true</span>;
+         Console.WriteLine (<span style="color: #ba2121;">"Done"</span>);
+      }
+   }
+}
+</pre>
+</div>
+<p>
+    Оба этих примера иллюстрируют другую ключевую концепцию:
+    потокобезопасность (thread safety [3]). Или, если быть точнее, с
+    отсутствием всякой безопасности! Следует быть очень осторожным, когда
+    потоки используют общие данные. В действительности с общими данными
+    вывод программы может быть неопределенным. Есть некая возможность, что
+    "Done" будет напечатано дважды. Особенно часто такие случаи будут
+    происходить, если поменять местами операторы в методе Go:
+</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+    <pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Go</span>()
+{
+    <span style="color: #008000; font-weight: bold;">if</span> (!done)
+   {
+      Console.WriteLine (<span style="color: #ba2121;">"Done"</span>);
+      done = <span style="color: #008000; font-weight: bold;">true</span>;
+   }
+}
+</pre>
+</div>
+<p>Результат:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #000000; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+    <pre style="margin: 0; line-height: 125%;"><span style="color: #ffffff;">Done
+Done
+</span></pre>
+</div>
+<p>
+    Проблема здесь в том, что один поток может проверить значение своего
+    условия if сразу в тот момент, когда другой поток выполняет оператор
+    WriteLine - в этом примере больше шансов, что это произойдет до того,
+    как done будет установлено в true.
+</p>
+<p>
+    Вылечить эту проблему можно путем получения исключительной блокировки
+    (exclusive lock [4]) в тот момент, когда происходит чтение и запись
+    общего поля программы. C# предоставляет именно для этой цели оператор
+    lock:
+</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+    <pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">class</span> <span style="color: #0000ff; font-weight: bold;">ThreadSafe</span> 
+{
+    <span style="color: #008000; font-weight: bold;">static</span> <span style="color: #b00040;">bool</span> done;
+    <span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">readonly</span> <span style="color: #b00040;">object</span> locker = <span style="color: #008000; font-weight: bold;">new</span> <span style="color: #b00040;">object</span>();
+ 
+    <span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Main</span>()
+   {
+    <span style="color: #008000; font-weight: bold;">new</span> <span style="color: #0000ff;">Thread</span> (Go).Start();
+      Go();
+   }
+ 
+    <span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Go</span>()
+   {
+    <span style="color: #008000; font-weight: bold;">lock</span> (locker)
+      {
+    <span style="color: #408080; font-style: italic;">// Начало критической секции кода</span>
+    <span style="color: #008000; font-weight: bold;">if</span> (!done)
+         {
+            Console.WriteLine (<span style="color: #ba2121;">"Done"</span>);
+            done = <span style="color: #008000; font-weight: bold;">true</span>;
+         }
+    <span style="color: #408080; font-style: italic;">// Конец критической секции кода</span>
+      }
+   }
+}
+</pre>
+</div>
+<p>
+    Когда два потока одновременно претендуют на доступ к блокировке lock
+    (в этом пример к locker), один поток ждет, или блокирует доступ к данным
+    до тех пор, пока lock не освободится. В этом примере такая блокировка
+    гарантирует, что только один поток в любой момент времени может зайти в
+    критическую секцию кода, в результате чего сообщение "Done" будет
+    выведено только 1 раз. Защищенный таким способом код (тут
+    подразумевается безопасный доступ к общим данным в многопоточной среде)
+    называют потокобезопасным (thread-safe).
+</p>
+<p style="padding-left: 30px;">
+    <span style="color: #800000;">Важное
+        замечание: общие данные, совместно используемые потоками, являются
+        основной причиной сложности программ в смысле отладки и поиска в них
+        ошибок. Несмотря на это часто приходится платить такую цену, чтобы
+        сделать программу как можно проще и отзывчивее на внешние и внутренние
+        события.
+    </span>
+</p>
+<p>
+    Если поток 1 дошел до критической секции, которую в данный момент
+    выполняет поток 2, то поток 1 будет заблокирован (blocked) до момента
+    освобождения критической секции. Заблокированный поток не потребляет
+    процессорные ресурсы (не загружает CPU).
+</p>
+<p><strong>Join и Sleep</strong>. Вы можете ждать завершения другого потока путем вызова метода Join. Пример:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+    <pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Main</span>()
+{
+   Thread t = <span style="color: #008000; font-weight: bold;">new</span> Thread (Go);
+   t.Start();
+   t.Join();
+   Console.WriteLine (<span style="color: #ba2121;">"Поток t завершился!"</span>);
+}
+ </pre>
+    <pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Go</span>()
+{
+    <span style="color: #008000; font-weight: bold;">for</span> (<span style="color: #b00040;">int</span> i = <span style="color: #666666;">0</span>; i &lt; <span style="color: #666666;">1000</span>; i++)
+      Console.Write (<span style="color: #ba2121;">"y"</span>);
+}
+</pre>
+</div>
+<p>
+    Этот пример напечатает символ "y" тысячу раз, и сразу за этим будет
+    выведено сообщение "Поток t завершился!". Вы можете добавить таймаут при
+    вызове Join, указав его либо в миллисекундах, либо как TimeSpan. Этот
+    вызов вернет true, если поток завершился до таймаута, или false, если
+    произошел таймаут.
+</p>
+<p>Thread.Sleep приостанавливает текущий поток на указанный период времени:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+    <pre style="margin: 0; line-height: 125%;">Thread.Sleep (TimeSpan.FromHours (<span style="color: #666666;">1</span>));    <span style="color: #408080; font-style: italic;">// приостановит поток на 1 час</span>
+Thread.Sleep (<span style="color: #666666;">500</span>);                       <span style="color: #408080; font-style: italic;">// приостановка на 500 миллисекунд</span>
+</pre>
+</div>
+<p>При ожидании на Sleep или Join поток заблокирован и не потребляет ресурсы процессора.</p>
+<p style="padding-left: 30px;">
+    <span style="color: #008080;">Вызов <strong>Thread.Sleep(0)</strong>
+        немедленно освобождает текущий квант времени, предоставляя тем самым
+        процессорное время для других потоков. В Framework 4.0 есть новый метод
+        Thread.Yield(), который делает то же самое, за исключением того, что
+        процессорное время освобождается только для потоков, которые работают на
+        том же процессоре (сегодня почти все компьютерные системы
+        многоядерные).
+    </span>
+</p>
+
+<p style="padding-left: 30px;">
+    <span style="color: #008080;">
+        <strong>Sleep(0)</strong> или <strong>Yield</strong>
+        иногда полезно использовать в конечном коде релиза для подстройки
+        скорости выполнения. Это также отличный инструмент диагностики,
+        помогающий разобраться с проблемами безопасности потоков: если вызов <strong>Thread.Yield()</strong> в любом месте Вашего кода создает проблему или приводит к падению программы, то скорее всего в программе есть ошибка.
+    </span>
+</p>
+<p>[<strong>Как работают потоки</strong>]</p>
+<p>
+    Многопоточная среда выполнения обслуживается внутри операционной
+    системы с помощью планировщика (thread scheduler), библиотека CLR обычно
+    делегирует эту функцию операционной системе. Планировщик гарантирует,
+    что все активные потоки получают подходящее время выполнения, и что
+    потоки, которые находятся в ожидании или заблокированы (например, на
+    критической секции exclusive lock или на вводе пользователя) не будут
+    потреблять процессорное время.
+</p>
+<p>
+    На компьютере с одним процессором планировщик работает по принципу
+    распределения квантов времени (time-slicing), т. е. он часто выполняет
+    переключение между каждым активным потоком. В операционной системе
+    Windows кванты времени (тики) обычно измеряются десятках миллисекунд.
+    Эти интервалы намного больше, чем CPU тратит на реальное переключение
+    контекста потоков (процесс переключения контекста обычно занимает
+    несколько микросекунд).
+</p>
+<p>
+    В мультипроцессорной системе многопоточность реализуется смесью
+    time-slicing и чистой одновременной средой выполнения, где разные потоки
+    выполняют свой код на разных ядрах или процессорах (CPU). Очевидно, что
+    в любом случае планировщик также применяет time-slicing в пределах
+    одного ядра даже при наличии нескольких ядер, потому что в операционной
+    системе имеется множество служебных системных потоков, и также
+    необходимо выполнять потоки других приложений.
+</p>
+<p>
+    Говорят, что поток "вытесняется" (preempted), когда его выполнение
+    принудительно приостанавливается внешним фактором, таким как
+    time-slicing. В большинстве случаев поток не управляет тем, когда и где
+    он будет вытеснен.
+</p>
+<p>
+    <strong>Различие между потоком и процессом</strong>. Поток (thread)
+    аналогичен системному процессу (process) операционной системы, в которой
+    работает Ваше приложение. Точно так же как процессы выполняются
+    параллельно на компьютере, потоки работают параллельно в пределах одного
+    процесса. Процессы полностью изолированы друг от друга; потоки же
+    изолированы друг от друга в определенной степени, в зависимости от того,
+    как это организовано разработчиком. В частности, потоки используют
+    общую память (куча, heap) вместе с другими потоками, работающими в том
+    же приложении. В этом в частности заключается одна из причин полезности
+    потоков: один поток может захватывать данные в фоне, когда другой поток,
+    к примеру, может обрабатывать и отображать данные по мере их
+    поступления. Эти данные иногда называют "разделяемым между потоками
+    состоянием" в противовес понятию "локальное состояние", которое
+    определяет данные, используемые потоком исключительно индивидуально.
+    Локальное состояние не создает проблем с безопасностью потоков, однако
+    разделяемое состояние требует принятия специальных мер, направленных на
+    обеспечение корректной совместной работы потоков.
+</p>
+<p><strong>Для чего используют потоки и какие основные ошибки при этом совершают</strong>. Многопоточность имеет множество применений, вот наиболее общие:</p>
+<p>
+    • <span style="color: #800000;">Обеспечение отзывчивости интерфейса пользователя</span>.
+    Когда задачи с интенсивными вычислениями работают параллельно в
+    "рабочем" потоке, основной интерфейс приложения (UI) свободен для
+    обработки событий клавиатуры и мыши.<br />
+    • <span style="color: #800000;">Эффективное использование процессора</span>.
+    Без многопоточности процессор был бы вынужден простаивать в ожидании
+    завершения каких-либо действий. Многопоточность полезна, когда поток
+    ждет ответа от другого компьютера или от какой-либо части аппаратного
+    обеспечения. А то время как один поток заблокирован на выполнении своей
+    задачи, другие потоки могут беспрепятственно использовать свободное
+    процессорное время в своих целях.<br />
+    • <span style="color: #800000;">Параллельное программирование</span>.
+    Код, выполняющий интенсивные вычисления, может быстрее получить
+    результат на многоядерных или многопроцессорных компьютерах, если
+    рабочая нагрузка по вычислениям распределена на несколько потоков по
+    принципу стратегии "разделяй и властвуй" (см. часть 5 этого руководства
+    [11]).<br />
+    • <span style="color: #800000;">Спекулятивное (упреждающее) выполнение</span>.
+    На многоядерных машинах Вы можете иногда улучшить быстродействие путем
+    предсказания чего-то, что возможно должно быть сделано, и затем выполняя
+    эти вычисления загодя. Пользователи LINQPad [5] применяюют эту технику
+    для ускорения создания новых запросов. Вариация этого метода - запуск
+    нескольких разных алгоритмов параллельно, которые выполняют одну и ту же
+    задачу. Тот, кто быстрее выполнит задачу, будет "победителем" - это
+    эффективно, когда Вы не знаете заранее, какой алгоритм выполнится
+    быстрее.<br />
+    •&nbsp;<span style="color: #800000;">Одновременное выполнение запросов</span>.
+    На сервере запросы от клиентов могут поступать конкурентно по отношению
+    друг к другу, поэтому запросы нуждаются в параллельной обработке(среда
+    .NET Framework автоматически для этого создает потоки, если используется
+    библиотеки ASP.NET, WCF, Web Services или Remoting). Это может быть
+    также полезно на стороне клиента, например в процессе обмена каждый с
+    каждым, peer-to-peer,&nbsp; или когда от пользователя поступило
+    несколько запросов.
+</p>
+<p>
+    С такими техниками, как ASP.NET и WCF, Вы можете даже не знать о
+    существовании многопоточности - за исключением случаев, когда
+    осуществляется доступ к общим данным (возможно через статические поля)
+    без соответствующей блокировки, когда встает проблема с безопасностью
+    потоков.
+</p>
+<p>
+    Применение потоков тащит за собой целый хвост проблем. Самая большая
+    проблема - кажущаяся простота на самом деле иногда усложняет понимание и
+    поддержку приложения. Наличие большого количества даже простых потоков
+    не уменьшает сложность написания программы - особенно в тех случаях,
+    когда требуется взаимодействие между потоками (синхронизация). Самая
+    частая ошибка - неправильная организация доступа к общим данным. В
+    результате при неграмотном планировании структуры приложения может
+    вырасти время разработки и вероятность появления трудно воспроизводимых
+    багов. По этой причине старайтесь свести взаимодействие между потоками к
+    минимуму, и по мере возможности придерживайтесь простых и проверенных
+    проектов. Эта статья фокусируется в основном на обсуждении именно таких
+    проблем.
+</p>
+<p style="padding-left: 30px;">
+    <span style="color: #008080;">Хорошей
+        стратегией будет инкапсуляция логики многопоточности в повторно
+        используемых классах, которые можно независимо проверить и
+        протестировать. Среда разработки .NET предоставляет множество
+        высокоуровневых конструкций, связанных с потоками, которые мы обсудим
+        позже.
+    </span>
+</p>
+<p>
+    Следует иметь в виду, что вовлечение потоков приводит к трате
+    дополнительных ресурсов процессора на планирование и переключение
+    контекста между потоками (scheduling and switching threads), особенно
+    когда активных потоков намного больше, чем ядер CPU. Также на эти
+    расходы накладывается процессорное время, затрачиваемое на создание и
+    уничтожение потоков (creation/tear-down) и связанная с этим "уборка
+    мусора" в куче. Многопоточность не всегда ускорит работу Вашего
+    приложения, она может даже замедлить его, если потоки используются
+    интенсивно и не соответствующим образом. Например, когда осуществляется
+    интенсивный дисковый ввод/вывод, то он может выполниться быстрее, когда
+    несколько рабочих потоков выполняются последовательно друг за другом,
+    чем если бы сразу 10 потоков работали с диском одновременно. В материале
+    "Обмен сигналами через Wait и Pulse" [7] будет описано, как реализовать
+    очередь генератор/потребитель данных (producer/consumer queue), где
+    будет предоставлена именно такая функциональность.
+</p>
+<p>[<strong>Создание и запуск потоков</strong>]</p>
+<p>
+    Как уже было сказано выше, потоки создаются конструктором класса
+    Thread путем передачи в него определенного делегата ThreadStart. Вот так
+    определен делегат ThreadStart:
+</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+    <pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">public</span> <span style="color: #008000; font-weight: bold;">delegate</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">ThreadStart</span>();
+</pre>
+</div>
+<p>
+    Вызов Start на потоке переводит его в работающее состояние. Поток
+    продолжает свое выполнения до момента возврата из его метода, в этом
+    месте поток завершается. Ниже показан расширенный синтаксис C# для
+    создания делегата TheadStart:
+</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+    <pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">class</span> <span style="color: #0000ff; font-weight: bold;">ThreadTest</span>
+{
+    <span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Main</span>() 
+   {
+      Thread t = <span style="color: #008000; font-weight: bold;">new</span> Thread (<span style="color: #008000; font-weight: bold;">new</span> ThreadStart (Go));
+ 
+      t.Start();     <span style="color: #408080; font-style: italic;">// Запуск Go() на новом потоке.</span>
+      Go();          <span style="color: #408080; font-style: italic;">// Одновременный запуск метода Go() в главном потоке.</span>
+   }
+ 
+    <span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Go</span>()
+   {
+      Console.WriteLine (<span style="color: #ba2121;">"hello!"</span>);
+   }
+}
+</pre>
+</div>
+<p>
+    В этом примере поток t выполнит процедуру Go() в то же самое время
+    (вероятнее всего), как основной поток вызовет Go(). В результате будет
+    близко по времени друг к другу два сообщения "hello!".
+</p>
+<p>
+    Поток может быть создан более удобным способом - просто если указать
+    метод группы, это позволит C# определить делегат ThreadStart:
+</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+    <pre style="margin: 0; line-height: 125%;">Thread t = <span style="color: #008000; font-weight: bold;">new</span> Thread (Go);   <span style="color: #408080; font-style: italic;">// Не нужно явно использовать ThreadStart</span>
+</pre>
+</div>
+<p>Другой хитрый способ - применить lambda expression или метод anonymous:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+    <pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Main</span>()
+{
+   Thread t = <span style="color: #008000; font-weight: bold;">new</span> Thread ( () =&gt; Console.WriteLine (<span style="color: #ba2121;">"Hello!"</span>) );
+   t.Start();
+}
+</pre>
+</div>
+<p>
+    <strong>Передача данных в поток</strong>. Простейший способ передать
+    аргументы в целевой метод потока - выполнить lambda-выражение, которое
+    вызовет метод с желаемыми аргументами:
+</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+    <pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Main</span>()
+{
+   Thread t = <span style="color: #008000; font-weight: bold;">new</span> Thread ( () =&gt; Print (<span style="color: #ba2121;">"Hello from t!"</span>) );
+   t.Start();
+}
+ </pre>
+    <pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Print</span> (<span style="color: #b00040;">string</span> message) 
+{
+   Console.WriteLine (message);
+}
+</pre>
+</div>
+<p>
+    С этим способом можно передать любое количество аргументов в метод
+    потока. Вы даже можете обернуть всю реализацию в один многооператорный
+    lambda:
+</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+    <pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">new</span> <span style="color: #0000ff;">Thread</span> (() =&gt;
+{
+   Console.WriteLine (<span style="color: #ba2121;">"Я запустил другой поток!"</span>);
+   Console.WriteLine (<span style="color: #ba2121;">"Это оказалось так просто!"</span>);
+}).Start();
+</pre>
+</div>
+<p>Вы можете сделать то же самое и почти так же просто в C# 2.0 с помощью anonymous-методов:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+    <pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">new</span> <span style="color: #0000ff;">Thread</span> (<span style="color: #008000; font-weight: bold;">delegate</span>()
+{
+   ...
+}).Start();
+</pre>
+</div>
+<p>Другая техника заключается в передаче аргумента в метод Start класса Thread:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+    <pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Main</span>()
+{
+   Thread t = <span style="color: #008000; font-weight: bold;">new</span> Thread (Print);
+   t.Start (<span style="color: #ba2121;">"Привет от потока t!"</span>);
+}
+ </pre>
+    <pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Print</span> (<span style="color: #b00040;">object</span> messageObj)
+{
+    <span style="color: #b00040;">string</span> message = (<span style="color: #b00040;">string</span>) messageObj;  <span style="color: #408080; font-style: italic;">// Здесь надо сделать приведение типа (cast).</span>
+   Console.WriteLine (message);
+}
+</pre>
+</div>
+<p>Это работает, потому что конструктор класса Thread перезагружен, чтобы принять любого из делегатов:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+    <pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">public</span> <span style="color: #008000; font-weight: bold;">delegate</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">ThreadStart</span>();</pre>
+    <pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">public</span> <span style="color: #008000; font-weight: bold;">delegate</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">ParameterizedThreadStart</span> (<span style="color: #b00040;">object</span> obj);
+</pre>
+</div>
+<p>
+    Ограничение ParameterizedThreadStart в том, что он может принять
+    только один аргумент. И потому, что у него тип object, обычно требуется
+    для применения параметра привести его к какому-либо типу (typecast).
+</p>
+<p>
+    <strong>Lambda-выражения и захваченные переменные</strong>. Выражения
+    lambda наиболее мощный способ передать данные в поток. Однако Вы должны
+    быть осторожны на предмет случайной модификации захваченных переменных
+    после запуска потока, потому что эти переменные будут общими (их копия
+    не делается). Например:
+</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+    <pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">for</span> (<span style="color: #b00040;">int</span> i = <span style="color: #666666;">0</span>; i &lt; <span style="color: #666666;">10</span>; i++)
+    <span style="color: #008000; font-weight: bold;">new</span> <span style="color: #0000ff;">Thread</span> (() =&gt; Console.Write (i)).Start();
+</pre>
+</div>
+<p>Вывод этого примера будет совершенно неопределенным! Вот типичный результат вывода этого примера:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #000000; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+    <pre style="margin: 0; line-height: 125%;"><span style="color: #ffffff;">0223557799
+</span></pre>
+</div>
+<p>
+    Проблема тут в том, что переменная i относится к одной и той же
+    ячейке памяти за все время работы цикла for. Таким образом, каждый поток
+    вызовет Console.Write с переменной, которая может поменяться в момент
+    работы потока!
+</p>
+<p style="padding-left: 30px;">
+    <span style="color: #008080;">Это
+        аналогично проблеме, которая описана в главе 8 "Captured Variables"
+        книги "C# 4.0 in a Nutshell" [8]. Эта проблема меньше касается
+        многопоточности, чем правил, по которым C# захватывает переменные (что
+        несколько нежелательно для циклов for и foreach).
+    </span>
+</p>
+<p>Решение состоит в применении временной переменной:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+    <pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">for</span> (<span style="color: #b00040;">int</span> i = <span style="color: #666666;">0</span>; i &lt; <span style="color: #666666;">10</span>; i++)
+{
+    <span style="color: #b00040;">int</span> temp = i;
+    <span style="color: #008000; font-weight: bold;">new</span> <span style="color: #0000ff;">Thread</span> (() =&gt; Console.Write (temp)).Start();
+}
+</pre>
+</div>
+<p>
+    Теперь переменная temp локальна для каждой итерации цикла. Таким
+    образом, каждый поток захватывает разные ячейки памяти, и проблемы нет.
+    Мы можем еще проще иллюстрировать проблему с предыдущим кодом:
+</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+    <pre style="margin: 0; line-height: 125%;"><span style="color: #b00040;">string</span> text = <span style="color: #ba2121;">"t1"</span>;
+Thread t1 = <span style="color: #008000; font-weight: bold;">new</span> Thread ( () =&gt; Console.WriteLine (text) );
+ 
+text = <span style="color: #ba2121;">"t2"</span>;
+Thread t2 = <span style="color: #008000; font-weight: bold;">new</span> Thread ( () =&gt; Console.WriteLine (text) );
+ 
+t1.Start();
+t2.Start();
+</pre>
+</div>
+<p>Из-за того, что lambda-выражение захватит одну и ту же переменную text, t2 будет напечатано дважды:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #000000; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+    <pre style="margin: 0; line-height: 125%;"><span style="color: #ffffff;">t2
+t2
+</span></pre>
+</div>
+<p>
+    <strong>Именованные потоки</strong>. У каждого потока есть свойство
+    Name, которое Вы можете установить в целях отладки. В частности это
+    полезно в среде Visual Studio, поскольку имя потока отображается в окне
+    Threads и тулбаре Debug Location. Вы можете установить имя потока только
+    один раз; попытки изменить его позже приведут к выбрасыванию
+    исключения.
+</p>
+<p>
+    Статическое свойство Thread.CurrentThread даст Вам имя выполняющегося
+    в настоящий момент потока. В следующем примере мы установим имя
+    главного потока:
+</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+    <pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">class</span> <span style="color: #0000ff; font-weight: bold;">ThreadNaming</span>
+{
+    <span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Main</span>()
+   {
+      Thread.CurrentThread.Name = <span style="color: #ba2121;">"main"</span>;
+      Thread worker = <span style="color: #008000; font-weight: bold;">new</span> Thread (Go);
+      worker.Name = <span style="color: #ba2121;">"worker"</span>;
+      worker.Start();
+      Go();
+   }
+ 
+    <span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Go</span>()
+   {
+      Console.WriteLine (<span style="color: #ba2121;">"Привет от потока "</span> + Thread.CurrentThread.Name);
+   }
+}
+</pre>
+</div>
+<p>
+    <strong>Потоки Foreground и Background</strong>. По умолчанию
+    создаваемые Вами потоки работают исключительно как равноправные
+    (foreground threads). Foreground-потоки удерживают приложение в
+    работающем состоянии пока хотя бы один из потоков работает, в то время
+    как background-потоки этого не делают. Как только завершатся все
+    foreground-потоки, завершится и приложение, и при завершении работы
+    приложения любые background-потоки резко завершают свое выполнение.
+</p>
+<p style="padding-left: 30px;"><span style="color: #008080;">Статус foreground/background потока не имеет отношение к его приоритету или выделению для потока процессорного времени.</span></p>
+<p>Вы можете опросить или поменять background-состояние потока с помощью его свойства IsBackground:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+    <pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">class</span> <span style="color: #0000ff; font-weight: bold;">PriorityTest</span>
+{
+    <span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Main</span> (<span style="color: #b00040;">string</span>[] args)
+   {
+      Thread worker = <span style="color: #008000; font-weight: bold;">new</span> Thread ( () =&gt; Console.ReadLine() );
+    <span style="color: #008000; font-weight: bold;">if</span> (args.Length &gt; <span style="color: #666666;">0</span>)
+         worker.IsBackground = <span style="color: #008000; font-weight: bold;">true</span>;
+      worker.Start();
+   }
+}
+</pre>
+</div>
+<p>
+    Если эта программа запущена без аргументов, то поток worker
+    подразумевает foreground-статус, и будет ждать на операторе ReadLine,
+    пока пользователь не нажмет клавишу Enter. Между тем основной поток
+    завершиться, но приложение останется работать, потому что
+    foreground-поток все еще работает.
+</p>
+<p>
+    С другой стороны, если в Main() передан аргумент, потоку worker
+    назначен background-статус, и программа сразу же завершится, как только
+    завершиться главный поток (что прервет работу ReadLine).
+</p>
+<p>
+    Когда процесс завершается таким образом, любые блоки finally в стеке
+    выполнения background-потоков не выполнятся. Это создаст проблему, если
+    Ваша программа используется конструкции try/finally, чтобы чисто
+    завершить работу наподобие освобождения ресурсов или удаления временных
+    файлов. Чтобы избежать этого, Вы можете явно ожидать завершения таких
+    background-потоков при выходе из приложения. Есть 2 способа для этого:
+</p>
+<p>
+    • Если Вы сами создали поток, вызовите Join на потоке.<br />
+    • Если у
+    Вас поток из пула (см. ниже "Thread Pooling"), реализуйте сигнализацию
+    ожидания события (см. event wait handle, дескрипторы ожидания [7]).
+</p>
+<p>
+    В любом случае Вы должны указать таймаут, чтобы можно было обрубить
+    непокорный поток, который не дает завершиться программе ко каким-то
+    причинам. Это Ваша стратегия сохранения выхода из приложения: это
+    обеспечит завершение приложения и не заставит пользователя применять для
+    этого Task Manager!
+</p>
+<p style="padding-left: 30px;">
+    <span style="color: #008080;">Если
+        пользователь применяет Task Manager для принудительного завершения
+        процесса .NET, то все потоки независимо от своего статуса немедленно
+        оборвут свою работу ("drop dead"), как если бы они были
+        background-потоками. Это наблюдаемое, а не документированные поведение, и
+        оно может поменяться в зависимости от версии библиотеки CLR и версии
+        операционной системы.
+    </span>
+</p>
+<p>
+    Foreground-потоки не требуют этой обработки, но Вы должны уделить
+    внимание для того, чтобы избежать ошибок, связанных с тем, что поток не
+    завершается. Общая причина проблемы, когда приложение не может правильно
+    завершиться - наличие активных foreground-потоков.
+</p>
+<p>
+    <strong>Приоритет потока</strong>. Этот параметр определяет, какую
+    долю процессорного времени (execution time) поток получит по отношению к
+    другим активным потокамв операционной системе. Шкала приоритетов
+    следующая:
+</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+    <pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">enum</span> ThreadPriority { Lowest, BelowNormal, Normal, AboveNormal, Highest }
+</pre>
+</div>
+<p>Приоритет работает только когда становятся активными несколько потоков одновременно.</p>
+<p style="padding-left: 30px;">
+    <span style="color: #800000;">Дважды
+        подумайте, прежде чем поднимать приоритеты потоков, это может привести к
+        таким потерям, как исчерпание ресурсов для других потоков.
+    </span>
+</p>
+<p>
+    Повышение приоритета потока не приведет к его работе в режиме
+    реального времени (как в системах RTOS), потому что процессорное время
+    все еще регулирует приоритет процесса приложения. Чтобы работа потока
+    была действительно близка к реальному времени, Вы также должны повысить
+    приоритет процесса приложения с помощью класса Process в библиотеке
+    System.Diagnostics:
+</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+    <pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">using</span> (Process p = Process.GetCurrentProcess())
+   p.PriorityClass = ProcessPriorityClass.High;
+</pre>
+</div>
+<p>
+    ProcessPriorityClass.High в действительности только одна метка за
+    исключением еще более высокого уровня приоритета: Realtime. Установка
+    приоритета процесса в Realtime инструктирует операционную систему, что
+    Вы не хотите, чтобы процесс уступал время CPU для других процессов. Если
+    Ваша программа случайно войдет в бесконечный цикл, то Вы можете
+    обнаружить, заблокировалась даже операционная система, и ничего не может
+    помочь вернуть еще к жизни, кроме кнопки сброса или выключения питания
+    на системном блоке! По этой причине High обычно лучший выбор для
+    приложений (как бы) реального времени.
+</p>
+<p style="padding-left: 30px;">
+    <span style="color: #800000;">Если Ваше
+        приложение реального времени снабжено интерфейсом пользователя (User
+        Interface, UI), то повышение приоритета процесса приведет к тому, что
+        обновление экрана будет потреблять дополнительное время CPU, замедляя
+        работу всего компьютера (в частности если этот UI сложный). Понижение
+        приоритета главного потока совместно с повышением приоритета процесса
+        гарантирует, что поток, работающий в реальном времени, не будет вытеснен
+        перерисовками экрана. Но это не решит проблему исчерпания ресурсов
+        процессора для других приложений, потому что операционная система все
+        еще будет не пропорционально выделять время CPU процессу в целом.
+        Идеальное решение - запустить рабочий поток реального времени и
+        интерфейс пользователя как отдельные приложения с разными приоритетами
+        процессов, и организовать их взаимодействие через класс Remoting или
+        отображаемые на память файлы (memory-mapped files). Отображаемые на
+        память файлы идеально подходят для этой задачи; как это работает
+        рассматривается в главах 14 и 25 книжки "C# 4.0 in a Nutshell" [8].
+    </span>
+</p>
+<p>
+    Даже с повышенным приоритетом процесса есть некий лимит пригодности
+    управляемой среды выполнения приложения к требованиям жесткого реального
+    времени. Дополнительно к проблемам, связанным с задержками в системе
+    автоматического сбора мусора, операционная система может доставить
+    дополнительные проблемы - даже для не обслуживаемых приложений
+    (unmanaged applications). По этой причине для систем и приложений RTOS
+    лучше всего решать с помощью специально выделенной аппаратуры или
+    специализированной платформы реального времени (real-time operating
+    system, RTOS).
+</p>
+<p>
+    <strong>Обработка исключений</strong> (Exception Handling). Любые
+    блоки try/catch/finally [9] при создании потока не имеют к нему
+    отношения, когда он начинает свое выполнение. Давайте рассмотрим
+    следующую программу:
+</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+    <pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">public</span> <span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Main</span>()
+{
+    <span style="color: #008000; font-weight: bold;">try</span>
+   {
+    <span style="color: #008000; font-weight: bold;">new</span> <span style="color: #0000ff;">Thread</span> (Go).Start();
+   }
+    <span style="color: #008000; font-weight: bold;">catch</span> (Exception ex)
+   {
+    <span style="color: #408080; font-style: italic;">// Сюда мы никогда не попадем!</span>
+      Console.WriteLine (<span style="color: #ba2121;">"Exception!"</span>);
+   }
+}</pre>
+    <pre style="margin: 0; line-height: 125%;">&nbsp;</pre>
+    <pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Go</span>() { <span style="color: #008000; font-weight: bold;">throw</span> <span style="color: #008000; font-weight: bold;">null</span>; }    <span style="color: #408080; font-style: italic;">// Выбросит исключение NullReferenceException</span>
+</pre>
+</div>
+<p>
+    Оператор try/catch в этом примере не работает, и новый созданный
+    поток столкнется с необработанным исключением NullReferenceException.
+    Такое поведение целесообразно, когда Вы примете во внимание, что каждый
+    поток имеет независимый путь вычислений при выполнении алгоритма.
+</p>
+<p>Решением будет переместить обработчик исключения внутрь метода Go:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+    <pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">public</span> <span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Main</span>()
+{
+    <span style="color: #008000; font-weight: bold;">new</span> <span style="color: #0000ff;">Thread</span> (Go).Start();
+}</pre>
+    <pre style="margin: 0; line-height: 125%;">&nbsp;</pre>
+    <pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Go</span>()
+{
+    <span style="color: #008000; font-weight: bold;">try</span>
+   {
+    <span style="color: #408080; font-style: italic;">// ...</span>
+    <span style="color: #008000; font-weight: bold;">throw</span> <span style="color: #008000; font-weight: bold;">null</span>;    <span style="color: #408080; font-style: italic;">// Исключение NullReferenceException будет обработано ниже</span>
+    <span style="color: #408080; font-style: italic;">// ...</span>
+   }
+    <span style="color: #008000; font-weight: bold;">catch</span> (Exception ex)
+   {
+    <span style="color: #408080; font-style: italic;">// В этом месте обычно в лог записывается факт исключения, и/или дается</span>
+    <span style="color: #408080; font-style: italic;">// сигнал другому потоку, что мы прокололись.</span>
+    <span style="color: #408080; font-style: italic;">// ...</span>
+   }
+}
+</pre>
+</div>
+<p>
+    Вам нужно реализовать обработчик исключения во всех методах потока в
+    приложениях релиза - точно так же, как Вы это делаете (обычно на более
+    высоком уровне, в стеке выполнения) на основном потоке приложения. Не
+    обработанное исключение приведет к падению всего приложения. С весьма
+    неприятным окном диалога, которое будет шокировать пользователей!
+</p>
+<p style="padding-left: 30px;">
+    <span style="color: #008080;">При
+        написании такого рода блоков обработки исключения обычно редко ошибка
+        полностью игнорируется. Чаще всего Вы записываете в лог подробности
+        возникновения исключения, и затем возможно показываете пользователю
+        диалог с предложением передать эту информацию на Ваш веб-сервер для
+        диагностики. Затем Вы может завершить приложение - потому что возникшая
+        ошибка может повредить состояние приложения (какие-то его данные).
+        Однако цена такого поведения может привести к тому, что пользователь
+        потеряет свою последнюю выполненную работу - например открытые
+        документы.
+    </span>
+</p>
+<p style="padding-left: 30px;">
+    <span style="color: #800000;">"Глобальная"
+        обработка событий исключения для приложений WPF и Windows Forms
+        (Application.DispatcherUnhandledException и Application.ThreadException)
+        срабатывает только для исключений, выбрасываемых главным потоком UI. Вы
+        все еще должны вручную обработать исключения в своих рабочих потоках.
+        AppDomain.CurrentDomain.UnhandledException срабатывает только на любое
+        не обработанное исключение, однако не предоставляет средств для
+        предотвращения завершения приложения после возникновения такого
+        исключения.
+    </span>
+</p>
+<p>
+    Однако здесь есть некоторые случаи, когда Вам не нужно обрабатывать
+    исключения на рабочем потоке, потому что .NET Framework уже делает это
+    для Вас. Это рассматривается в других секциях этой документации:
+</p>
+<p>•&nbsp;Асинхронные делегаты (см. ниже)<br />
+    •&nbsp;<a href="http://www.albahari.com/threading/part3.aspx#_BackgroundWorker">BackgroundWorker</a><a href="http://www.albahari.com/threading/part3.aspx#_BackgroundWorker"><br />
+    </a>• <a href="http://www.albahari.com/threading/part5.aspx#_The_Parallel_Class">Task Parallel Library</a> (применяется к условиям)</p>
+<p>[<strong>Объединение потоков в пул (Thread Pooling)</strong>]</p>
+<p>
+    Всякий раз, когда Вы запускаете поток, несколько сотен микросекунд
+    тратятся на организацию таких вещей, как чистый приватный стек для
+    локальных переменных потока. Каждый поток также потребляет (по
+    умолчанию) около 1 мегабайта памяти. Пул потоков сокращает эти издержки
+    путем совместного использования потоков и переработки потоков
+    (recycling), позволяя многопоточности применяться очень гранулярно без
+    потери производительности. Особенно это полезно на многоядерных
+    процессорах, чтобы интенсивные вычисления выполнялись параллельно в
+    стиле "разделяй и властвуй".
+</p>
+<p>
+    Пул потоков также сохраняет контроль над общим количеством
+    одновременно работающих потоков. Слишком большое количество активных
+    потоков замедляют операционную систему административным бременем и
+    делает работу кэшей CPU не эффективной. При достижении предела задания
+    стоят в очереди и запускаются, только когда другие задачи завершились.
+    По такому принципу работают многие приложения наподобие веб-сервера.
+    Метод асинхронной маски (asynchronous method pattern) это продвинутая
+    техника, которая делает еще более эффективным применение пула потоков;
+    это описывается в главе 23 книжки "C# 4.0 in a Nutshell" [8].
+</p>
+<p>Есть несколько способов создать пул потоков:</p>
+<p>• С помощью библиотеки параллельных вычислений [6] (Task Parallel Library из Framework 4.0)<br />
+    • Вызовом ThreadPool.QueueUserWorkItem (см. ниже)<br />
+    • Через асинхронный делегат (asynchronous delegates, см. ниже)<br />
+    • Через BackgroundWorker [10]</p>
+<p style="padding-left: 30px;"><span style="color: #008080;">Следующие конструкции косвенно используют пул потоков:</span></p>
+<p style="padding-left: 30px;"><span style="color: #008080;">• WCF, Remoting, ASP.NET и серверы приложений ASMX Web Services</span><br />
+    <span style="color: #008080;">• <a href="http://www.albahari.com/threading/part3.aspx#_Multithreaded_Timers"><span style="color: #008080;">System.Timers.Timer и System.Threading.Timer</span></a><a href="http://www.albahari.com/threading/part3.aspx#_Multithreaded_Timers"><span style="color: #008080;"><br />
+    </span></a>• Framework-методы, которые оканчиваются на Async, такие как WebClient (<a href="http://www.albahari.com/threading/part3.aspx#_Event-Based_Asynchronous_Pattern"><span style="color: #008080;">event-based asynchronous pattern</span></a>) и большинство методов BeginXXX (asynchronous programming model pattern)</span><br />
+    <span style="color: #008080;">• PLINQ</span></p>
+<p>
+    Библиотеки Task Parallel Library (TPL) и PLINQ очень мощные и
+    высокоуровневые, Вы захотите использовать их, чтобы помочь в реализации
+    многопоточности, даже когда применение пула потока не важно. Это
+    подробно обсуждается в части 5 [11] этой документации; сейчас мы кратко
+    рассмотрим, как Вы можете использовать класс Task в качестве простого
+    средства выполнения делегата на потоке из пула.
+</p>
+<p style="padding-left: 30px;"><span style="color: #008080;">Есть некоторые вещи, которые меняются при использовании потоков в пуле:</span></p>
+<p style="padding-left: 30px;">
+    <span style="color: #008080;">• Вы не
+        можете установить имя Name для потока в пуле, что усложняет отладку
+        (хотя Вы можете прикрепить описание к потоку, когда делаете отладку в
+        среде Visual Studio. Просмотреть описание можно с помощью окна Threads).
+    </span>
+    <br />
+    <span style="color: #008080;">•
+        Потоки в пуле всегда работают как потоки background (см. выше, что
+        такое foreground и background потоки). Обычно это не составляет никакой
+        проблемы.
+    </span>
+    <br />
+    <span style="color: #008080;">• Блокировка [12]
+        потока в пуле может привести к дополнительной задержке по сравнению с
+        обычным запуском потоков, кроме случаев, когда Вы вызываете
+        ThreadPool.SetMinThreads (см. ниже "Оптимизация Thread Pool").
+    </span>
+</p>
+<p style="padding-left: 30px;">
+    <span style="color: #008080;">Вы можете
+        свободно менять приоритет для потоков в пуле - он будет восстановлен к
+        нормальному приоритету, когда поток освобождается обратно в пул.
+    </span>
+</p>
+<p>Через свойство Thread.CurrentThread.IsThreadPoolThread Вы можете опросить, выполняется ли текущий код на потоке из пула.</p>
+<p>
+    <strong>Вход в Thread Pool через TPL</strong>. Вы можете просто войти
+    в пул потоков с использованием классов Task (см. Task Parallelism в
+    [11]) из библиотеки TPL (Task Parallel Library). Классы Task были
+    представлены в Framework 4.0: если Вы знакомы с более старыми
+    конструкциями, рассмотрите замену nongeneric-класса Task для
+    ThreadPool.QueueUserWorkItem, и замену generic-класса Task &lt; TResult
+    &gt; для асинхронных делегатов. Новые конструкции работают быстрее,
+    более удобные и гибкие, чем старые.
+</p>
+<p>Для использования nongeneric-класса Task вызовите Task.Factory.StartNew с передачей делегата целевого метода:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+    <pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Main</span>()   <span style="color: #408080; font-style: italic;">// Класс Task в System.Threading.Tasks</span>
+{
+   Task.Factory.StartNew (Go);
+}
+ </pre>
+    <pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Go</span>()
+{
+   Console.WriteLine (<span style="color: #ba2121;">"Привет из пула потоков!"</span>);
+}
+</pre>
+</div>
+<p>
+    Task.Factory.StartNew вернет объект Task, который Вы можете применять
+    для мониторинга задачи - например, Вы можете ждать его завершения с
+    помощью метода Wait.
+</p>
+<p style="padding-left: 30px;">
+    <span style="color: #008080;">Любые не
+        обработанные исключения удобно перебрасываются потоку хоста, когда Вы
+        вызываете метод Wait экземпляра класса Task (если Вы не вызвали Wait и
+        вместо этого забросили эту задачу, не обработанное исключение остановит
+        процесс приложения точно так же, как это происходит с обычным потоком).
+    </span>
+</p>
+<p>
+    Generic-класс Task &lt; TResult &gt; является подклассом
+    nongeneric-класса Task. Это позволяет Вам вернуть обратно значение из
+    задачи после её завершения. В следующем примере мы загружаем
+    веб-страницу с помощью использования Task &lt; TResult &gt;:
+</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+    <pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Main</span>()
+{
+    <span style="color: #408080; font-style: italic;">// Запуск выполнения задачи:</span>
+   Task&lt; <span style="color: #b00040;">string</span>&gt; task = Task.Factory.StartNew<span style="background-color: #ffff00;">&lt; <span style="color: #b00040;">string</span>&gt;</span>
+      ( () =&gt; DownloadString (<span style="color: #ba2121;">"http://www.linqpad.net"</span>) );
+ 
+    <span style="color: #408080; font-style: italic;">// Мы здесь можем заняться другой работой, которая будет выполняться параллельно:</span>
+   RunSomeOtherMethod();
+ 
+    <span style="color: #408080; font-style: italic;">// Когда нам нужно возвращенное значение из задачи, то опрашиваем её свойство Result:</span>
+    <span style="color: #408080; font-style: italic;">// если задаче все еще выполняется, текущий поток заблокируется (будет ждать)</span>
+    <span style="color: #408080; font-style: italic;">// до завершения работы задачи:</span>
+    <span style="color: #b00040;">string</span> result = <span style="background-color: #ffff00;">task.Result</span>;
+}
+ </pre>
+    <pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">static</span> <span style="color: #b00040;">string</span> <span style="color: #0000ff;">DownloadString</span> (<span style="color: #b00040;">string</span> uri)
+{
+    <span style="color: #008000; font-weight: bold;">using</span> (<span style="color: #b00040;">var</span> wc = <span style="color: #008000; font-weight: bold;">new</span> System.Net.WebClient())
+    <span style="color: #008000; font-weight: bold;">return</span> wc.DownloadString (uri);
+}
+</pre>
+</div>
+<p>
+    <span style="color: #808080;">Примечание: аргумент типа &lt;
+        string&gt; подсвечен желтым для ясности, он выводится компилятором
+        автоматически, если мы его опустили.
+    </span>
+</p>
+<p>
+    Любое не обработанное исключение автоматически перебрасывается, когда
+    Вы опрашиваете свойство Result, обернутое в AggregateException. Однако
+    если Вы не смогли опросить свойство Result (и не вызвали Wait), то любое
+    не обработанное исключение завершит процесс приложения.
+</p>
+<p>
+    Библиотека TPL имеет многие другие функции, которые в частности
+    полезны для задействования многоядерных процессоров. Продолжение
+    обсуждения TPL приведено в части 5 [11] этой документации.
+</p>
+<p>
+    <strong>Вход в пул потоков без TPL</strong>. Вы не можете
+    использовать TPL, если применяете более ранние версии .NET Framework (до
+    версии 4.0). Вместо этого Вы должны применить старые конструкции для
+    входа в пул потоков: ThreadPool.QueueUserWorkItem и асинхронные делегаты
+    (asynchronous delegates). Разница между ними в том, что асинхронные
+    делегаты позволяют Вам вернуть данные из потока. Асинхронные делегаты
+    также перенаправляют любые исключения обратно в вызывающий код.
+</p>
+<p><strong>QueueUserWorkItem</strong>. Для использования QueueUserWorkItem просто вызовите этот метод с делегатом, который хотите запустить в пуле потоков:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+    <pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Main</span>()
+{
+   ThreadPool.QueueUserWorkItem (Go);
+   ThreadPool.QueueUserWorkItem (Go, <span style="color: #666666;">123</span>);
+   Console.ReadLine();
+}</pre>
+    <pre style="margin: 0; line-height: 125%;">&nbsp;</pre>
+    <pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Go</span> (<span style="color: #b00040;">object</span> data)     <span style="color: #408080; font-style: italic;">// в первом вызове данные будут null.</span>
+{
+  Console.WriteLine (<span style="color: #ba2121;">"Привет из пула потоков! "</span> + data);
+}
+</pre>
+</div>
+<p>Результат работы этого примера:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #000000; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+    <pre style="margin: 0; line-height: 125%;"><span style="color: #ffffff;">Привет из пула потоков!
+Привет из пула потоков! 123
+</span></pre>
+</div>
+<p>
+    Целевой метод Go должен принять один аргумент типа object (чтобы
+    удовлетворить делегату WaitCallback). Это дает удобный способ передать
+    данные в метод, наподобие ParameterizedThreadStart. В отличие от Task,
+    QueueUserWorkItem не возвращает объект, чтобы помочь в последующем
+    управлении выполнением кода. Также Вы должны разобраться с исключениями в
+    целевом коде - не обработанные исключения прервут выполнение программы.
+</p>
+<p>
+    <strong>Асинхронные делегаты</strong>. ThreadPool.QueueUserWorkItem
+    не предоставляет простой механизм для возврата значений из потока после
+    того, как он завершил свою работу. Вовлечение асинхронного делегата
+    решает эту проблему, позволяя передать в обоих направлениях любое
+    количество типизованных аргументов. Кроме того, не обработанные
+    исключения на асинхронном делегате удобно перебрасываются в оригинальный
+    поток (или точнее потоку, который вызвал EndInvoke), и таким образом им
+    не нужна явная обработка исключений.
+</p>
+<p style="padding-left: 30px;">
+    <span style="color: #800000;">Не путайте
+        асинхронные делегаты с асинхронными методами (методами, начинающимися на
+        Begin или End, такими как File.BeginRead/File.EndRead). Асинхронные
+        методы снаружи следуют похожему протоколу, но они существуют, чтобы
+        решить намного более сложную проблему, которая описана в главе 23 книжки
+        "C# 4.0 in a Nutshell" [8].
+    </span>
+</p>
+<p>Покажем, как запустить рабочую задачу (worker task) через асинхронный делегат:</p>
+<p>
+    <strong>1</strong>. Инстанцируете делегата, нацеленного на метод,
+    который Вы хотите запустить параллельно (обычно один из предварительно
+    определенных делегатов Func).<br />
+    <strong>2</strong>. Вызовите
+    BeginInvoke с делегатом, сохранив его возвращенное значение
+    IAsyncResult. BeginInvoke немедленно вернет управление в вызывающий код.
+    Вы можете затем выполнять другие действия, пока поток работает в пуле.<br />
+    <strong>3</strong>. Когда Вам нужно получить результат, вызовите EndInvoke на делегате, переданном в сохраненном объекте IAsyncResult.
+</p>
+<p>
+    В следующем примере мы применяем вовлечение асинхронного делегата для
+    конкурентного выполнения вместе с главным потоком простого метода,
+    который вернет длину строки:
+</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+    <pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Main</span>()
+{
+   Func&lt; <span style="color: #b00040;">string</span>, <span style="color: #b00040;">int</span>&gt; method = Work;
+   IAsyncResult cookie = method.BeginInvoke (<span style="color: #ba2121;">"test"</span>, <span style="color: #008000; font-weight: bold;">null</span>, <span style="color: #008000; font-weight: bold;">null</span>);
+    <span style="color: #408080; font-style: italic;">//</span>
+    <span style="color: #408080; font-style: italic;">// ... здесь мы можем параллельно выполнять другую работу ...</span>
+    <span style="color: #408080; font-style: italic;">//</span>
+    <span style="color: #b00040;">int</span> result = method.EndInvoke (cookie);
+   Console.WriteLine (<span style="color: #ba2121;">"Длина строки: "</span> + result);
+}
+ </pre>
+    <pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">static</span> <span style="color: #b00040;">int</span> <span style="color: #0000ff;">Work</span> (<span style="color: #b00040;">string</span> s) { <span style="color: #008000; font-weight: bold;">return</span> s.Length; }
+</pre>
+</div>
+<p>
+    <strong>EndInvoke</strong> делает три вещи. Во-первых, он ждет
+    завершения выполнения асинхронного делегата, если этого еще не
+    произошло. Во-вторых, он получает возвращенное значение(как и любые
+    параметры ref или out). В-третьих, он выбрасывает любое не обработанное
+    исключение работающего потока обратно в вызывающий поток.
+</p>
+<p style="padding-left: 30px;">
+    <span style="color: #800000;">Если метод,
+        который Вы вызвали с асинхронным делегатом, не имеет возвращаемого
+        значения, то Вы все еще (технически) обязаны вызвать EndInvoke. На
+        практике этот момент открыт для дебатов; нет никакой специальной полиции
+        EndInvoke, чтобы применить административные санкции к отсутствию
+        вызова. Однако если Вы выбрали путь не вызывать EndInvoke, то следует
+        рассмотреть обработку исключения в работающем методе делегата, чтобы
+        избежать тихих отказов.
+    </span>
+</p>
+<p>
+    Вы также можете указать делегат функции обратного вызова (callback),
+    когда вызываете BeginInvoke - метод принимает объект IAsyncResult,
+    который будет автоматически вызван при завершении. Это позволяет
+    инициирующему запуск задачи потоку "забыть" про асинхронный делегат, но
+    это требует дополнительной работы в функции callback:
+</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+    <pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Main</span>()
+{
+   Func&lt; <span style="color: #b00040;">string</span>, <span style="color: #b00040;">int</span>&gt; method = Work;
+   method.BeginInvoke (<span style="color: #ba2121;">"test"</span>, Done, method);
+    <span style="color: #408080; font-style: italic;">// ...</span>
+    <span style="color: #408080; font-style: italic;">//</span>
+}</pre>
+    <pre style="margin: 0; line-height: 125%;">&nbsp;</pre>
+    <pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">static</span> <span style="color: #b00040;">int</span> <span style="color: #0000ff;">Work</span> (<span style="color: #b00040;">string</span> s) { <span style="color: #008000; font-weight: bold;">return</span> s.Length; }</pre>
+    <pre style="margin: 0; line-height: 125%;">&nbsp;</pre>
+    <pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Done</span> (IAsyncResult cookie)
+{
+    <span style="color: #b00040;">var</span> target = (Func&lt; <span style="color: #b00040;">string</span>, <span style="color: #b00040;">int</span>&gt;) cookie.AsyncState;
+    <span style="color: #b00040;">int</span> result = target.EndInvoke (cookie);
+   Console.WriteLine (<span style="color: #ba2121;">"Длина строки равна: "</span> + result);
+}
+</pre>
+</div>
+<p>
+    <strong>Оптимизация Thread Pool</strong>. Пул потоков стартует с
+    одним потоком в этом пуле. При назначении задачи менеджер пула
+    "инжектирует" новые потоки, чтобы справиться с дополнительной
+    параллельно работающей полезной нагрузкой, пока не будет достигнут
+    определенный максимальный предел. После значительного периода отсутствия
+    активности менеджер пула может "удалять" потоки, если есть подозрение,
+    что это приведет к улучшению производительности.
+</p>
+<p>
+    Вы можете установить верхний предел потоков, которые создаст пул,
+    путем вызова ThreadPool.SetMaxThreads; значения по умолчанию следующие:
+</p>
+<p>• 1023 для Framework 4.0, 32-bit environment<br />
+    • 32768 для Framework 4.0, 64-bit environment<br />
+    • 250 на ядро для Framework 3.5<br />
+    • 25 на ядро для Framework 2.0</p>
+<p>
+    Эти значения могут меняться в соответствии с разной аппаратурой и
+    разными версиями операционной системы. Причина в том, что нужно
+    гарантировать для завершения работы, чтобы некоторые потоки были
+    заблокированы (находились в приостановленном состоянии в ожидании некого
+    условия, такого как ответ от другого сетевого компьютера).
+</p>
+<p>
+    Также Вы можете задать нижний лимит путем вызова
+    ThreadPool.SetMinThreads. Роль нижнего предела более тонкая: это
+    продвинутая техника оптимизации, которая инструктирует менеджер пула не
+    задерживать вовлечение потоков, пока не будет достигнут нижний предел.
+    Повышение минимального количества потоков улучшает конкурентное
+    выполнение, когда есть заблокированные потоки.
+</p>
+<p style="padding-left: 30px;">
+    <span style="color: #008080;">Нижний
+        предел по умолчанию равен одному потоку на ядро процессора - такой
+        минимум позволяет реализовать полную загрузку CPU. Однако в рабочем
+        окружении сервера (таком как ASP.NET, работающем в IIS), нижний предел
+        обычно намного выше - 50 или еще больше.
+    </span>
+</p>
+<p></p>
+<div class="spoiler" id="1_spoiler">
+    <input type="hidden" class="opened" value="0" />
+    <div class="sp-head folded" id="1-sp-head">
+        <div class="sp-head-click" id="1-sp-head-click"><a href="javascript:void(0)">Как работает Minimum Thread Count</a></div>
+    </div>
+    <div style="margin: 0px; position: static; overflow: hidden; height: 0px;">
+        <div class="sp-body" id="1-sp-body" style="margin: -553px 0px 0px;">
+            <p></p>
+            <p>
+                Повышение минимума количества потоков до x в действительности не
+                создает принудительно x потоков, потоки все равно создаются только по
+                запросу. Вместо этого повышение минимума инструктирует менеджер пула
+                немедленно создать до x потоков, если это необходимо. Тогда встает
+                вопрос - почему, если не повышать минимум, добавляется задержка при
+                создании потоков, когда необходимо их создание?
+            </p>
+            <p>
+                Ответ должен воспрепятствовать ситуации, когда короткий, не долго
+                выполняемый пакет вызовет полное выделение ресурсов для потоков внезапно
+                увеличив потребление памяти приложением. Для иллюстрации рассмотрим
+                четырехядерный компьютер, на котором работает клиентское приложение,
+                которое сразу ставит в очередь 40 задач. Если каждая задача выполняет
+                вычисление за 10 мс, то все вычисления будут завершены примерно за
+                больше чем 100 мс, если предположить, что работа будет разделена между 4
+                ядрами. Идеально мы хотели бы запустить эти 40 задач точно в 4 потоках:
+            </p>
+            <p>• Если потоков будет меньше, то не будут максимально использоваться все 4 ядра.<br />
+                • Если больше, то будет зря тратиться память и время CPU на создание ненужных потоков.</p>
+            <p>
+                Это точное описание работы пула потоков. Соответствие количества
+                потоков количеству ядер позволяет программе сохранить минимальное
+                потребление памяти без снижения производительности - пока потоки
+                используются эффективно (что имеет место в случае пула).
+            </p>
+            <p>
+                Однако предположим теперь, что вместо выполнения работы за 10 мс
+                каждая задача опрашивает сеть Интернет, ожидая полсекунды ответа, пока
+                локальный CPU простаивает. Стратегия экономии для потоков у менеджера
+                пула рушится; теперь уже лучше создать больше потоков, поскольку все
+                запросы к Интернет могут происходить одновременно.
+            </p>
+            <p>
+                К счастью, у менеджера пула есть запасной план. Если его очередь
+                стабильна в течение времени больше 0.5 секунды, он отвечает на это
+                созданием дополнительных потоков - по одному на каждые полсекунды - по
+                того предела, пока не будет достигнута емкость пула потоков.
+            </p>
+            <p>
+                Полусекундная задержка это палка о двух концах. С одной стороны, это
+                не приведет к тому, что одиночный пакет краткого действия внезапно
+                заставит программу сразу выделить 40 мегабайт (или больше) памяти. С
+                другой стороны, это вводит нежелательную задержку, когда блокируется
+                поток из пула, как в случае запроса к базе данных или вызова
+                WebClient.DownloadFile. По этой причине Вы можете указать менеджеру пула
+                не выполнять задержку при выделении первых x потоков путем вызова
+                SetMinThreads, например:
+            </p>
+            <!-- HTML generated using hilite.me -->
+            <div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+                <pre style="margin: 0; line-height: 125%;">ThreadPool.SetMinThreads (<span style="color: #666666;">50</span>, <span style="color: #666666;">50</span>);
+</pre>
+            </div>
+            <p>
+                <span style="color: #808080;">Примечание: второе значение показывает,
+                    сколько потоков назначать на порты завершения (I/O completion ports),
+                    которые используются на платформе APM (описывается в главе 23 книжки "C#
+                    4.0 in a Nutshell" [8].
+                </span>
+            </p>
+            <p>Значение по умолчанию - один поток на ядро.</p>
+            <p></p>
+        </div>
+    </div>
+</div>
+<p></p>
+<p>[<strong>Ссылки</strong>]</p>
+<p><strong>1</strong>. Threading in C# PART 1: GETTING STARTED site:albahari.com.<br />
+    <strong>2</strong>. <a href="http://microsin.net/programming/pc/static-in-csharp.html">Ключевое слово static на языке C#</a>.<br />
+    <strong>3</strong>. <a href="http://microsin.net/programming/pc/threading-in-csharp-part-2-basic-synchronization.html#ThreadSafety">Безопасность потоков (Thread Safety)</a>.<br />
+    <strong>4</strong>. <a href="http://microsin.net/programming/pc/threading-in-csharp-part-2-basic-synchronization.html#Locking">Блокировка (Locking)</a>.<br />
+    <strong>5</strong>. The .NET Programmer’s Playground site:linqpad.net.<br />
+    <strong>6</strong>. <a href="http://microsin.net/programming/pc/threading-in-csharp-part-5-parallel-programming.html#ParallelClass">Класс Parallel</a>.<br />
+    <strong>7</strong>. <a href="http://microsin.net/programming/pc/threading-in-csharp-part-4-advanced-threading.html#Wait_and_Pulse">Обмен сигналами через Wait и Pulse</a>.<br />
+    <strong>8</strong>. C# 7.0 in a Nutshell site:albahari.com.<br />
+    <strong>9</strong>. <a href="http://microsin.net/programming/pc/csharp-exception-handling-best-practices.html">Как лучше всего обрабатывать исключения на C#</a>.<br />
+    <strong>10</strong>. <a href="http://microsin.net/programming/pc/threading-in-csharp-part-3-using-threads.html#BackgroundWorker">BackgroundWorker</a>.<br />
+    <strong>11</strong>. <a href="http://microsin.net/programming/pc/threading-in-csharp-part-5-parallel-programming.html">Потоки на C#. Часть 5: параллельное программирование</a>.<br />
+    <strong>12</strong>. <a href="http://microsin.net/programming/pc/threading-in-csharp-part-2-basic-synchronization.html#Blocking">Что такое блокировка</a>.<br />
+    <strong>13</strong>. <a href="http://microsin.net/programming/pc/threading-in-csharp-part-2-basic-synchronization.html">Потоки на C#. Часть 2: основы синхронизации</a>.</p>
+                                                                    </td>
+                                                                </tr>
+
+                                                            </tbody>
+                                                        </table>
+                                                        <span class="article_separator">&nbsp;</span>
+                                                        <script type="text/javascript">
+<!--
+    var jcomments = new JComments(2248, 'com_content', '/index.php?option=com_jcomments&amp;tmpl=component');
+    jcomments.setList('comments-list');
+                                                            //-->
+                                                        </script>
+                                                    </div>
+                                                    <!-- Bottom Modules -->
+                                                </td>
+                                                <!-- RIGHT Modules -->
+
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <img src="%D0%9F%D0%BE%D1%82%D0%BE%D0%BA%D0%B8%20%D0%BD%D0%B0%20C%23.%20%D0%A7%D0%B0%D1%81%D1%82%D1%8C%201_files/shad_bottom_left.gif" width="11" height="19" border="0" /></td>
+                <td width="100%" background="%D0%9F%D0%BE%D1%82%D0%BE%D0%BA%D0%B8%20%D0%BD%D0%B0%20C%23.%20%D0%A7%D0%B0%D1%81%D1%82%D1%8C%201_files/shad_bottom.gif">
+                    <table width="100%" cellspacing="0" cellpadding="0" border="0">
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <img src="%D0%9F%D0%BE%D1%82%D0%BE%D0%BA%D0%B8%20%D0%BD%D0%B0%20C%23.%20%D0%A7%D0%B0%D1%81%D1%82%D1%8C%201_files/shad_bottom_inner_left.gif" width="19" height="19" border="0" />
+                                </td>
+                                <td align="left"><a href="#top">
+                                    <img src="%D0%9F%D0%BE%D1%82%D0%BE%D0%BA%D0%B8%20%D0%BD%D0%B0%20C%23.%20%D0%A7%D0%B0%D1%81%D1%82%D1%8C%201_files/top_of_page.gif" alt="Top of Page" vspace="5" border="0" /></a></td>
+                                <td width="100%" align="right">
+                                    <!--���������������� ��� ���������� ������ "File does not exist:
+                                    /home/microsig/public_html/images/poweredbyLong.gif"<img src="/images/poweredbyLong.gif" width="169" height="8" vspace="5" border="0" alt="Powered by Mambo Open Source">-->
+                                </td>
+                                <td>
+                                    <img src="%D0%9F%D0%BE%D1%82%D0%BE%D0%BA%D0%B8%20%D0%BD%D0%B0%20C%23.%20%D0%A7%D0%B0%D1%81%D1%82%D1%8C%201_files/shad_bottom_inner_right.gif" width="19" height="19" border="0" />
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+
+
+</body>
+</html>

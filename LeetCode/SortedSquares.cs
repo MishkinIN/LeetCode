@@ -27,7 +27,7 @@ namespace LeetCode
             }
             if (nums.Length == 0)
             {
-                return new int[0];
+                return Array.Empty<int>();
             }
             if (nums.Length == 1)
                 return new int[] { nums[0] * nums[0] };

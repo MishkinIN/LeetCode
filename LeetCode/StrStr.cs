@@ -53,7 +53,10 @@ namespace LeetCode
 
         public static void ReverseString(char[] s) {
             char acc;
-            int left = 0, right = s.Length;
+
+            int right = s.Length;
+
+            int left;
             for (left = 0; left < right; left++) {
                 acc = s[left];
                 s[left] = s[--right];
@@ -177,7 +180,6 @@ namespace LeetCode
             if (s.Length > t.Length) {
                 return false;
             }
-            int charCount = s.Length;
             int[] chars = new int[26];
             foreach (var ch in s) {
                 chars[ch - 'a']++;

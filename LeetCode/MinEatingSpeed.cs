@@ -40,10 +40,8 @@ namespace LeetCode
             if (h==pilesLength) {
                 return (maxpile,1);
             }
-            int kMax = (int)Math.Min(maxpile, (totalBananas - pilesLength) / (h - pilesLength) + 1);
-            int kMin = (int)Math.Max(1, (totalBananas-pilesLength) / h);
-            int kmn = kMin;
-            int kmx = kMax;
+            int kMax = (int)System.Math.Min(maxpile, (totalBananas - pilesLength) / (h - pilesLength) + 1);
+            int kMin = (int)System.Math.Max(1, (totalBananas-pilesLength) / h);
             if (kMin==kMax) {
                 return (kMin, 1);
             }
@@ -84,10 +82,10 @@ namespace LeetCode
             int b = 0;
             foreach (int pile in piles) {
                 sum += pile;
-                b = Math.Max(b, pile);
+                b = System.Math.Max(b, pile);
             }
             int a = (int)((sum + h - 1) / h);
-            b = Math.Min(b, (int)((sum - piles.Length) / (h - piles.Length + 1)) + piles.Length);
+            b = System.Math.Min(b, (int)((sum - piles.Length) / (h - piles.Length + 1)) + piles.Length);
             int stepcount = 0;
 
             while (a < b) {

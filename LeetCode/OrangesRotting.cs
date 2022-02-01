@@ -32,8 +32,8 @@ namespace LeetCode
         public static int OrangesRotting(int[][] grid) {
             int m = grid.Length;
             int n = grid[0].Length;
-            HashSet<int> fresh = new HashSet<int>(m*n);
-            HashSet<int> rotten = new HashSet<int>(m*n);
+            HashSet<int> fresh = new(m*n);
+            HashSet<int> rotten = new (m*n);
             HashSet<int> vs;
             for (int i = 0; i < m; i++) {
                 for (int j = 0; j < n; j++) {

@@ -57,14 +57,14 @@ namespace LeetCode
                     if ((maxCenterDist + 1) / 2 > i)
                     {
                         dist = (maxCenterDist + 1) / 2;
-                        return Math.Max(dist, rightDist);
+                        return System.Math.Max(dist, rightDist);
                     }
                     dist = 0;
                 }
                 else
                     dist++;
             }
-            return Math.Max(dist, Math.Max((maxCenterDist + 1) / 2, rightDist));
+            return System.Math.Max(dist, System.Math.Max((maxCenterDist + 1) / 2, rightDist));
         }
 
     }

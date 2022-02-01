@@ -1,11 +1,23 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.32002.261
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32112.339
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LeetCode.net5", "LeetCode\LeetCode.net5.csproj", "{47D90D84-E126-43A8-9FA5-5DEB5D067A9C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LeecCode.net5.Test", "LeecCode.Test\LeecCode.net5.Test.csproj", "{BF8BF26A-F4B6-412E-8F93-E6B1F9553034}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Concurrency", "Concurrency\Concurrency.csproj", "{7A3ECA20-9053-4C28-91D6-B0BD30036513}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{045AECAB-710F-43E9-8BDD-EAD0ED133939}"
+	ProjectSection(SolutionItems) = preProject
+		Docs\TAP.docx = Docs\TAP.docx
+		Docs\Потоки на C#. Часть 1.html = Docs\Потоки на C#. Часть 1.html
+		Docs\Потоки на C#. Часть 2.html = Docs\Потоки на C#. Часть 2.html
+		Docs\Потоки на C#. Часть 3.html = Docs\Потоки на C#. Часть 3.html
+		Docs\Потоки на C#. Часть 4.html = Docs\Потоки на C#. Часть 4.html
+		Docs\Потоки на C#. Часть 5.html = Docs\Потоки на C#. Часть 5.html
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +33,10 @@ Global
 		{BF8BF26A-F4B6-412E-8F93-E6B1F9553034}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BF8BF26A-F4B6-412E-8F93-E6B1F9553034}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BF8BF26A-F4B6-412E-8F93-E6B1F9553034}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7A3ECA20-9053-4C28-91D6-B0BD30036513}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7A3ECA20-9053-4C28-91D6-B0BD30036513}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7A3ECA20-9053-4C28-91D6-B0BD30036513}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7A3ECA20-9053-4C28-91D6-B0BD30036513}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

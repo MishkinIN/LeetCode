@@ -112,7 +112,7 @@ namespace LeetCode
     1 <= Node.val <= 100
 
          */
-        public ListNode MiddleNode(ListNode head) {
+        public static ListNode MiddleNode(ListNode head) {
             ListNode middle = head, last = head.next;
             if (last == null) {
                 return head;
@@ -135,7 +135,7 @@ namespace LeetCode
     1 <= n <= sz
 
          */
-        public ListNode RemoveNthFromEnd(ListNode head, int n) {
+        public static ListNode RemoveNthFromEnd(ListNode head, int n) {
             var last = head;
             for (int i = 0; i < n; i++) {
                 last = last.next;

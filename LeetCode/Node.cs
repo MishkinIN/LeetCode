@@ -73,11 +73,10 @@ namespace LeetCode
             Queue<Node> nextLevel = new ();
             if (vals == null || vals.Length == 0 || !vals[0].HasValue)
                 return null;
-            Node root = new Node(vals[0].Value), node = default, left, right;
+            Node root = new(vals[0].Value);
 
             currentLevel.Enqueue(root);
             int i = 1;
-            int? val = null;
             while (i < vals.Length) {
                 if (currentLevel.Count == 0) {
                     if (nextLevel.Count == 0) {
@@ -88,10 +87,10 @@ namespace LeetCode
                     nextLevel = sw;
                 }
                 else {
-                    node = currentLevel.Dequeue();
-                    val = vals[i++];
+                    var node = currentLevel.Dequeue();
+                    int? val = vals[i++];
                     if (val.HasValue) {
-                        left = new Node(val.Value);
+                        var left = new Node(val.Value);
                         nextLevel.Enqueue(left);
                         node.left = left;
                     }
@@ -99,7 +98,7 @@ namespace LeetCode
                         break;
                     val = vals[i++];
                     if (val.HasValue) {
-                        right = new Node(val.Value);
+                        var right = new Node(val.Value);
                         nextLevel.Enqueue(right);
                         node.right = right;
                     }

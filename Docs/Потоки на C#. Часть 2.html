@@ -1,0 +1,2206 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru-ru" lang="ru-ru"><head>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-149136603-1');
+</script>
+  
+  <!-- base href="http://microsin.net/programming/pc/threading-in-csharp-part-2-basic-synchronization.html" -->
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="robots" content="index, follow">
+  <meta name="keywords" content="C#, thread, synchronization">
+  
+  <meta name="author" content="microsin">
+  <meta name="description" content="Описание основ синхронизации потоков на C#.">
+  
+  <title>Потоки на C#. Часть 2: основы синхронизации | pc | programming</title>
+  <link href="http://microsin.net/component/option,com_jcomments/format,raw/object_group,com_content/object_id,2249/task,rss/" rel="alternate" type="application/rss+xml" title="Потоки на C#. Часть 2: основы синхронизации">
+  <link rel="stylesheet" href="%D0%9F%D0%BE%D1%82%D0%BE%D0%BA%D0%B8%20%D0%BD%D0%B0%20C%23.%20%D0%A7%D0%B0%D1%81%D1%82%D1%8C%202_files/style.css" type="text/css">
+  <link rel="stylesheet" href="%D0%9F%D0%BE%D1%82%D0%BE%D0%BA%D0%B8%20%D0%BD%D0%B0%20C%23.%20%D0%A7%D0%B0%D1%81%D1%82%D1%8C%202_files/spoiler.css" type="text/css">
+  <link rel="stylesheet" href="%D0%9F%D0%BE%D1%82%D0%BE%D0%BA%D0%B8%20%D0%BD%D0%B0%20C%23.%20%D0%A7%D0%B0%D1%81%D1%82%D1%8C%202_files/acesearch.css" type="text/css">
+  <style type="text/css">
+    <!--
+
+    .sp-head-click a{font-size: 11px; font-style: normal; color: #000000 !important; }
+	.sp-head{border: 0px #ccc solid; font-weight: bold;
+            -webkit-border-radius: 8px;
+            -moz-border-radius: 8px;
+            -khtml-border-radius: 8px;
+            border-radius: 8px;
+            width: 85%;
+            background-color: #f0f0f0;
+            text-shadow: 0 -1px 1px rgba(0,0,0,0.25);
+            box-shadow: 0 0 5px rgba(0,0,0,0.6);
+            -moz-box-shadow: 0 0 5px rgba(0,0,0,0.6);
+	        -webkit-box-shadow: 0 0 5px rgba(0,0,0,0.6);
+	        }
+	.sp-body{font-size: 11px; font-weight: normal; background: #FFFDDD; border: 1px #ccc solid; 
+	-webkit-border-radius: 7px;
+	-moz-border-radius: 7px;
+	-khtml-border-radius: 7px;
+	border-radius: 7px;
+	width: 95%;
+	font-style: italic;
+	padding: 10px}	
+	
+    -->
+  </style>
+  
+  
+  
+  
+  
+  
+  
+  
+  <script type="text/javascript">
+
+                        var pb_sp_conf = {
+                            revealtype: "click",
+                            mouseoverdelay: 200,
+                            collapseprev: 0,
+                            onemustopen: 0,
+                            animatedefault: 0,
+                            animatespeed: 400
+                        };
+  </script>
+  <script language="JavaScript" type="text/javascript"><!-- // --><![CDATA[
+				function pr_setup() {
+					xajaxRequestUri='http://microsin.net/index.php?option=com_proofreader&task=sendmistake&tmpl=component';
+					xajaxWaitCursor=true;
+					xajaxDefinedPost=1;
+					xajaxDebug=false;
+					xajaxStatusMessages=false;
+					xajaxDefinedGet=0;
+				}
+
+			var xajaxRequestUri='http://microsin.net/index.php?option=com_proofreader&task=sendmistake&tmpl=component';
+			var xajaxWaitCursor=true;
+			var xajaxDefinedPost=1;
+			var xajaxDebug=false;
+			var xajaxStatusMessages=false;
+			var xajaxDefinedGet=0;
+
+			function addEventPR(obj, evType, fn){ 
+				 if (obj.addEventListener){ 
+					obj.addEventListener(evType, fn, false); 
+					return true; 
+				} else if (obj.attachEvent){
+					var r = obj.attachEvent("on"+evType, fn); 
+					return r; 
+				} else { 
+					return false; 
+				} 
+			}
+
+		 var pr_alt = false;  var pr_shift = true;  var pr_ctrl = false; 
+				var PReader_cur_page = "http://microsin.net/index.php?option=com_content&Itemid=44&catid=24&id=2249&lang=ru&view=article";
+				addEventPR(window, 'load',  addDivWindow);
+				addEventPR(window, 'load',  keyPressInit);
+			// ]]></script>
+  <script type="text/javascript">
+/*<![CDATA[*/
+	var jax_live_site = 'http://microsin.net/index.php';
+	var jax_site_type = '1.5';
+/*]]>*/
+</script>
+  <link rel="stylesheet" type="text/css" href="%D0%9F%D0%BE%D1%82%D0%BE%D0%BA%D0%B8%20%D0%BD%D0%B0%20C%23.%20%D0%A7%D0%B0%D1%81%D1%82%D1%8C%202_files/style_002.css">
+<link rel="stylesheet" type="text/css" href="%D0%9F%D0%BE%D1%82%D0%BE%D0%BA%D0%B8%20%D0%BD%D0%B0%20C%23.%20%D0%A7%D0%B0%D1%81%D1%82%D1%8C%202_files/comment_style.css">
+
+<script type="text/javascript">
+/*<![CDATA[*/
+var jc_option           = "";
+var jc_autoUpdate       = "0";
+var jc_update_period    = 300*1000;
+var jc_orderBy          = "1";
+var jc_livesite_busyImg = "http://microsin.net/components/com_jomcomment/busy.gif";
+var jc_username         = "";
+var jc_email            = "";
+var jc_commentForm;
+/*]]>*/
+</script>
+
+<link rel="stylesheet" href="%D0%9F%D0%BE%D1%82%D0%BE%D0%BA%D0%B8%20%D0%BD%D0%B0%20C%23.%20%D0%A7%D0%B0%D1%81%D1%82%D1%8C%202_files/system.css" type="text/css">
+<link rel="stylesheet" href="%D0%9F%D0%BE%D1%82%D0%BE%D0%BA%D0%B8%20%D0%BD%D0%B0%20C%23.%20%D0%A7%D0%B0%D1%81%D1%82%D1%8C%202_files/general.css" type="text/css">
+<link rel="stylesheet" href="%D0%9F%D0%BE%D1%82%D0%BE%D0%BA%D0%B8%20%D0%BD%D0%B0%20C%23.%20%D0%A7%D0%B0%D1%81%D1%82%D1%8C%202_files/template_css.css" type="text/css">
+<!-- <link rel="shortcut"   href="/templates/microsin/images/favicon16x16-8b.gif" type="image/x-icon"/> -->
+<link rel="shortcut icon" href="http://microsin.net/templates/microsin/images/favicon16x16-8b.gif">
+<meta http-equiv="Content-Language" content="en"><style type="text/css" id="ya_share_style">.b-share-popup-wrap{z-index:1073741823;position:absolute;width:500px}.b-share-popup{position:absolute;z-index:1073741823;border:1px solid #888;background:#FFF;color:#000}.b-share-popup-wrap .b-share-popup_down{top:0}.b-share-popup-wrap .b-share-popup_up{bottom:0}.b-share-popup-wrap_state_hidden{position:absolute!important;top:-9999px!important;right:auto!important;bottom:auto!important;left:-9999px!important;visibility:hidden!important}.b-share-popup,x:nth-child(1){border:0;padding:1px!important}@media all and (resolution=0){.b-share-popup,x:nth-child(1),x:-o-prefocus{padding:0!important;border:1px solid #888}}.b-share-popup__i{display:-moz-inline-box;display:inline-block;padding:5px 0!important;overflow:hidden;vertical-align:top;white-space:nowrap;visibility:visible;background:#FFF;-webkit-box-shadow:0 2px 9px rgba(0,0,0,.6);-moz-box-shadow:0 2px 9px rgba(0,0,0,.6);box-shadow:0 2px 9px rgba(0,0,0,.6)}.b-share-popup__item{font:1em/1.25em Arial,sans-serif;display:block;padding:5px 15px!important;white-space:nowrap;background:#FFF}.b-share-popup__item,a.b-share-popup__item:link,a.b-share-popup__item:visited{text-decoration:none!important;border:0!important}a.b-share-popup__item{cursor:pointer}a.b-share-popup__item .b-share-popup__item__text{display:inline;text-decoration:underline;color:#1A3DC1}a.b-share-popup__item:hover{word-spacing:0}a.b-share-popup__item:hover .b-share-popup__item__text{color:red;cursor:pointer}.b-share-popup__icon{display:-moz-inline-box;display:inline-block;margin:-3px 0 0;padding:0 5px 0 0!important;vertical-align:middle}.b-share-popup__icon_input{width:21px;height:16px;margin-top:-6px;padding:0!important}.b-share-popup__icon__input{margin-right:0;margin-left:2px;vertical-align:top}.b-share-popup__spacer{display:block;padding-top:10px!important}.b-share-popup__header{font:86%/1em Verdana,sans-serif;display:block;padding:10px 15px 5px!important;color:#999}.b-share-popup__header_first{padding-top:5px!important}.b-share-popup__input{font:86%/1em Verdana,sans-serif;display:block;padding:5px 15px!important;color:#999;text-align:left}.b-share-popup__input__input{font:1em/1em Verdana,sans-serif;display:block;width:10px;margin:5px 0 0;-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;resize:none;text-align:left;direction:ltr}.b-share-popup_down .b-share-popup_with-link .b-share-popup__input_link{position:absolute;top:5px;right:0;left:0}.b-share-popup_up .b-share-popup_with-link .b-share-popup__input_link{position:absolute;right:0;bottom:5px;left:0}.b-share-popup_down .b-share-popup_with-link{padding-top:55px!important}.b-share-popup_up .b-share-popup_with-link{padding-bottom:55px!important}.b-share-popup_down .b-share-popup_expandable .b-share-popup__main{padding-bottom:25px!important}.b-share-popup_up .b-share-popup_expandable .b-share-popup__main{padding-top:25px!important}.b-share-popup_down .b-share-popup_yandexed{padding-bottom:10px!important}.b-share-popup_up .b-share-popup_yandexed{padding-top:10px!important}.b-share-popup__yandex{position:absolute;right:4px;bottom:2px;font:78.125%/1em Verdana,sans-serif;padding:3px!important;background:0 0}a.b-share-popup__yandex:link,a.b-share-popup__yandex:visited{color:#C6C5C5;text-decoration:none}a.b-share-popup__yandex:link:hover,a.b-share-popup__yandex:visited:hover{color:red;text-decoration:underline}.b-share-popup_up .b-share-popup__yandex{top:2px;bottom:auto}.b-share-popup_expandable .b-share-popup__yandex{right:auto;left:4px}.b-share-popup_to-right .b-share-popup_expandable .b-share-popup__yandex{right:4px;left:auto}.b-share-popup__expander .b-share-popup__item{position:absolute;bottom:5px;font:86%/1em Verdana,sans-serif;margin:10px 0 0;padding:5px 10px!important;cursor:pointer;color:#999;background:0 0}.b-share-popup_to-right,.b-share-popup_to-right .b-share-popup__expander{direction:rtl}.b-share-popup_to-right .b-share-popup__expander .b-share-popup__icon{padding:0 0 0 5px!important}.b-share-popup_up .b-share-popup__expander .b-share-popup__item{top:-5px;bottom:auto}.b-share-popup__expander .b-share-popup__item:hover .b-share-popup__item__text{text-decoration:underline}.b-share-popup__expander .b-ico_action_rarr,.b-share-popup_to-right .b-share-popup__expander .b-ico_action_larr,.b-share-popup_full .b-share-popup__expander .b-ico_action_larr,.b-share-popup_to-right .b-share-popup_full .b-share-popup__expander .b-ico_action_rarr,.b-share-popup__expander .b-share-popup__item__text_collapse,.b-share-popup_full .b-share-popup__item__text_expand{display:none}.b-share-popup_to-right .b-share-popup__expander .b-ico_action_rarr,.b-share-popup_full .b-share-popup__item__text_collapse,.b-share-popup_full .b-share-popup__expander .b-ico_action_rarr,.b-share-popup_to-right .b-share-popup_full .b-share-popup__expander .b-ico_action_larr{display:inline}.b-ico_action_rarr,.b-ico_action_larr{width:8px;height:7px;border:0}.b-share-popup__main,.b-share-popup__extra{direction:ltr;vertical-align:bottom;text-align:left}.b-share-popup_down .b-share-popup__main,.b-share-popup_down .b-share-popup__extra{vertical-align:top}.b-share-popup__main{display:-moz-inline-stack;display:inline-block}.b-share-popup__extra{display:none;margin:0 -10px 0 0}.b-share-popup_full .b-share-popup__extra{display:-moz-inline-stack;display:inline-block}.b-share-popup_to-right .b-share-popup__extra{margin:0 0 0 -10px}.b-share-popup__tail{position:absolute;width:21px;height:10px;margin:0 0 0 -11px}.b-share-popup_down .b-share-popup__tail{top:-10px;background:url("//yastatic.net/share/static/b-share-popup_down__tail.gif") 0 0 no-repeat}.b-share-popup_up .b-share-popup__tail{bottom:-10px;background:url("//yastatic.net/share/static/b-share-popup_up__tail.gif") 0 0 no-repeat}.b-share-popup_down .b-share-popup__tail,x:nth-child(1){top:-9px;background-image:url("//yastatic.net/share/static/b-share-popup_down__tail.png")}.b-share-popup_up .b-share-popup__tail,x:nth-child(1){bottom:-9px;background-image:url("//yastatic.net/share/static/b-share-popup_up__tail.png")}@media all and (resolution=0){.b-share-popup_down .b-share-popup__tail,x:nth-child(1),x:-o-prefocus{top:-10px;background-image:url("//yastatic.net/share/static/b-share-popup_down__tail.gif")}.b-share-popup_up .b-share-popup__tail,x:nth-child(1),x:-o-prefocus{bottom:-10px;background-image:url("//yastatic.net/share/static/b-share-popup_up__tail.gif")}}.b-share-popup .b-share-popup_show_form_mail,.b-share-popup .b-share-popup_show_form_html{padding:0!important}.b-share-popup .b-share-popup_show_form_mail .b-share-popup__main,.b-share-popup .b-share-popup_show_form_html .b-share-popup__main,.b-share-popup .b-share-popup_show_form .b-share-popup__main,.b-share-popup .b-share-popup_show_form_mail .b-share-popup__extra,.b-share-popup .b-share-popup_show_form_html .b-share-popup__extra,.b-share-popup .b-share-popup_show_form .b-share-popup__extra{height:15px;padding:0!important;overflow:hidden;visibility:hidden}.b-share-popup_show_form_mail .b-share-popup__expander,.b-share-popup_show_form_html .b-share-popup__expander,.b-share-popup_show_form .b-share-popup__expander,.b-share-popup_show_form_mail .b-share-popup__input_link,.b-share-popup_show_form_html .b-share-popup__input_link,.b-share-popup_show_form .b-share-popup__input_link{display:none}.b-share-popup__form{position:relative;display:none;overflow:hidden;padding:5px 0 0!important;margin:0 0 -15px;white-space:normal}.b-share-popup_show_form_mail .b-share-popup__form_mail,.b-share-popup_show_form_html .b-share-popup__form_html,.b-share-popup_show_form .b-share-popup__form{display:block}.b-share-popup__form__link{padding:5px!important;margin:0 0 5px 10px;text-decoration:underline;cursor:pointer;color:#1A3DC1}.b-share-popup__form__link,.b-share-popup__form__button{font:86%/1.4545em Verdana,sans-serif;float:left;display:inline}.b-share-popup__form__button{margin:5px 0 0 15px}.b-share-popup__form__close{font:86%/1.4545em Verdana,sans-serif;float:right;display:inline;padding:5px!important;margin:0 10px 5px 0;cursor:pointer;color:#999}a.b-share-popup__form__link:hover,a.b-share-popup__form__close:hover{text-decoration:underline;color:red}.b-share-popup_font_fixed .b-share-popup__item{font-size:12.8px}.b-share-popup_font_fixed .b-share-popup__header,.b-share-popup_font_fixed .b-share-popup__input,.b-share-popup_font_fixed .b-share-popup__expander .b-share-popup__item,.b-share-popup_font_fixed .b-share-popup__form__link,.b-share-popup_font_fixed .b-share-popup__form__button,.b-share-popup_font_fixed .b-share-popup__form__close{font-size:11px}.b-share-popup_font_fixed .b-share-popup__yandex{font-size:10px}.b-share-form-button{font:86%/17px Verdana,Arial,sans-serif;display:-moz-inline-box;display:inline-block;position:relative;height:19px;margin:0 3px;padding:0 4px;cursor:default;white-space:nowrap;text-decoration:none!important;color:#000!important;border:none;outline:none;background:url("//yastatic.net/share/static/b-share-form-button.png") 0 -20px repeat-x}.b-share-form-button:link:hover,.b-share-form-button:visited:hover{color:#000!important}.b-share-form-button__before,.b-share-form-button__after{position:absolute;width:3px;height:19px;background:url("//yastatic.net/share/static/b-share-form-button.png")}.b-share-form-button__before{margin-left:-7px}.b-share-form-button__after{margin-left:4px;background-position:-3px 0}.b-share-form-button::-moz-focus-inner{border:none}button.b-share-form-button .b-share-form-button__before,button.b-share-form-button .b-share-form-button__after{margin-top:-1px}@-moz-document url-prefix(){button.b-share-form-button .b-share-form-button__after{margin-top:-2px;margin-left:6px}button.b-share-form-button .b-share-form-button__before{margin-top:-2px;margin-left:-9px}}SPAN.b-share-form-button:hover,.b-share-form-button_state_hover{background-position:0 -60px}SPAN.b-share-form-button:hover .b-share-form-button__before,.b-share-form-button_state_hover .b-share-form-button__before{background-position:0 -40px}SPAN.b-share-form-button:hover .b-share-form-button__after,.b-share-form-button_state_hover .b-share-form-button__after{background-position:-3px -40px}.b-share-form-button_state_pressed,.b-share-form-button_state_pressed .b-share-form-button_share{background-position:0 -100px!important}.b-share-form-button_state_pressed .b-share-form-button__before{background-position:0 -80px!important}.b-share-form-button_state_pressed .b-share-form-button__after{background-position:-3px -80px!important}button.b-share-form-button_state_pressed{overflow:visible}.b-share-form-button_icons{position:relative;padding:0;background-position:0 -20px!important}.b-share-form-button_icons .b-share-form-button__before{left:0;margin-left:-3px;background-position:0 0!important}.b-share-form-button_icons .b-share-form-button__after{z-index:-1;margin-left:0;background-position:-3px 0!important}.b-share-form-button_icons .b-share__handle{padding:2px!important}.b-share-form-button_icons .b-share__handle_more{position:relative;padding-right:6px!important;margin-right:-4px}.b-share-form-button_icons .b-share-icon{opacity:.5;background-image:url("//yastatic.net/share/static/b-share-icon_size_14.png")}.b-share-form-button_icons A.b-share__handle:hover .b-share-icon{opacity:1}.b-share{font:86%/1.4545em Arial,sans-serif;display:-moz-inline-box;display:inline-block;padding:1px 3px 1px 4px!important;vertical-align:middle}.b-share .b-share-form-button{font-size:1em}.b-share__text .b-share-icon{margin:0 5px 0 0;border:none}.b-share__text{margin-right:5px}.b-share__handle{float:left;height:16px;padding:5px 3px 5px 2px!important;cursor:pointer;text-align:left;text-decoration:none!important}.b-share__handle_cursor_default{cursor:default}.b-share__handle .b-share-form-button{margin-top:-2px}.b-share__hr{display:none;float:left;width:1px;height:26px;margin:0 3px 0 2px}a.b-share__handle:hover .b-share__text{text-decoration:underline;color:red}.b-share_bordered{padding:0 2px 0 3px!important;border:1px solid #E4E4E4;-moz-border-radius:5px;-webkit-border-radius:5px;border-radius:5px}.b-share_bordered .b-share__hr{display:inline;background:#E4E4E4}.b-share_link{margin:-8px 0}a.b-share_link{margin:0}.b-share_link .b-share__text{text-decoration:underline;color:#1A3DC1}.b-share-form-button_share{padding-left:26px!important;vertical-align:top}.b-share-form-button_share .b-share-form-button__before{margin-left:-29px}.b-share-form-button_share .b-share-form-button__icon{position:absolute;width:20px;height:17px;margin:1px 0 0 -23px;background:url("//yastatic.net/share/static/b-share-form-button_share__icon.png") 0 0 no-repeat}.b-share-pseudo-link{border-bottom:1px dotted;cursor:pointer;text-decoration:none!important}.b-share_font_fixed{font-size:11px}.b-share__handle_more{font-size:9px;margin-top:-1px;color:#7B7B7B}A.b-share__handle_more:hover{color:#000}.b-share__group{float:left}.b-share-icon{float:left;display:inline;overflow:hidden;width:16px;height:16px;padding:0!important;vertical-align:top;border:0;background:url("//yastatic.net/share/static/b-share-icon.png") 0 99px no-repeat}.b-share-icon_vkontakte,.b-share-icon_custom{background-position:0 0}.b-share-icon_yaru,.b-share-icon_yaru_photo,.b-share-icon_yaru_wishlist{background-position:0 -17px}.b-share-icon_lj{background-position:0 -34px}.b-share-icon_twitter{background-position:0 -51px}.b-share-icon_facebook{background-position:0 -68px}.b-share-icon_moimir{background-position:0 -85px}.b-share-icon_friendfeed{background-position:0 -102px}.b-share-icon_mail{background-position:0 -119px}.b-share-icon_html{background-position:0 -136px}.b-share-icon_postcard{background-position:0 -153px}.b-share-icon_odnoklassniki{background-position:0 -170px}.b-share-icon_blogger{background-position:0 -187px}.b-share-icon_delicious{background-position:0 -221px}.b-share-icon_gbuzz{background-position:0 -238px}.b-share-icon_linkedin{background-position:0 -255px}.b-share-icon_myspace{background-position:0 -272px}.b-share-icon_evernote{background-position:0 -289px}.b-share-icon_digg{background-position:0 -306px}.b-share-icon_juick{background-position:0 -324px}.b-share-icon_moikrug{background-position:0 -341px}.b-share-icon_yazakladki{background-position:0 -358px}.b-share-icon_liveinternet{background-position:0 -375px}.b-share-icon_tutby{background-position:0 -392px}.b-share-icon_diary{background-position:0 -409px}.b-share-icon_gplus{background-position:0 -426px}.b-share-icon_pocket{background-position:0 -443px}.b-share-icon_surfingbird{background-position:0 -460px}.b-share-icon_pinterest{background-position:0 -477px}.b-share-icon_renren{background-position:0 0}.b-share-icon_renren,.b-share-icon_sina_weibo{background:url("//yastatic.net/share/static/b-share-icon__china.png") no-repeat}.b-share-icon_sina_weibo{background-position:-18px 0}.b-share-icon_qzone{background-position:-36px 0}.b-share-icon_qzone,.b-share-icon_tencent_weibo{background:url("//yastatic.net/share/static/b-share-icon__china.png") no-repeat}.b-share-icon_tencent_weibo{background-position:-54px 0}.b-share_theme_dark .b-share-icon{background:url("//yastatic.net/share/static/b-share-icons__theme_dark.png") 99px 0 no-repeat}.b-share_theme_dark .b-share-icon_odnoklassniki{background-position:-4px -3px}.b-share_theme_dark .b-share-icon_vkontakte{background-position:-24px -3px}.b-share_theme_dark .b-share-icon_twitter{background-position:-44px -3px}.b-share_theme_dark .b-share-icon_facebook{background-position:-64px -3px}.b-share_theme_dark .b-share-icon_lj{background-position:-85px -3px}.b-share_theme_dark .b-share-icon_yaru{background-position:-105px -3px}.b-share_theme_dark .b-share-popup .b-share-icon_odnoklassniki,.b-share_theme_dark .b-share-icon_odnoklassniki:hover{background-position:-4px -28px}.b-share_theme_dark .b-share-popup .b-share-icon_vkontakte,.b-share_theme_dark .b-share-icon_vkontakte:hover{background-position:-24px -28px}.b-share_theme_dark .b-share-popup .b-share-icon_twitter,.b-share_theme_dark .b-share-icon_twitter:hover{background-position:-44px -28px}.b-share_theme_dark .b-share-popup .b-share-icon_facebook,.b-share_theme_dark .b-share-icon_facebook:hover{background-position:-64px -28px}.b-share_theme_dark .b-share-popup .b-share-icon_lj,.b-share_theme_dark .b-share-icon_lj:hover{background-position:-85px -28px}.b-share_theme_dark .b-share-popup .b-share-icon_yaru,.b-share_theme_dark .b-share-icon_yaru:hover{background-position:-105px -28px}.b-share_theme_dark .b-share-form-button_share .b-share-form-button__icon{background-image:url("//yastatic.net/share/static/b-share-form-button_share__icon_dark.png")}.b-share_theme_dark .b-share-form-button{color:#fff!important;opacity:.8}.b-share_theme_dark .b-share__handle:hover .b-share-form-button,.b-share_theme_dark .b-share-form-button:hover{opacity:1;cursor:pointer}.b-share_theme_dark .b-share-form-button,.b-share_theme_dark .b-share-form-button__before,.b-share_theme_dark .b-share-form-button__after{background:0 0}.b-share_theme_dark .b-share-popup__i{background-color:#333;border-radius:10px;-webkit-box-shadow:0 2px 9px rgba(255,255,255,.6);-moz-box-shadow:0 2px 9px rgba(255,255,255,.6);box-shadow:0 2px 9px rgba(255,255,255,.6)}.b-share_theme_dark .b-share__text{color:#AAA}.b-share_theme_dark .b-share-popup{color:#AAA;border-radius:10px;background-color:#333;background-color:rgba(50,50,50,.3)}.b-share_theme_dark .b-share-popup__item{background:0 0;color:#ccc}.b-share_theme_dark .b-share-popup .b-share-popup__item__text{color:#ccc}.b-share_theme_counter .b-share{display:inline-block;vertical-align:middle;white-space:nowrap}.b-share-counter{font:14px Arial,sans-serif;line-height:18px;display:none;float:left;margin:3px 6px 3px 3px;color:#fff}.b-share_theme_counter .b-share_type_small .b-share-counter{font-size:11px;line-height:14px;margin:2px 6px 2px 1px}.b-share_theme_counter .b-share-btn__counter .b-share-counter{display:block}.b-share-btn__counter{text-decoration:none}.b-share_theme_counter .b-share-btn__wrap{position:relative;float:left;margin-left:5px}.b-share_theme_counter .b-share_type_small .b-share-btn__wrap{margin-left:4px}.b-share_theme_counter .b-share-btn__wrap:first-child{margin-left:0}.b-share_theme_counter .b-share__link{display:inline-block;cursor:pointer;-webkit-border-radius:3px;border-radius:3px}.b-share_theme_counter .b-share_type_small .b-share__link{-webkit-border-radius:2px;border-radius:2px}.b-share_theme_counter .b-share-icon{display:block;float:left;width:24px;height:24px;background-image:url("//yastatic.net/share/static/b-share_counter_large.png");background-position:-20px 0}.b-share_theme_counter .b-share_type_small .b-share-icon{width:18px;height:18px;background-image:url("//yastatic.net/share/static/b-share_counter_small.png")}.b-share_theme_counter .b-share-icon_facebook{background-position:0 0}.b-share_theme_counter .b-share-btn__facebook{background-color:#3c5a98}.b-share_theme_counter .b-share-btn__facebook:hover{background-color:#30487a}.b-share_theme_counter .b-share-btn__facebook:active{border-top:2px solid #24365a;background-color:#334d81}.b-share_theme_counter .b-share-icon_moimir{background-position:0 -29px}.b-share_theme_counter .b-share-btn__moimir{background-color:#226eb7}.b-share_theme_counter .b-share-btn__moimir:hover{background-color:#1b5892}.b-share_theme_counter .b-share-btn__moimir:active{border-top:2px solid #14426d;background-color:#1d5e9c}.b-share_theme_counter .b-share-icon_vkontakte{background-position:0 -58px}.b-share_theme_counter .b-share-btn__vkontakte{background-color:#48729e}.b-share_theme_counter .b-share-btn__vkontakte:hover{background-color:#3a5b7e}.b-share_theme_counter .b-share-btn__vkontakte:active{border-top:2px solid #2b445e;background-color:#3d6186}.b-share_theme_counter .b-share-icon_twitter{background-position:0 -87px}.b-share_theme_counter .b-share-btn__twitter{background-color:#00aced}.b-share_theme_counter .b-share-btn__twitter:hover{background-color:#008abe}.b-share_theme_counter .b-share-btn__twitter:active{border-top:2px solid #00668d;background-color:#0092ca}.b-share_theme_counter .b-share-icon_odnoklassniki{background-position:0 -116px}.b-share_theme_counter .b-share-btn__odnoklassniki{background-color:#ff9f4d}.b-share_theme_counter .b-share-btn__odnoklassniki:hover{background-color:#cc7f3e}.b-share_theme_counter .b-share-btn__odnoklassniki:active{border-top:2px solid #975e2e;background-color:#d98742}.b-share_theme_counter .b-share-icon_gplus{background-position:0 -145px}.b-share_theme_counter .b-share-btn__gplus{background-color:#c25234}.b-share_theme_counter .b-share-btn__gplus:hover{background-color:#9b422a}.b-share_theme_counter .b-share-btn__gplus:active{border-top:2px solid #73311f;background-color:#a5462c}.b-share_theme_counter .b-share-icon_yaru{background-position:0 -174px}.b-share_theme_counter .b-share-btn__yaru{background-color:#d83933}.b-share_theme_counter .b-share-btn__yaru:hover{background-color:#ad2e29}.b-share_theme_counter .b-share-btn__yaru:active{border-top:2px solid #80221e;background-color:#b8312b}.b-share_theme_counter .b-share-icon_pinterest{background-position:0 -203px}.b-share_theme_counter .b-share-btn__pinterest{background-color:#cd1e27}.b-share_theme_counter .b-share-btn__pinterest:hover{background-color:#a4181f}.b-share_theme_counter .b-share-btn__pinterest:active{border-top:2px solid #7b1217;background-color:#ae1921}.b-share_theme_counter .b-share__link:active{height:22px}.b-share_theme_counter .b-share_type_small .b-share__link:active{height:16px}.b-share_theme_counter .b-share__link:active .b-share-icon,.b-share_theme_counter .b-share__link:active .b-share-counter{position:relative;top:-1px}.b-share_theme_counter .b-share__link::after{position:absolute;top:0;right:0;bottom:0;left:0;content:"";background-image:url(data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==)}.b-share_theme_counter .b-share__handle{height:auto;padding:0!important}</style><meta http-equiv="origin-trial" content="AxujKG9INjsZ8/gUq8+dTruNvk7RjZQ1oFhhgQbcTJKDnZfbzSTE81wvC2Hzaf3TW4avA76LTZEMdiedF1vIbA4AAABueyJvcmlnaW4iOiJodHRwczovL2ltYXNkay5nb29nbGVhcGlzLmNvbTo0NDMiLCJmZWF0dXJlIjoiVHJ1c3RUb2tlbnMiLCJleHBpcnkiOjE2NTI3NzQ0MDAsImlzVGhpcmRQYXJ0eSI6dHJ1ZX0="><meta http-equiv="origin-trial" content="Azuce85ORtSnWe1MZDTv68qpaW3iHyfL9YbLRy0cwcCZwVnePnOmkUJlG8HGikmOwhZU22dElCcfrfX2HhrBPAkAAAB7eyJvcmlnaW4iOiJodHRwczovL2RvdWJsZWNsaWNrLm5ldDo0NDMiLCJmZWF0dXJlIjoiVHJ1c3RUb2tlbnMiLCJleHBpcnkiOjE2NTI3NzQ0MDAsImlzU3ViZG9tYWluIjp0cnVlLCJpc1RoaXJkUGFydHkiOnRydWV9"><meta http-equiv="origin-trial" content="A16nvcdeoOAqrJcmjLRpl1I6f3McDD8EfofAYTt/P/H4/AWwB99nxiPp6kA0fXoiZav908Z8etuL16laFPUdfQsAAACBeyJvcmlnaW4iOiJodHRwczovL2dvb2dsZXRhZ3NlcnZpY2VzLmNvbTo0NDMiLCJmZWF0dXJlIjoiVHJ1c3RUb2tlbnMiLCJleHBpcnkiOjE2NTI3NzQ0MDAsImlzU3ViZG9tYWluIjp0cnVlLCJpc1RoaXJkUGFydHkiOnRydWV9"><meta http-equiv="origin-trial" content="AxBHdr0J44vFBQtZUqX9sjiqf5yWZ/OcHRcRMN3H9TH+t90V/j3ENW6C8+igBZFXMJ7G3Pr8Dd13632aLng42wgAAACBeyJvcmlnaW4iOiJodHRwczovL2dvb2dsZXN5bmRpY2F0aW9uLmNvbTo0NDMiLCJmZWF0dXJlIjoiVHJ1c3RUb2tlbnMiLCJleHBpcnkiOjE2NTI3NzQ0MDAsImlzU3ViZG9tYWluIjp0cnVlLCJpc1RoaXJkUGFydHkiOnRydWV9"><meta http-equiv="origin-trial" content="A88BWHFjcawUfKU3lIejLoryXoyjooBXLgWmGh+hNcqMK44cugvsI5YZbNarYvi3roc1fYbHA1AVbhAtuHZflgEAAAB2eyJvcmlnaW4iOiJodHRwczovL2dvb2dsZS5jb206NDQzIiwiZmVhdHVyZSI6IlRydXN0VG9rZW5zIiwiZXhwaXJ5IjoxNjUyNzc0NDAwLCJpc1N1YmRvbWFpbiI6dHJ1ZSwiaXNUaGlyZFBhcnR5Ijp0cnVlfQ=="><meta http-equiv="origin-trial" content="A8FHS1NmdCwGqD9DwOicnHHY+y27kdWfxKa0YHSGDfv0CSpDKRHTQdQmZVPDUdaFWUsxdgVxlwAd6o+dhJykPA0AAACWeyJvcmlnaW4iOiJodHRwczovL2RvdWJsZWNsaWNrLm5ldDo0NDMiLCJmZWF0dXJlIjoiQ29udmVyc2lvbk1lYXN1cmVtZW50IiwiZXhwaXJ5IjoxNjQzMTU1MTk5LCJpc1N1YmRvbWFpbiI6dHJ1ZSwiaXNUaGlyZFBhcnR5Ijp0cnVlLCJ1c2FnZSI6InN1YnNldCJ9"><meta http-equiv="origin-trial" content="A8zdXi6dr1hwXEUjQrYiyYQGlU3557y5QWDnN0Lwgj9ePt66XMEvNkVWOEOWPd7TP9sBQ25X0Q15Lr1Nn4oGFQkAAACceyJvcmlnaW4iOiJodHRwczovL2dvb2dsZXN5bmRpY2F0aW9uLmNvbTo0NDMiLCJmZWF0dXJlIjoiQ29udmVyc2lvbk1lYXN1cmVtZW50IiwiZXhwaXJ5IjoxNjQzMTU1MTk5LCJpc1N1YmRvbWFpbiI6dHJ1ZSwiaXNUaGlyZFBhcnR5Ijp0cnVlLCJ1c2FnZSI6InN1YnNldCJ9"><meta http-equiv="origin-trial" content="A4/Htern2udN9w3yJK9QgWQxQFruxOXsXL7cW60DyCl0EZFGCSme/J33Q/WzF7bBkVvhEWDlcBiUyZaim5CpFQwAAACceyJvcmlnaW4iOiJodHRwczovL2dvb2dsZXRhZ3NlcnZpY2VzLmNvbTo0NDMiLCJmZWF0dXJlIjoiQ29udmVyc2lvbk1lYXN1cmVtZW50IiwiZXhwaXJ5IjoxNjQzMTU1MTk5LCJpc1N1YmRvbWFpbiI6dHJ1ZSwiaXNUaGlyZFBhcnR5Ijp0cnVlLCJ1c2FnZSI6InN1YnNldCJ9"></head>
+
+<body aria-hidden="false" topmargin="0" rightmargin="0" leftmargin="0" bottommargin="0">
+<a name="top" id="top"></a>
+  <table style="height: auto !important;" width="780" cellspacing="0" cellpadding="0" border="0" align="center">
+    <tbody><tr height="20">
+      <td>&nbsp;</td>
+      <td width="100%">&nbsp;</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr style="height: auto !important;">
+      <td valign="top" background="%D0%9F%D0%BE%D1%82%D0%BE%D0%BA%D0%B8%20%D0%BD%D0%B0%20C%23.%20%D0%A7%D0%B0%D1%81%D1%82%D1%8C%202_files/shad_left.gif">
+      <img src="%D0%9F%D0%BE%D1%82%D0%BE%D0%BA%D0%B8%20%D0%BD%D0%B0%20C%23.%20%D0%A7%D0%B0%D1%81%D1%82%D1%8C%202_files/shad_top_left.gif" width="11" height="17" border="0"></td>
+      <td style="height: auto !important;" width="100%" valign="top">
+      <table style="height: auto !important;" width="100%" cellspacing="1" border="0" bgcolor="#000000">
+        <tbody><tr>
+          <td width="100%">
+            <table width="100%" cellspacing="0" cellpadding="0" border="0">
+              <tbody><tr>
+                <td class="pathway" valign="center" align="left"><img src="%D0%9F%D0%BE%D1%82%D0%BE%D0%BA%D0%B8%20%D0%BD%D0%B0%20C%23.%20%D0%A7%D0%B0%D1%81%D1%82%D1%8C%202_files/arrow.png" hspace="5">
+                <span class="breadcrumbs pathway">
+<a href="http://microsin.net/programming/index.html" class="pathway">Программирование</a> <img src="%D0%9F%D0%BE%D1%82%D0%BE%D0%BA%D0%B8%20%D0%BD%D0%B0%20C%23.%20%D0%A7%D0%B0%D1%81%D1%82%D1%8C%202_files/arrow.png" alt=""> <a href="http://microsin.net/programming/pc/index.html" class="pathway">PC</a> <img src="%D0%9F%D0%BE%D1%82%D0%BE%D0%BA%D0%B8%20%D0%BD%D0%B0%20C%23.%20%D0%A7%D0%B0%D1%81%D1%82%D1%8C%202_files/arrow.png" alt=""> Потоки на C#. Часть 2: основы синхронизации</span>
+
+                </td>
+                <td class="pathway" valign="center" align="right">
+                Tue, February 01 2022&nbsp;&nbsp;</td>
+              </tr>
+            </tbody></table>
+          </td>
+        </tr>
+        <tr height="80">
+          <td width="100%" bgcolor="#54647A" background="%D0%9F%D0%BE%D1%82%D0%BE%D0%BA%D0%B8%20%D0%BD%D0%B0%20C%23.%20%D0%A7%D0%B0%D1%81%D1%82%D1%8C%202_files/logo_bar_logo.jpg" align="left"></td>
+        </tr>
+        <tr>
+          <td width="100%" bgcolor="#AFC6DB" background="%D0%9F%D0%BE%D1%82%D0%BE%D0%BA%D0%B8%20%D0%BD%D0%B0%20C%23.%20%D0%A7%D0%B0%D1%81%D1%82%D1%8C%202_files/but_bar_back.gif">
+
+          		<div class="moduletable_topmenu">
+					<table width="100%" cellspacing="1" cellpadding="0" border="0"><tbody><tr><td nowrap="nowrap"><span class="mainlevel">  | </span><a href="http://microsin.net/" class="mainlevel">Главная</a><span class="mainlevel">  | </span><a href="http://microsin.net/mycontacts.html" class="mainlevel">Контакты</a><span class="mainlevel">  | </span><a href="http://microsin.net/adminstuff/index.html" class="mainlevel">Администрирование</a><span class="mainlevel">  | </span><a href="http://microsin.net/programming/index.html" class="mainlevel" id="active_menu">Программирование</a><span class="mainlevel">  | </span><a href="http://microsin.net/Ssyilki/index.html" class="mainlevel">Ссылки</a><span class="mainlevel">  | </span></td></tr></tbody></table>		</div>
+	
+
+                    </td>
+        </tr>
+        <tr style="height: auto !important;">
+          <td style="height: auto !important;" width="100%" bgcolor="#FFFFFF">
+          <table style="border-collapse: collapse; height: auto !important;" id="AutoNumber1" width="100%" cellspacing="0" cellpadding="4" border="0">
+            <tbody><tr style="height: auto !important;">
+              <!-- LEFT Modules -->
+              
+                  <td width="150" valign="top" bgcolor="#F0F0F0">
+                    <div class="modules" style="width:155px;">
+                    		<div class="moduletable">
+					<table border="0">
+<tbody>
+<tr>
+<td><img src="%D0%9F%D0%BE%D1%82%D0%BE%D0%BA%D0%B8%20%D0%BD%D0%B0%20C%23.%20%D0%A7%D0%B0%D1%81%D1%82%D1%8C%202_files/UK-flag-ico.png" alt="UK-flag-ico.png" title="English site version" border="0" align="bottom"></td>
+<td><a href="http://translate.google.ru/translate?hl=ru&amp;sl=ru&amp;tl=en&amp;u=http%3A%2F%2Fmicrosin.net%2F">English Version</a></td>
+</tr>
+<tr>
+<td><img src="%D0%9F%D0%BE%D1%82%D0%BE%D0%BA%D0%B8%20%D0%BD%D0%B0%20C%23.%20%D0%A7%D0%B0%D1%81%D1%82%D1%8C%202_files/GERMAN-flag-ico.png" alt="GERMAN-flag-ico.png" title="Die deutsche Version der Webseite" border="0" align="bottom"></td>
+<td><a href="http://translate.google.ru/translate?hl=ru&amp;sl=ru&amp;tl=de&amp;u=http%3A%2F%2Fmicrosin.net%2F">Die deutsche Version</a></td>
+</tr>
+</tbody>
+</table>
+<a href="http://microsin.net/xmap-1.html">Карта сайта</a>		</div>
+			<div class="moduletable">
+					<h3>Поделиться</h3>
+					<!-- http://api.yandex.ru/share/ -->
+ <div class="yashare-auto-init" data-yasharel10n="ru" data-yasharetype="none" data-yasharequickservices="vkontakte,facebook,twitter,moimir,lj,yaru,friendfeed"><span class="b-share"><a rel="nofollow" target="_blank" title="ВКонтакте" class="b-share__handle b-share__link b-share-btn__vkontakte" href="https://share.yandex.net/go.xml?service=vkontakte&amp;url=http%3A%2F%2Fmicrosin.net%2Fprogramming%2Fpc%2Fthreading-in-csharp-part-2-basic-synchronization.html&amp;title=%D0%9F%D0%BE%D1%82%D0%BE%D0%BA%D0%B8%20%D0%BD%D0%B0%20C%23.%20%D0%A7%D0%B0%D1%81%D1%82%D1%8C%202%3A%20%D0%BE%D1%81%D0%BD%D0%BE%D0%B2%D1%8B%20%D1%81%D0%B8%D0%BD%D1%85%D1%80%D0%BE%D0%BD%D0%B8%D0%B7%D0%B0%D1%86%D0%B8%D0%B8%20%7C%20pc%20%7C%20programming" data-service="vkontakte"><span class="b-share-icon b-share-icon_vkontakte"></span></a><a rel="nofollow" target="_blank" title="Facebook" class="b-share__handle b-share__link b-share-btn__facebook" href="https://share.yandex.net/go.xml?service=facebook&amp;url=http%3A%2F%2Fmicrosin.net%2Fprogramming%2Fpc%2Fthreading-in-csharp-part-2-basic-synchronization.html&amp;title=%D0%9F%D0%BE%D1%82%D0%BE%D0%BA%D0%B8%20%D0%BD%D0%B0%20C%23.%20%D0%A7%D0%B0%D1%81%D1%82%D1%8C%202%3A%20%D0%BE%D1%81%D0%BD%D0%BE%D0%B2%D1%8B%20%D1%81%D0%B8%D0%BD%D1%85%D1%80%D0%BE%D0%BD%D0%B8%D0%B7%D0%B0%D1%86%D0%B8%D0%B8%20%7C%20pc%20%7C%20programming" data-service="facebook"><span class="b-share-icon b-share-icon_facebook"></span></a><a rel="nofollow" target="_blank" title="Twitter" class="b-share__handle b-share__link b-share-btn__twitter" href="https://share.yandex.net/go.xml?service=twitter&amp;url=http%3A%2F%2Fmicrosin.net%2Fprogramming%2Fpc%2Fthreading-in-csharp-part-2-basic-synchronization.html&amp;title=%D0%9F%D0%BE%D1%82%D0%BE%D0%BA%D0%B8%20%D0%BD%D0%B0%20C%23.%20%D0%A7%D0%B0%D1%81%D1%82%D1%8C%202%3A%20%D0%BE%D1%81%D0%BD%D0%BE%D0%B2%D1%8B%20%D1%81%D0%B8%D0%BD%D1%85%D1%80%D0%BE%D0%BD%D0%B8%D0%B7%D0%B0%D1%86%D0%B8%D0%B8%20%7C%20pc%20%7C%20programming" data-service="twitter"><span class="b-share-icon b-share-icon_twitter"></span></a><a rel="nofollow" target="_blank" title="Мой Мир" class="b-share__handle b-share__link b-share-btn__moimir" href="https://share.yandex.net/go.xml?service=moimir&amp;url=http%3A%2F%2Fmicrosin.net%2Fprogramming%2Fpc%2Fthreading-in-csharp-part-2-basic-synchronization.html&amp;title=%D0%9F%D0%BE%D1%82%D0%BE%D0%BA%D0%B8%20%D0%BD%D0%B0%20C%23.%20%D0%A7%D0%B0%D1%81%D1%82%D1%8C%202%3A%20%D0%BE%D1%81%D0%BD%D0%BE%D0%B2%D1%8B%20%D1%81%D0%B8%D0%BD%D1%85%D1%80%D0%BE%D0%BD%D0%B8%D0%B7%D0%B0%D1%86%D0%B8%D0%B8%20%7C%20pc%20%7C%20programming" data-service="moimir"><span class="b-share-icon b-share-icon_moimir"></span></a><a rel="nofollow" target="_blank" title="LiveJournal" class="b-share__handle b-share__link b-share-btn__lj" href="https://share.yandex.net/go.xml?service=lj&amp;url=http%3A%2F%2Fmicrosin.net%2Fprogramming%2Fpc%2Fthreading-in-csharp-part-2-basic-synchronization.html&amp;title=%D0%9F%D0%BE%D1%82%D0%BE%D0%BA%D0%B8%20%D0%BD%D0%B0%20C%23.%20%D0%A7%D0%B0%D1%81%D1%82%D1%8C%202%3A%20%D0%BE%D1%81%D0%BD%D0%BE%D0%B2%D1%8B%20%D1%81%D0%B8%D0%BD%D1%85%D1%80%D0%BE%D0%BD%D0%B8%D0%B7%D0%B0%D1%86%D0%B8%D0%B8%20%7C%20pc%20%7C%20programming" data-service="lj"><span class="b-share-icon b-share-icon_lj"></span></a></span></div>		</div>
+			<div class="moduletable">
+					<script type="text/javascript">
+		window.addEvent('load', function() {
+		var url = '/component/option,com_acesearch/format,raw/task,complete/';
+		var completer = new Autocompleter.Ajax.Json($('qr-10034'), url, {'postVar': 'q'});
+	});
+		
+	function acesearchsubmit(){
+		var moquery = document.getElementById("qr-10034").value.length;
+		
+		if (moquery >= "3"  ) {
+			return true;
+		} 
+		else {
+			alert("Пожалуйста убедитесь, что Ваш запрос длиннее, чем 3 символов.");
+			return false;
+		}
+	}
+</script>
+
+<form id="acesearchModule-10034" action="/component/option,com_acesearch/view,search/" method="post" name="acesearchModule" onsubmit="return acesearchsubmit();">
+	<div class="search acesearch_bg_module">
+		<input type="text" name="query" value="..." id="qr-10034" class="acesearch_input_module_modif" onblur="if(this.value=='') this.value='...';" onfocus="if(this.value=='...') this.value='';" style="margin-right:5px;" autocomplete="off"><a style="float:left;padding-left:5px;" href="http://microsin.net/component/option,com_acesearch/view,advancedsearch/" title="Расширенный поиск">Расширенный поиск</a><input type="hidden" name="lang" value="ru">	</div>
+	
+	<input type="hidden" name="option" value="com_acesearch">
+	<input type="hidden" name="view" value="search">
+	<input type="hidden" name="task" value="search">
+</form>
+<div class="acesearch_clear_mod_bottom"></div>		</div>
+			<div class="moduletable">
+					<h3>Нашли опечатку?</h3>
+					Пожалуйста, сообщите об этом - просто выделите ошибочное слово или фразу и нажмите <b>Shift Enter</b>.		</div>
+			<div class="moduletable">
+					<!-- <a href="/images/stories/programming/AT90USB162fuses.JPG" target="_self"><img style="width: 120px; height: 128px; margin: 5px;" title="AT90USB162fuses.JPG" src="/images/stories/programming/AT90USB162fuses.JPG" alt="AT90USB162fuses.JPG" width="120" height="128" align="bottom" /></a> -->
+<br>
+<table>
+   <tbody>
+      <tr>
+         <td><img src="%D0%9F%D0%BE%D1%82%D0%BE%D0%BA%D0%B8%20%D0%BD%D0%B0%20C%23.%20%D0%A7%D0%B0%D1%81%D1%82%D1%8C%202_files/ronkathehead-small.jpg"></td>
+         <td><a href="https://vk.com/ronkathehead">Блог одного Сумасшествия</a></td>
+      </tr>
+   </tbody>
+</table>		</div>
+	
+<br> <!-- ��� ��� ������� �� ���������� ������ -->
+                    </div>
+                  </td>
+                                <td style="height: auto !important;" valign="top">
+              <!-- Top Modules -->
+                                          <div class="nopad" style="height: auto !important;"><table class="contentpaneopen">
+<tbody><tr>
+		<td class="contentheading" width="100%">
+					Потоки на C#. Часть 2: основы синхронизации			</td>
+				
+				<td class="buttonheading" width="100%" align="right">
+		<a href="http://microsin.net/programming/pc/threading-in-csharp-part-2-basic-synchronization/Pechat.html" title="Печать" onclick="window.open(this.href,'win2','status=no,toolbar=no,scrollbars=yes,titlebar=no,menubar=no,resizable=yes,width=640,height=480,directories=no,location=no'); return false;" rel="nofollow"><img src="%D0%9F%D0%BE%D1%82%D0%BE%D0%BA%D0%B8%20%D0%BD%D0%B0%20C%23.%20%D0%A7%D0%B0%D1%81%D1%82%D1%8C%202_files/printButton.png" alt="Печать"></a>		</td>
+		
+					</tr>
+</tbody></table>
+
+<table class="contentpaneopen" style="height: auto !important;">
+<tbody><tr>
+	<td valign="top">
+		<span class="small">
+			Добавил(а) microsin		</span>
+		&nbsp;&nbsp;
+	</td>
+</tr>
+
+
+
+<tr style="height: auto !important;">
+<td style="height: auto !important;" valign="top">
+<p>В предыдущей части [2] было показано, как запустить задачу (task) на 
+потоке (thread), как конфигурировать поток и как передать данные в обоих
+ направлениях (в поток и из потока). Также описывалось, каким образом 
+локальные переменные делаются приватными для потока, и как ссылки могут 
+использоваться между потоками совместно, чтобы можно было обмениваться 
+данными между потоками через общие поля класса.</p>
+
+
+
+<p>Следующий важный шаг это синхронизация: координация действий потоков,
+ чтобы они работали предсказуемым образом. Синхронизация в частности 
+важна, когда потоки обращаются к одним и тем же данным; удивительно 
+просто работать с такими данными.</p>
+<p>Конструкции синхронизации можно поделить на 4 категории:</p>
+<p><strong>Простые методы блокировки</strong>. Суть этих методов в 
+ожидании, когда другой поток завершится. Ожидание может быть задано на 
+определенный период времени. К методам простой блокировки относятся 
+Sleep, Join и Task.Wait.</p>
+<p><strong>Конструкции критических секций</strong> (locking constructs).
+ Это вводит ограничение, что определенная секция кода может исполняться в
+ любой момент времени только ограниченным количеством потоков. 
+Исключительная блокировка (exclusive locking) встречается чаще всего - 
+она позволяет в любой момент времени только одному потоку осуществлять 
+доступ к общим данным, при этом другие потоки не могут помешать доступу.
+ Стандартные конструкции исключительной блокировки это lock 
+(Monitor.Enter/Monitor.Exit, см. далее "Locking"), Mutex (см. далее) и 
+SpinLock (см. [3]). Конструкции не исключительной блокировки 
+(nonexclusive locking) это Semaphore, SemaphoreSlim (см. далее) и 
+блокировки reader/writer (см. [4]).</p>
+<p><strong>Конструкции сигнализации</strong> (signaling). Они позволяют 
+потоку приостановиться, пока не придет оповещение от другого потока, что
+ устраняет необходимость не эффективного опроса (каких-то общих флагов 
+или переменных). Есть два используемых обычно устройства сигнализации 
+(signaling devices): обработчики ожидания события (event wait handles, 
+см. далее) и методы and Wait/Pulse класса Monitor [5]. Framework 4.0 
+представляет классы CountdownEvent (см. далее) и Barrier [6].</p>
+<p><strong>Не блокирующие конструкции синхронизации</strong>. Они 
+защищают доступ к общему полю путем вызова примитивов процессора. 
+Библиотека CLR и язык C# предоставляют следующие не блокирующие 
+конструкции: Thread.MemoryBarrier, Thread.VolatileRead, 
+Thread.VolatileWrite [7], ключевое слово volatile [8] и класс 
+Interlocked [9].</p>
+<p>Блокировка важна для всех перечисленных категорий, кроме последней. Давайте кратко рассмотрим концепцию блокировки.</p>
+<p><a name="Blocking"></a>[<strong>Что такое блокировка</strong>]</p>
+<p>Поток считается заблокированным, когда его выполнение приостановлено 
+по какой-то причине, такой как засыпание (Sleep) или ожидание завершения
+ другого потока с помощью Join или EndInvoke. Заблокированный поток 
+немедленно уступает текущий квант процессорного времени, и с этого 
+момента не использует процессор, пока не будет удовлетворено условие 
+снятия блокировки (blocking condition). Вы можете проверить, 
+заблокирован ли поток, с помощью его свойства ThreadState:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #b00040;">bool</span> blocked = (someThread.ThreadState &amp; ThreadState.WaitSleepJoin) != <span style="color: #666666;">0</span>;
+</pre>
+</div>
+<p><span style="color: #808080;">Примечание: состояние потока может 
+измениться в момент его опроса, и сами действия по постоянному опросу не
+ рекомендуются как не эффективные. Поэтому приведенный выше код полезен 
+только в сценариях диагностики.</span></p>
+<p>Когда поток блокируется или разблокируется, операционная система 
+(точнее - её планировщик, sheduler) выполняет так называемое 
+переключение контекста (context switch). Эта операция влечет трату 
+процессорного времени в несколько микросекунд.</p>
+<p>Разблокировка происходит одним из 4 способов (кнопка питания на системном блоке компьютера не считается!):</p>
+<p>• Удовлетворено условие блокировки<br>• Истек таймаут операции (если был указан таймаут)<br>• Работа потока была прервана с помощью Thread.Interrupt [10]<br>• Работа потока была оборвана с помощью Thread.Abort [10]</p>
+<p>Поток не считается заблокированным, если его выполнение приостановлено через (устаревший) метод Suspend [11].</p>
+<p><strong>Блокировка против циклов опроса</strong>. Иногда поток должен
+ поставить свои действия на паузу, пока не выполнится определенное 
+условие. Конструкции сигнализации и критических секций эффективно решают
+ эту проблему с помощью блокировки потока до момента, пока не будет 
+удовлетворено условие. Однако есть более простая альтернатива: поток 
+может ждать появления нужного условия в постоянно прокручивающемся цикле
+ опроса. Пример:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">while</span> (!proceed);
+</pre>
+</div>
+<p>или:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">while</span> (DateTime.Now &lt; nextStartTime);
+</pre>
+</div>
+<p>О общем это очень затратный способ, бесполезно тратящий ресурс 
+процессора: библиотека CLR и операционная система будут считать, что 
+поток выполняет важное вычисление, и даст ему на это соответствующие 
+выделенные ресурсы!</p>
+<p>Иногда применяется гибрид между блокировкой и прокруткой с опросом:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">while</span> (!proceed) Thread.Sleep (<span style="color: #666666;">10</span>);
+</pre>
+</div>
+<p>Хотя такой вариант не слишком элегантен, он обычно намного более 
+эффективен чем прямая прокрутка цикла без вызова Sleep. Хотя тут 
+проблемы могут возникнуть из-за проблем конкурентного доступа к 
+опрашиваемому флагу, по которому будет запущено продолжение действий. 
+Правильное использование критической секции и сигналов помогает избежать
+ этой проблемы.</p>
+<p style="padding-left: 30px;"><span style="color: #008080;">Прокрутка с
+ циклом опроса может быть редко эффективной только в тех случаях, когда 
+Вы ожидаете удовлетворения условия в очень краткий промежуток времени 
+(возможно в пределах нескольких микросекунд) потому что это позволяет 
+избежать чрезмерной нагрузки на процессор и задержки на переключение 
+контекста. Среда .NET Framework предоставляют для этого специальные 
+методы и классы, что рассматривается в разделе описания параллельного 
+программирования [3].</span></p>
+<p>Состояния потока (ThreadState). Вы можете узнать, в каком из 
+состояний находится поток, путем чтения свойства ThreadState. Это вернет
+ флаги перечисления типа ThreadState, которые комбинируют 3 "слоя" 
+данных по принципу побитного кодирования информации. Однако большинство 
+этих бит избыточны, не используются или устарели. На диаграмме ниже 
+показан один из "слоев":</p>
+<p><img src="%D0%9F%D0%BE%D1%82%D0%BE%D0%BA%D0%B8%20%D0%BD%D0%B0%20C%23.%20%D0%A7%D0%B0%D1%81%D1%82%D1%8C%202_files/CSharp-Threading-ThreadState.png" alt="CSharp Threading ThreadState"></p>
+<p>Следующий код преобразует ThreadState в одно из четырех наиболее полезных значений: Unstarted, Running, WaitSleepJoin и Stopped:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">public</span> <span style="color: #008000; font-weight: bold;">static</span> ThreadState <span style="color: #0000ff;">SimpleThreadState</span> (ThreadState ts)
+{
+   <span style="color: #008000; font-weight: bold;">return</span> ts &amp; (ThreadState.Unstarted |
+                ThreadState.WaitSleepJoin |
+                ThreadState.Stopped);
+}
+</pre>
+</div>
+<p>Свойство ThreadState полезно для целей диагностики, но его чтение в 
+целях синхронизации будет работать нестабильно, потому что состояние 
+потока может поменяться в любой момент, в том числе и между проверками 
+ThreadState, и это повлияет на актуальность прочитанной из ThreadState 
+информации.</p>
+<p><a name="Locking"></a>[<strong>Блокировка</strong>]</p>
+<p>Исключительная, или монопольная блокировка (exclusive locking) 
+используется, чтобы гарантировать, что только один поток в любой момент 
+времени мог войти в определенную секцию кода. Есть две основные 
+конструкции для exclusive locking, это lock и Mutex. Из этих двух 
+конструкция lock работает быстрее и более удобен. Однако у Mutex есть 
+ниша, в которой её блокировка может охватить приложения в различных 
+процессах, работающих на компьютере (чем отличается процесс от потока 
+см. [1]).</p>
+<p>В этой секции мы начнем обсуждения с конструкции lock, и затем 
+перейдем к рассмотрению Mutex и семафорам (для не исключительной 
+блокировки, nonexclusive locking). Позже мы рассмотрим блокировки 
+reader/writer [4].</p>
+<p style="padding-left: 30px;"><span style="color: #008080;">Начиная с Framework 4.0 есть также структура SpinLock для сценариев кода, выполняющегося в условиях высокой конкуренции.</span></p>
+<p>Начнем с примера следующего класса:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">class</span> <span style="color: #0000ff; font-weight: bold;">ThreadUnsafe</span>
+{
+   <span style="color: #008000; font-weight: bold;">static</span> <span style="color: #b00040;">int</span> _val1 = <span style="color: #666666;">1</span>, _val2 = <span style="color: #666666;">1</span>;
+ 
+   <span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Go</span>()
+   {
+      <span style="color: #008000; font-weight: bold;">if</span> (_val2 != <span style="color: #666666;">0</span>) Console.WriteLine (_val1 / _val2);
+      _val2 = <span style="color: #666666;">0</span>;
+   }
+}
+</pre>
+</div>
+<p>Этот
+ класс не будет потокобезопасным: если Go был вызван двумя потоками 
+одновременно, то есть возможность получения ошибки деления на 0, потому 
+что _val2 установилась бы в 0 в одном потоке, в и в другом потоке в это 
+же время мог бы выполняться оператор в параметре вызова 
+Console.WriteLine.</p>
+<p>Вот так блокировка lock может исправить эту проблему:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">class</span> <span style="color: #0000ff; font-weight: bold;">ThreadSafe</span>
+{
+   <span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">readonly</span> <span style="color: #b00040;">object</span> _locker = <span style="color: #008000; font-weight: bold;">new</span> <span style="color: #b00040;">object</span>();
+   <span style="color: #008000; font-weight: bold;">static</span> <span style="color: #b00040;">int</span> _val1, _val2;
+ 
+   <span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Go</span>()
+   {
+      <span style="color: #008000; font-weight: bold;">lock</span> (_locker)
+      {
+         <span style="color: #408080; font-style: italic;">// Начало критической секции кода</span>
+         <span style="color: #008000; font-weight: bold;">if</span> (_val2 != <span style="color: #666666;">0</span>) Console.WriteLine (_val1 / _val2);
+         _val2 = <span style="color: #666666;">0</span>;
+         <span style="color: #408080; font-style: italic;">// Конец критической секции кода</span>
+      }
+   }
+}
+</pre>
+</div>
+<p>Только
+ один поток может в любой момент времени заблокировать объект 
+синхронизации lock (в этом примере объект синхронизации _locker). Любые 
+претендующие на доступ к lock-участку кода будут заблокированы, пока 
+блокировка не будет снята (т. е. пока выполнение не выйдет за пределы 
+lock-участка кода). Такой участок кода также называют критической 
+секцией. Если больше одного потока претендуют на доступ к региону кода 
+lock, то они ставятся в очередь готовности (ready queue), и доступ к 
+критической секции будет даваться по принципу FIFO, т. е. первым 
+запросил доступ - первым получит доступ (некая проблема здесь 
+заключается в нюансах поведения планировщика Windows и библиотеки CLR, в
+ результате чего этот порядок предоставления доступа иногда нарушается).
+ Исключительные блокировки, как иногда говорят, принуждает к применению 
+строго последовательного доступа (serialized access) к участку кода, 
+защищенному lock, потому что доступ со стороны одного потока никогда не 
+может перекрыть доступ другого. В нашем примере логика защиты применена 
+внутри метода Go method, когда осуществляется доступ к полям _val1 и 
+_val2.</p>
+<p>Поток блокируется, пока оспариваемый участок критического кода 
+находится в состоянии ThreadState WaitSleepJoin. При рассмотрении 
+Interrupt и Abort будет описано, как заблокированный поток может быть 
+принудительно освобожден другим потоком. Это довольно мощный метод, 
+который может использоваться для завершения потока.</p>
+<p></p><div class="spoiler" id="1_spoiler">
+                        <input type="hidden" class="opened" value="0">
+			<div class="sp-head folded" id="1-sp-head">
+			<div class="sp-head-click" id="1-sp-head-click"><a href="javascript:void(0)">Сравнение блокирующих конструкций</a></div></div>
+			<div style="margin: 0px; position: static; overflow: hidden; height: 0px;"><div class="sp-body" id="1-sp-body" style="margin: -345px 0px 0px;"><p></p>
+<table cellspacing="1" cellpadding="3" border="0" bgcolor="#8cacbb">
+<tbody>
+<tr style="background-color: #dee7ec;">
+<td><strong>Конструкция</strong></td>
+<td><strong>Назначение</strong></td>
+<td><strong>Работает между процессами?</strong></td>
+<td><strong>Загрузка<sup>(*)</sup></strong></td>
+</tr>
+<tr style="background-color: #ffffff;">
+<td>lock (Monitor.Enter / Monitor.Exit)</td>
+<td rowspan="2">Гарантирует, что только один поток в любой момент времени может получить доступ к ресурсу или секции кода.</td>
+<td>-</td>
+<td>20 нс</td>
+</tr>
+<tr style="background-color: #ffffff;">
+<td>Mutex</td>
+<td>ДА</td>
+<td>1000 нс</td>
+</tr>
+<tr style="background-color: #ffffff;">
+<td>SemaphoreSlim (добавлено в Framework 4.0)</td>
+<td rowspan="2">Гарантирует, что не более указанного количества потоков могут получить доступ к ресурсу или секции кода.</td>
+<td>-</td>
+<td>200 нс</td>
+</tr>
+<tr style="background-color: #ffffff;">
+<td>Semaphore</td>
+<td>ДА</td>
+<td>1000 нс</td>
+</tr>
+<tr style="background-color: #ffffff;">
+<td>ReaderWriterLockSlim (добавлено в Framework 3.5)</td>
+<td rowspan="2">Позволяет нескольким читающим потокам существовать вместе с одним записывающим.</td>
+<td>-</td>
+<td>40 нс</td>
+</tr>
+<tr style="background-color: #ffffff;">
+<td>ReaderWriterLock (сильно устарело)</td>
+<td>-</td>
+<td>100 нс</td>
+</tr>
+</tbody>
+</table>
+<p><span style="color: #808080;">Примечание (*): время, которое тратится
+ на блокировку и разблокировку конструкции на одном и том же потоке 
+(подразумевая, что другие потоки не блокируются), как это было измерено 
+на процессоре Intel Core i7 860.</span></p>
+<p></p></div></div>
+			</div><p></p>
+<p><strong>Monitor.Enter и Monitor.Exit</strong>. Оператор lock на C# 
+фактически является "синтаксическим сахаром", т. е. обертками над 
+вызовами методов Monitor.Enter и Monitor.Exit с блоком try/finally. Это 
+представляет программисту упрощенную версию того, что реально происходит
+ внутри метода Go в предыдущем примере:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;">Monitor.Enter (_locker);</pre>
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">try</span>
+{
+   <span style="color: #008000; font-weight: bold;">if</span> (_val2 != <span style="color: #666666;">0</span>) Console.WriteLine (_val1 / _val2);
+   _val2 = <span style="color: #666666;">0</span>;
+}</pre>
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">finally</span> { Monitor.Exit (_locker); }
+</pre>
+</div>
+<p>Вызов Monitor.Exit без предшествующего вызова Monitor.Enter на одном и том же объекте приведет к выбрасыванию исключения.</p>
+<p><strong>Перезагрузки lockTaken</strong>. Код, который мы только что 
+продемонстрировали, на компиляторах C# версия 1.0, 2.0 и 3.0 будет 
+транслироваться из оператора lock.</p>
+<p>Однако в этом коде есть тонкая уязвимость. Рассмотрим (маловероятное)
+ событие исключения, которое выбрасывается с реализацией Monitor.Enter 
+между вызовом Monitor.Enter и блоком try (при этом возможно будет вызван
+ Abort на этом потоке, либо выбрасывание исключение 
+OutOfMemoryException). В таком сценарии блокировка может не произойти. 
+Если блокировка произошла, то она не будет освобождена - потому что мы 
+никогда не войдем в блок try/finally. Это приведет к пропущенной 
+блокировке (leaked lock).</p>
+<p>Для устранения этой опасности разработчики CLR 4.0 добавили следующую перезагрузку для Monitor.Enter:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">public</span> <span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Enter</span> (<span style="color: #b00040;">object</span> obj, <span style="color: #008000; font-weight: bold;">ref</span> <span style="color: #b00040;">bool</span> lockTaken);
+</pre>
+</div>
+<p>Параметр lockTaken равен false после этого метода если (и только 
+если) метод Enter выбросил исключение и блокировка lock не была взята.</p>
+<p>Вот корректный шаблон использования (в который C# 4.0 будет транслировать оператор lock):</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #b00040;">bool</span> lockTaken = <span style="color: #008000; font-weight: bold;">false</span>;</pre>
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">try</span>
+{
+   Monitor.Enter (_locker, <span style="color: #008000; font-weight: bold;">ref</span> lockTaken);
+   <span style="color: #408080; font-style: italic;">// Тут какой-то наш код...</span>
+}</pre>
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">finally</span> { <span style="color: #008000; font-weight: bold;">if</span> (lockTaken) Monitor.Exit (_locker); }
+</pre>
+</div>
+<p><strong>TryEnter</strong>.
+ Также предоставляет метод TryEnter, который позволяет задать таймаут 
+либо в миллисекундах, либо через TimeSpan. Этот метод вернет true, если 
+блокировка была получена, или false, если блокировка не была получена 
+из-за таймаута метода. TryEnter может быть также вызван без аргумента, 
+что "проверяет" блокировку lock, таймаут произойдет немедленно, если 
+блокировка не может быть получена надлежащим способом.</p>
+<p>Как и метод Enter, метод TryEnter перезагружен в CLR 4.0, чтобы принять аргумент lockTaken.</p>
+<p><strong>Выбор объекта синхронизации</strong>. Любой объект, видимый 
+каждому из участвующих в общей работе потоков, может использоваться в 
+качестве синхронизирующего объекта согласно одному жесткому правилу: это
+ должен быть ссылочный тип (reference type). Синхронизирующий объект 
+обычно имеет область доступа private (потому что это помогает 
+инкапсулировать логику блокировки) и обычно это поле экземпляра или 
+статическое поле. Синхронизирующий объект может иметь двойное 
+назначение, т. е. он может быть встроен в защищаемый объект, как это 
+делает поле _list в следующем примере:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">class</span> <span style="color: #0000ff; font-weight: bold;">ThreadSafe</span>
+{
+   List &lt; <span style="color: #b00040;">string</span>&gt; _list = <span style="color: #008000; font-weight: bold;">new</span> List &lt; <span style="color: #b00040;">string</span>&gt;();
+ 
+   <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Test</span>()
+   {
+      <span style="color: #008000; font-weight: bold;">lock</span> (_list)
+      {
+         _list.Add (<span style="color: #ba2121;">"Item 1"</span>);
+         ...
+</pre>
+</div>
+<p>Поле, выделенное для этой цели (такое как _locker в предыдущем 
+примере), позволяет точное управление областью действия и гранулярностью
+ блокировки. Объект текущего содержимого (containing object, this) - или
+ даже его тип - также может использоваться в качестве объекта 
+синхронизации:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">lock</span> (<span style="color: #008000; font-weight: bold;">this</span>) { ... }
+</pre>
+</div>
+<p>или:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">lock</span> (<span style="color: #008000; font-weight: bold;">typeof</span> (Widget)) { ... }      <span style="color: #408080; font-style: italic;">// Для защиты доступа к static-данным</span>
+</pre>
+</div>
+<p>Недостаток такого способа блокировки в том, что Вы не инкапсулируете 
+отдельно логику блокировки, и становится сложнее защититься от глухой 
+блокировки (deadlocking, см. ниже) и излишней блокировки (excessive 
+blocking). Блокировка на типе также может просочиться через границы 
+домена приложения (в пределах одного и того же процесса).</p>
+<p>Также Вы можете реализовать блокировку lock на локальных переменных, захваченных lambda-выражениями или anonymous-методами.</p>
+<p style="padding-left: 30px;"><span style="color: #008080;">Блокировка 
+не ограничивает каким-либо образом доступ к самому объекту. Другими 
+словами, x.ToString() не будет блокироваться, потому что другой поток 
+вызвал lock(x); оба потока должны вызвать lock(x), чтобы блокировка 
+произошла.</span></p>
+<p>Когда применять блокировку? Как основное правило, Вам нужна 
+блокировка вокруг доступа к любой записываемой общей переменной 
+(writable shared field). Даже в простейшем случае - операция 
+присваивания одиночного поля - нужно учитывать синхронизацию. В 
+следующем классе ни метод Increment, ни метод Assign не будут 
+потокобезопасными:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">class</span> <span style="color: #0000ff; font-weight: bold;">ThreadUnsafe</span>
+{
+   <span style="color: #008000; font-weight: bold;">static</span> <span style="color: #b00040;">int</span> _x;
+   <span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Increment</span>() { _x++; }
+   <span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Assign</span>()    { _x = <span style="color: #666666;">123</span>; }
+}
+</pre>
+</div>
+<p>Ниже показаны потокобезопасные версии для Increment и Assign:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">class</span> <span style="color: #0000ff; font-weight: bold;">ThreadSafe</span>
+{
+   <span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">readonly</span> <span style="color: #b00040;">object</span> _locker = <span style="color: #008000; font-weight: bold;">new</span> <span style="color: #b00040;">object</span>();
+   <span style="color: #008000; font-weight: bold;">static</span> <span style="color: #b00040;">int</span> _x;
+ 
+   <span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Increment</span>() { <span style="color: #008000; font-weight: bold;">lock</span> (_locker) _x++; }
+   <span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Assign</span>()    { <span style="color: #008000; font-weight: bold;">lock</span> (_locker) _x = <span style="color: #666666;">123</span>; }
+}
+</pre>
+</div>
+<p>В не блокирующей синхронизации [12] мы рассмотрим случаи, 
+когда возникает необходимость в такой синхронизации, и как барьеры на 
+памяти и класс Interlocked [9] может предоставить альтернативу 
+блокировке в этих ситуациях.</p>
+<p><strong>Блокировка и атомарность</strong>. Если группа переменных 
+всегда читается и записывается в пределах одной и той же блокировки 
+lock, можно сказать, что эти переменные читаются и записываются 
+атомарно. Предположим, что поля x и y всегда читаются и назначаются 
+внутри блокировки на объекте locker:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">lock</span> (locker) { <span style="color: #008000; font-weight: bold;">if</span> (x != <span style="color: #666666;">0</span>) y /= x; }
+</pre>
+</div>
+<p>Можно сказать, что к x и y осуществляется атомарный доступ, потому 
+выполнение кода в пределах блокировки не может быть разделено или 
+вытеснено действиями в другом потоке, в результате чего посторонние 
+действия никак не могут отдельно повлиять на x или y так, что результат 
+вычислений станет недостоверным. Вы никогда не получите ошибку деления 
+на 0, так как доступ к x и y реализован в одной исключительной 
+блокировке (exclusive lock).</p>
+<p style="padding-left: 30px;"><span style="color: #800000;">Атомарность, предоставленная блокировкой lock, нарушается, если произойдет выбрасывание исключения внутри блока lock. Например:</span></p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #b00040;">decimal</span> _savingsBalance, _checkBalance;</pre>
+<pre style="margin: 0; line-height: 125%;">&nbsp;</pre>
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Transfer</span> (<span style="color: #b00040;">decimal</span> amount)
+{
+   <span style="color: #008000; font-weight: bold;">lock</span> (_locker)
+   {
+      _savingsBalance += amount;
+      _checkBalance -= amount + GetBankFee();
+   }
+}
+</pre>
+</div>
+<p style="padding-left: 30px;"><span style="color: #800000;">Если 
+исключение сработало в результате вызова GetBankFee(), то банк потерял 
+бы деньги. В этом случае нам нужно избегать проблем путем вызова 
+GetBankFee заранее. Решение подобной проблемы для более сложных случаев -
+ реализация логики отката (rollback) с помощью блока catch или finally.</span></p>
+<p>Понятие атомарности инструкции это другая, хотя аналогичная 
+концепция: инструкция считается атомарной, если она неделимо (её никак 
+нельзя прервать, поделить на части) выполняется на нижележащем 
+процессоре, см. описание не блокирующей синхронизации [12].</p>
+<p><strong>Вложенные блокировки</strong>. Поток можно повторно блокировать на одном и том же объекте вложенным (реентрантным) способом:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">lock</span> (locker)
+   <span style="color: #008000; font-weight: bold;">lock</span> (locker)
+      <span style="color: #008000; font-weight: bold;">lock</span> (locker)
+      {
+         <span style="color: #408080; font-style: italic;">// Тут какие-то действия...</span>
+      }
+</pre>
+</div>
+<p>или так:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;">Monitor.Enter (locker); Monitor.Enter (locker);  Monitor.Enter (locker); 
+   <span style="color: #408080; font-style: italic;">// Тут какие-то действия...</span>
+Monitor.Exit (locker);  Monitor.Exit (locker);   Monitor.Exit (locker);
+</pre>
+</div>
+<p>В этих сценариях объект разблокируется только когда произойдет выход 
+из самого внешнего оператора lock, или будет выполнено соответствующее 
+количество операторов Monitor.Exit.</p>
+<p>Вложенная блокировка полезна, когда один метод вызывает другой в пределах критической секции lock:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">readonly</span> <span style="color: #b00040;">object</span> _locker = <span style="color: #008000; font-weight: bold;">new</span> <span style="color: #b00040;">object</span>();
+ </pre>
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Main</span>()
+{
+   <span style="color: #008000; font-weight: bold;">lock</span> (_locker)
+   {
+      AnotherMethod();
+      <span style="color: #408080; font-style: italic;">// У нас все еще есть блокировка - потому что блокировки lock реентрантны.</span>
+  }
+}
+ </pre>
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">AnotherMethod</span>()
+{
+   <span style="color: #008000; font-weight: bold;">lock</span> (_locker) { Console.WriteLine (<span style="color: #ba2121;">"Метод AnotherMethod"</span>); }
+}
+</pre>
+</div>
+<p><strong>Глухие блокировки</strong> (deadlock). Глухая, или "мертвая" 
+блокировка deadlock произойдет, когда два потока взаимно ждут 
+освобождения ресурса, захваченного другим потоком, в результате ничего 
+не происходит. Ниже приведена самая простая иллюстрация этой ситуации с 
+двумя блокировками lock:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #b00040;">object</span> locker1 = <span style="color: #008000; font-weight: bold;">new</span> <span style="color: #b00040;">object</span>();</pre>
+<pre style="margin: 0; line-height: 125%;"><span style="color: #b00040;">object</span> locker2 = <span style="color: #008000; font-weight: bold;">new</span> <span style="color: #b00040;">object</span>();
+ </pre>
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">new</span> <span style="color: #0000ff;">Thread</span> (() =&gt; {
+                     <span style="color: #008000; font-weight: bold;">lock</span> (locker1)
+                     {
+                        Thread.Sleep (<span style="color: #666666;">1000</span>);
+                        <span style="color: #008000; font-weight: bold;">lock</span> (locker2);   <span style="color: #408080; font-style: italic;">// Deadlock</span>
+                     }
+                  }).Start();</pre>
+<pre style="margin: 0; line-height: 125%;">&nbsp;</pre>
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">lock</span> (locker2)
+{
+  Thread.Sleep (<span style="color: #666666;">1000</span>);
+  <span style="color: #008000; font-weight: bold;">lock</span> (locker1);                         <span style="color: #408080; font-style: italic;">// Deadlock</span>
+}
+</pre>
+</div>
+<p>Программист может "наколбасить" и более сложные цепочки глухой блокировки с участием трех и большего количества потоков.</p>
+<p style="padding-left: 30px;"><span style="color: #800000;">Библиотека 
+CLR в стандартном окружении хоста не работает наподобие сервера SQL 
+Server, не определяет автоматически глухие блокировки и не представляет 
+автоматическое средство исправления таких блокировок путем останова 
+одного из участников глухой блокировки. Глухая блокировка потоков 
+заставляет их на неопределенное время прервать свое выполнение, если 
+конечно Вы не предусмотрели таймаут блокировки. В итерации хоста SQL 
+CLR, однако, deadlock-и автоматически определяются и выбрасывается 
+(перехватываемое catch) исключение в одном из потоков, участвующих в 
+глухой блокировке.</span></p>
+<p>Deadlock одна из самых жестких проблем в многопоточности, особенно 
+когда есть множество взаимосвязанных объектов. Фундаментальная сложность
+ состоит в том, что Вы не можете быть уверены, что завершилась 
+блокировка кода, который сам вызвал блокировку.</p>
+<p>Например, Вы можете нечаянно заблокировать private-поле в своем 
+классе x, не зная, что Ваш вызывающий код (или код, вызвавший 
+вызывающего) уже заблокирован на поле b в классе y. Между тем другой 
+поток делает обратное, создавая deadlock. Ирония тут в том, что проблема
+ усиливается "хорошими" (изначально подразумеваемыми) шаблонами 
+объектно-ориентированного стиля программирования, потому что принцип 
+"скрывай детали кода внутри объектов" создает цепочки взаимосвязей, 
+которые не очевидны для программиста, пока код не начнет выполняться в 
+реальном времени.</p>
+<p>Популярные советы избежать мертвых блокировок типа "блокируйте 
+объекты в правильном порядке" тяжело применить на практике, хотя они 
+могут помочь в простых случаях, примеры которых мы описывали. Лучшая 
+стратегия - особенно внимательно применять блокировки вокруг вызова 
+методов в объектах, которые могут ссылаться обратно на Ваш собственный 
+объект. Тщательно взвесьте необходимость блокировки вокруг вызова 
+методов в других классах, часто это делается, однако иногда - что мы 
+рассмотрим позже - есть и другие опции реализации. Больше полагаясь на 
+декларативность [13] и параллелизм обработки данных&nbsp;[14], не 
+изменяемые типы (immutable types, см. далее) и не блокирующие 
+конструкции синхронизации [12], можно снизить необходимость в 
+блокировках.</p>
+<p style="padding-left: 30px;"><span style="color: #008080;">Есть еще 
+один способ почувствовать проблему: когда Вы вызываете другой код, 
+содержащий блокировку, происходит скрытая инкапсуляция этой блокировки. 
+Это не приведет к ошибке в библиотеке CLR или .NET Framework, но 
+является фундаментальным ограничением блокировки в целом. Проблемам 
+блокировки посвящены многие исследовательские проекты, включая Software 
+Transactional Memory.</span></p>
+<p>Другой сценарий мертвой блокировки возникнет, когда вызывается 
+Dispatcher.Invoke (в приложении WPF) или Control.Invoke (в приложении 
+Windows Forms) во время активной блокировки. Если случилось так, что UI 
+запустил другой метод, который ждет на той же блокировке, то произойдет 
+deadlock. Это часто можно исправить простым вызовом BeginInvoke вместо 
+Invoke. Альтернативно Вы можете освободить свою блокировку перед вызовом
+ Invoke, хотя это не будет работать, если вызывающий код запустил 
+блокировку. Invoke и BeginInvoke будут рассматриваться далее в секции 
+"Rich Client Applications и Thread Affinity".</p>
+<p><strong>Производительность</strong>. Блокировка работает быстро: Вы 
+можете ожидать, что захват и освобождение критической секции lock займет
+ меньше 20 наносекунд на поколении компьютеров 2010 года, если к этой 
+секции блокировки не было конкурентного доступа. Если же был случай 
+конкурентного доступа, то последующие затраты на переключение контекста 
+введут трату процессорного времени примерно около микросекунды, хотя 
+этот интервал может быть больше, если учесть время, за которое смена 
+состояния потока будет реально обработана планировщиком. Вы можете 
+избежать трат на переключение контекста с помощью класса SpinLock [3] - 
+если блокировка происходит очень коротко.</p>
+<p>Блокировка может снизить конкурентность, если блокировка удерживается
+ слишком долго. Это также может повысить шансы возникновения deadlock.</p>
+<p><strong>Mutex</strong>. Мьютекс подобен C# lock, но он может работать
+ между несколькими процессами. Другими словами, Mutex может действовать 
+как в пределах компьютера, так и в пределах приложения.</p>
+<p style="padding-left: 30px;"><span style="color: #008080;">Захват и 
+освобождение Mutex в случае отсутствия конкурентных попыток доступа 
+занимает несколько микросекунд - примерно в 50 раз медленнее, чем 
+работает критическая секция lock.</span></p>
+<p>С классом Mutex можно вызвать метод WaitOne для блокировки и 
+ReleaseMutex для разблокировки. Закрытие или избавление от (disposing) 
+Mutex автоматически освободит его. Так же, как и с оператором lock, 
+Mutex может быть освобожден только в том потоке, который получил этот 
+Mutex.</p>
+<p>Общее использование для межпроцессного Mutex применяется для 
+гарантии, что только один экземпляр программы может быть запущен в любой
+ момент времени. Вот как это делается:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">class</span> <span style="color: #0000ff; font-weight: bold;">OneAtATimePlease</span>
+{
+   <span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Main</span>()
+   {
+      <span style="color: #408080; font-style: italic;">// Присвоение мьютексу имени делает его доступным в пределах</span>
+      <span style="color: #408080; font-style: italic;">// всего компьютера. Используйте имя, которое уникально для</span>
+      <span style="color: #408080; font-style: italic;">// Вашей компании, например имя, включающее URL сайта.</span>
+ 
+      <span style="color: #008000; font-weight: bold;">using</span> (<span style="color: #b00040;">var</span> mutex = <span style="color: #008000; font-weight: bold;">new</span> Mutex (<span style="color: #008000; font-weight: bold;">false</span>, <span style="color: #ba2121;">"oreilly.com OneAtATimeDemo"</span>))
+      {
+         <span style="color: #408080; font-style: italic;">// Ожидание в течение нескольких секунд, если произошла попытка</span>
+         <span style="color: #408080; font-style: italic;">// конкурентного запуска в случае, когда другой экземпляр</span>
+         <span style="color: #408080; font-style: italic;">// программы все еще находится в процессе завершения.</span>
+         <span style="color: #008000; font-weight: bold;">if</span> (!mutex.WaitOne (TimeSpan.FromSeconds (<span style="color: #666666;">3</span>), <span style="color: #008000; font-weight: bold;">false</span>))
+         {
+            Console.WriteLine (<span style="color: #ba2121;">"Another app instance is running. Bye!"</span>);
+            <span style="color: #008000; font-weight: bold;">return</span>;
+         }
+         RunProgram();
+      }
+  }
+ 
+   <span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">RunProgram</span>()
+   {
+      Console.WriteLine (<span style="color: #ba2121;">"Программа уже работает. Нажмите Enter для выхода"</span>);
+      Console.ReadLine();
+   }
+}
+</pre>
+</div>
+Если приложение запущено по управлением службы терминала (Terminal Services)
+ от имени определенного пользователя, то видимый в пределах всего 
+компьютера Mutex обычно виден только для приложений в пределах одной 
+терминальной сессии (т. е. только в сессии этого пользователя 
+терминала). Чтобы сделать мьютекс видимым для всех сессий терминала, 
+снабдите его имя префиксом Global\.</span></p>
+<p><strong>Семафор</strong>. Это объект, который похож на ночной клуб: у
+ него есть определенная емкость, принудительно отслеживаемая вышибалой 
+на входе. Будучи заполненным, клуб больше не может принять посетителей, 
+что создает очередь снаружи. Тогда для каждой уходящей персоны зайдет 
+одна персона из головы очереди. Конструктор семафора требует минимум 2 
+аргументов: количество доступных в настоящий момент мест и общая емкость
+ семафора.</p>
+<p>Семафор с емкостью, равной 1, работает подобно Mutex или lock, за 
+исключением того, что у семафора нет "владельца" - он не обращает 
+внимания на потоки (thread-agnostic). Любой поток может вызвать Release 
+на Semaphore, в то время как с Mutex или lock, только один поток может 
+получить блокировку и освободить её.</p>
+<p style="padding-left: 30px;"><span style="color: #008080;">Есть две 
+подобных по функционалу версии этого класса: Semaphore и SemaphoreSlim. 
+Последний был представлен в Framework 4.0, и он оптимизирован для 
+удовлетворения повышенных требований на малые задержки в параллельном 
+программировании [14]. Также он полезен в традиционной многопоточности, 
+потому что позволяет указать билет отмены (cancellation token [15]) для 
+ожидания. Однако это нельзя использовать для сигнализации между 
+процессами.</span></p>
+<p style="padding-left: 30px;"><span style="color: #008080;">Semaphore 
+вводит трату времени процессора около 1 микросекунды в вызове WaitOne 
+или Release; SemaphoreSlim тратит на это около четверти микросекунды.</span></p>
+<p>Семафоры могут быть полезные в пределах ограниченной многопоточности -
+ они предотвращают ситуации, когда одну и ту же секцию кода выполняют 
+слишком много потоков. В следующем примере 5 потоков пытаются войти в 
+ночной клуб, в который разрешено войти за один раз только троим потокам:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">class</span> <span style="color: #0000ff; font-weight: bold;">TheClub</span>
+{
+   <span style="color: #008000; font-weight: bold;">static</span> SemaphoreSlim _sem = <span style="color: #008000; font-weight: bold;">new</span> SemaphoreSlim (<span style="color: #666666;">3</span>); <span style="color: #408080; font-style: italic;">// Емкость == 3</span>
+ 
+   <span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Main</span>()
+   {
+      <span style="color: #008000; font-weight: bold;">for</span> (<span style="color: #b00040;">int</span> i = <span style="color: #666666;">1</span>; i &lt;= <span style="color: #666666;">5</span>; i++) <span style="color: #008000; font-weight: bold;">new</span> Thread (Enter).Start (i);
+   }
+ 
+   <span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Enter</span> (<span style="color: #b00040;">object</span> id)
+   {
+      Console.WriteLine (id + <span style="color: #ba2121;">" хочет зайти"</span>);
+      _sem.Wait();
+      Console.WriteLine (id + <span style="color: #ba2121;">" вошел!"</span>);    <span style="color: #408080; font-style: italic;">// Только 3 потока</span>
+      Thread.Sleep (<span style="color: #666666;">1000</span> * (<span style="color: #b00040;">int</span>) id);        <span style="color: #408080; font-style: italic;">// могут находиться тут</span>
+      Console.WriteLine (id + <span style="color: #ba2121;">" выходит"</span>);<span style="color: #408080; font-style: italic;">// одновременно.</span>
+      _sem.Release();
+   }
+}
+</pre>
+</div>
+<p>Результат работы этого примера:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #000000; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #ffffff;">1 хочет зайти
+1 вошел!
+2 хочет зайти
+2 вошел!
+3 хочет зайти
+3 вошел!
+4 хочет зайти
+5 хочет зайти
+1 выходит
+4 вошел!
+2 выходит
+5 вошел!
+</span></pre>
+</div>
+<p>Если вместо оператора Sleep выполняется интенсивный дисковый 
+ввод/вывод, то этот семафор улучшит общую производительность программы 
+путем ограничения конкурентной активности с жестким диском.</p>
+<p>Semaphore, если он именован, может работать между процессами точно так же, как и Mutex.</p>
+<p><a name="ThreadSafety"></a>[<strong>Безопасность потоков (Thread Safety)</strong>]</p>
+<p>Программа или метод считается потокобезопасным (thread-safe) если он 
+не вводит никакой неопределенности в работе кода при наличии сценария 
+многопоточности. Безопасность потоков достигается главным образом путем 
+блокировки и уменьшения возможности по взаимодействию между потоками.</p>
+<p>Типы общего назначения (general-purpose types) редко ориентированы на многопоточность по следующим причинам:</p>
+<p>• Цена разработки потокобезопасного кода может быть значительной, в 
+частности если разрабатываемый тип имеет множество полей (каждое поле 
+потенциально может взаимодействовать в произвольном контексте 
+многопоточности).<br>• Обеспечение потокобезопасности может повлечь 
+дополнительные затраты процессорного времени, что снизит общую 
+производительность кода (в частности затраты могут зависеть от того, 
+используется ли в действительности этот тип несколькими потоками).<br>• 
+Потокобезопасный тип вовсе не обязательно приведет к безопасному его 
+использованию в программе. Также часто конечный код, включающий 
+использование потокобезопасного типа, делает его потокобезопасность 
+избыточной.</p>
+<p>Следовательно, рационально потокобезопасность реализовать только в 
+том месте, где она действительно должна быть, чтобы правильно обработать
+ определенный сценарий многопоточности.</p>
+<p>Однако здесь есть несколько способов "обмана", чтобы безопасно 
+запустить большие и сложные классы в многопоточном окружении. Один из 
+них - жертвовать гранулярностью путем обертки одной монопольной 
+блокировкой больших секций кода - даже доступ ко всем объекту - 
+принуждая применить последовательный доступ к объекту на верхнем уровне.
+ Такая тактика фактически важна, если Вы хотите использовать не 
+безопасный по отношению к многопоточности сторонний код (или большинство
+ Framework-типов) в многопоточном контексте. Прием должен просто 
+использовать одинаковую монопольную блокировку (exclusive lock), чтобы 
+защитить доступ ко всем свойствам, методам и полям на не безопасном по 
+отношению к потокам объекте. Это решение хорошо работает, если все 
+методы объекта выполняются быстро (иначе будут иметь место большие 
+блокировки).</p>
+<p style="padding-left: 30px;"><span style="color: #800000;">Примитивные
+ типы, к которым относятся некоторые типы .NET Framework, будучи 
+инстанцированными, являются потокобезопасными только при доступе 
+read-only. Ответственность за правильное их использование для 
+потокобезопасности лежит на разработчике, обычно это верно для 
+монопольных блокировок (исключение составляют сборки в библиотеке 
+System.Collections.Concurrent).</span></p>
+<p>Другой способ обмана - минимизация взаимодействия потоков путем 
+минимизации количества общих данных. Это отличный подход, неявно 
+используемый в приложениях среднего уровня, не сохраняющих свое 
+состояние, и серверах веб-страниц. Поскольку могут одновременно 
+поступить несколько клиентских запросов, вызываемые методы сервера 
+должны быть потокозащищенными. Дизайн без сохранения состояния 
+(stateless, популярный по причине хорошей масштабируемости) изначально 
+ограничивает возможность взаимодействия между потоками, поскольку классы
+ не сохраняют данные между запросами. Тогда взаимодействие потоков 
+ограничивается только статическими полями, решение создать которые можно
+ принять только в целях кэширования в памяти общих используемых данных, и
+ предоставления инфраструктуры служб аутентификации и аудита.</p>
+<p>Конечный этап реализации безопасности потоков состоит в использовании
+ режима автоматической блокировки. Библиотека .NET Framework это точно 
+делает, если вы разделяете ContextBoundObject на подклассы и применяете 
+атрибут Synchronization для этого класса. Тогда каждый раз, когда 
+вызывается метод или происходит обращение к свойству такого объекта, 
+автоматически берется блокировка на весь объект, пока не выполнится 
+полностью метод или не завершится доступ к свойству. Хотя это упрощает 
+обеспечение безопасности потоков, возникают собственные проблемы: 
+мертвые блокировки (deadlock), которые иначе не произошли бы, ухудшение 
+параллелизма и непреднамеренная реентрантность. По этим причинам ручная 
+блокировка обычно лучший выбор - по крайней мере пока не станет 
+доступным упрощенный режим автоматической блокировки.</p>
+<p><strong>Безопасность потоков и типы .NET Framework</strong>. 
+Блокировку можно использовать, чтобы превратить не безопасный по 
+отношению к потокам код в потокобезопасный. Хорошее применение для этого
+ библиотека .NET Framework: почти все её не примитивные типы, будучи 
+инстанцированными, не являются потокобезопасными (для чего-то большего, 
+чем доступ только на чтение). И все же они могут быть использованы в 
+многопоточном коде, если любой доступ к любому имеющемуся объекту 
+осуществляется через блокировку lock. Ниже приведен пример, где два 
+потока одновременно добавляют элемент в одну и ту же коллекцию List, и 
+затем делают перечисление списка в цикле:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">class</span> <span style="color: #0000ff; font-weight: bold;">ThreadSafe</span>
+{
+   <span style="color: #008000; font-weight: bold;">static</span> List &lt; <span style="color: #b00040;">string</span>&gt; _list = <span style="color: #008000; font-weight: bold;">new</span> List &lt; <span style="color: #b00040;">string</span>&gt;();
+ 
+   <span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Main</span>()
+   {
+      <span style="color: #008000; font-weight: bold;">new</span> <span style="color: #0000ff;">Thread</span> (AddItem).Start();
+      <span style="color: #008000; font-weight: bold;">new</span> <span style="color: #0000ff;">Thread</span> (AddItem).Start();
+   }
+ 
+   <span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">AddItem</span>()
+   {
+      <span style="color: #008000; font-weight: bold;">lock</span> (_list) _list.Add (<span style="color: #ba2121;">"Item "</span> + _list.Count);
+      <span style="color: #b00040;">string</span>[] items;
+      <span style="color: #008000; font-weight: bold;">lock</span> (_list) items = _list.ToArray();
+      <span style="color: #008000; font-weight: bold;">foreach</span> (<span style="color: #b00040;">string</span> s <span style="color: #008000; font-weight: bold;">in</span> items) Console.WriteLine (s);
+   }
+}
+</pre>
+</div>
+<p>В
+ этом примере мы осуществляем блокировку на самом объекте _list. Если бы
+ у нас было 2 взаимосвязанных списка, мы должны были бы выбрать общий 
+объект, на котором можно было бы осуществить блокировку (мы могли бы 
+выбрать для этого один из этих списков, но лучше использовать для 
+блокировки отдельное, независимое поле).</p>
+<p>Перечисление коллекций .NET также не является потокобезопасным в том 
+смысле, что будет выброшено исключение, если список модифицируется во 
+время процесса его перечисления. Вместо того, чтобы блокироваться на 
+время до завершения перечисления, в этом примере мы просто сначала 
+делаем копию элементов в массив. Это дает возможность избежать 
+чрезмерной блокировки, если процесс перечисления списка может занять 
+много времени (другое решение - использовать блокировку reader/writer 
+[4]).</p>
+<p><strong>Блокировки вокруг потокобезопасных объектов</strong>. Иногда 
+также нужно делать блокировку при доступе к потокобезопасным объектам. 
+Для иллюстрации представим, что Framework-класс List был действительно 
+потокобезопасным, и мы хотим добавить элемент в его список:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">if</span> (!_list.Contains (newItem)) _list.Add (newItem);
+</pre>
+</div>
+<p>Независимо от того, является список потокобезопасным или нет, этот 
+оператор определенно не является потокобезопасным! Для обеспечения 
+потокобезопасности весь оператор if должен быть обернут в блокировку, 
+чтобы предотвратить вытеснение в промежутке между проверкой и 
+добавлением нового элемента. Та же самая блокировка затем нужна в любом 
+месте, где мы модифицируем этот список. Например, следующий оператор 
+также нуждается в обертке идентичной блокировкой (чтобы гарантировать, 
+что процесс модификации не вытеснит предыдущий оператор):</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;">_list.Clear();
+</pre>
+</div>
+<p>Другими словами, мы должны были бы реализовать блокировку точно так 
+же, как это делали с не безопасными для многопоточного использования 
+классами.</p>
+<p style="padding-left: 30px;"><span style="color: #008080;">Блокировка 
+вокруг доступа к коллекции может привести к чрезмерной блокировке в 
+среде высокой конкуренции потоков. Для этого Framework 4.0 предоставляет
+ потокобезопасные очередь (queue), стек (stack) и словарь (dictionary).</span></p>
+<p><strong>Статические члены класса</strong>. Обертывание доступа к 
+объекту вокруг пользовательской блокировки работает только если все 
+конкурентные потоки учитывают и используют блокировки. Это может не 
+иметь место, если объект широко доступен. Самый худший случай - 
+статический (объявленный с ключевым словом static) член класса со снятым
+ ограничением на доступ (объявлен с типом доступа public). Для примера 
+представим: если статическое свойство DateTime.Now структуры DateTime, 
+было бы не потокобезопасным, то два конкурентных доступа к нему дадут 
+ошибочный результат или выбрасывание исключения. Единственный способ 
+бороться с этим через внешнюю блокировку мог бы состоять в том, чтобы 
+заблокировать доступ к самому типу - lock(typeof(DateTime)) - перед 
+вызовом DateTime.Now. Это работало бы, только если все программисты 
+согласились бы поступать подобным образом (что маловероятно). Кроме 
+того, блокировка типа создает собственные проблемы.</p>
+<p>По этой причине статические члены структуры DateTime (структура и 
+класс на C# это по сути одно и то же) должны быть тщательно реализованы 
+для обеспечения потокобезопасности. Ото общий шаблон поведения кода 
+библиотеки .NET Framework: static-члены потокобезопасны; члены 
+экземпляров (instance members) не потокобезопасны. Следование этому 
+шаблону также целесообразно при написании типов для публичного 
+использования, чтобы не создавать невозможные проблемы с безопасностью 
+потоков. Другими словами, путем реализации статических методов 
+потокозащищенными Вы программируете код типа, чтобы не исключать 
+безопасность потоков для пользователей этого типа.</p>
+<p style="padding-left: 30px;"><span style="color: #008080;">Безопасность
+ для использования в потоках статических методов это то, что Вы должны 
+кодировать специально: оно не произойдет само собой, на основании 
+объявления метода статическим!</span></p>
+<p><strong>Безопасность для потоков при доступе только на чтение</strong>.
+ Реализация типов потокобезопасными для конкурентного доступа только на 
+чтение (где это возможно) выгодна, поскольку это означает, что 
+пользователи могут избежать чрезмерной блокировки. Многие типы из 
+библиотеки .NET Framework следуют этому принципу: коллекции 
+(collections), например, потокобезопасны для конкурентного доступа 
+потоков на чтение.</p>
+<p>Следование этому принципу простое: если Вы документируете тип как 
+потокобезопасный для конкурентного доступа только на чтение, не 
+записывайте в поля в методах, которые пользователь ожидает работающими 
+только на чтение (или делайте блокировку вокруг записи). Например, в 
+реализации метода ToArray() в коллекции Вы можете начать со сжатия 
+внутренней структуры коллекции. Однако это сделало бы метод не 
+потокобезопасным для пользователей, которые ожидают доступа только на 
+чтение.</p>
+<p>Безопасность потоков для только чтения одна из причин, по которой 
+перечислители (enumerators) отделены от перечислений (enumerables): два 
+потока могут одновременно перечислять элементы коллекции, потому что 
+каждый получает отдельный объект перечислителя.</p>
+<p style="padding-left: 30px;"><span style="color: #008080;">При 
+отсутствии документации приходится платить предположением, что по своей 
+природе любой метод работает только на чтение. Хороший пример это класс 
+Random: когда Вы вызываете Random.Next(), его внутренняя реализация 
+требует, чтобы это действие обновило внутреннее приватное значение seed.
+ Таким образом, Вы должны либо делать блокировку вокруг использования 
+класса Random, или поддерживать раздельные экземпляры этого класса для 
+каждого потока.</span></p>
+<p><strong>Безопасность потоков в серверах приложений</strong> 
+(Application Servers). Серверы приложений требуют многопоточности для 
+обработки одновременных запросов от клиентов. Приложения WCF, ASP.NET и 
+Web Services неявно используют многопоточность; то же самое верно для 
+приложений сервера Remoting, которые используют сетевой канал, такой как
+ TCP или HTTP. Это означает, что когда Вы пишете код на стороне сервера,
+ то должны учитывать безопасность потоков, если есть возможность 
+взаимодействия среди потоков при обработке запросов клиентов. К счастью,
+ такая возможность редка; типичный класс сервера либо не сохраняет 
+состояния (stateless, не имеет полей), либо содержит модель активации, 
+которая создает отдельный экземпляр объекта на каждый потупивший запрос 
+от клиента. Взаимодействие обычно возникает только через статические 
+поля, иногда используемые для кэширования в памяти частей базы данных в 
+целях улучшения производительности.</p>
+<p>Например, предположим, что у Вас есть метод RetrieveUser, который делает запрос к базе данных:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #408080; font-style: italic;">// User это пользовательский класс с полями для данных пользователя.</span></pre>
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">internal</span> User <span style="color: #0000ff;">RetrieveUser</span> (<span style="color: #b00040;">int</span> id) { ... }
+</pre>
+</div>
+<p>Если этот метод вызывался часто, то Вам следует улучшить 
+производительность путем кэширования результатов в статическом словаре 
+(static Dictionary). Вот решение, учитывающее безопасность потоков:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">class</span> <span style="color: #0000ff; font-weight: bold;">UserCache</span>
+{
+   <span style="color: #008000; font-weight: bold;">static</span> Dictionary &lt; <span style="color: #b00040;">int</span>, User&gt; _users = <span style="color: #008000; font-weight: bold;">new</span> Dictionary &lt; <span style="color: #b00040;">int</span>, User&gt;();
+ 
+   <span style="color: #008000; font-weight: bold;">internal</span> <span style="color: #008000; font-weight: bold;">static</span> User <span style="color: #0000ff;">GetUser</span> (<span style="color: #b00040;">int</span> id)
+   {
+      User u = <span style="color: #008000; font-weight: bold;">null</span>;
+      <span style="color: #008000; font-weight: bold;">lock</span> (_users)
+         <span style="color: #008000; font-weight: bold;">if</span> (_users.TryGetValue (id, <span style="color: #008000; font-weight: bold;">out</span> u))
+            <span style="color: #008000; font-weight: bold;">return</span> u;
+ 
+      u = RetrieveUser (id);     <span style="color: #408080; font-style: italic;">// Метод для получения пользователя из базы данных</span>
+      <span style="color: #008000; font-weight: bold;">lock</span> (_users) _users [id] = u;
+      <span style="color: #008000; font-weight: bold;">return</span> u;
+   }
+}
+</pre>
+</div>
+<p>Мы
+ должны, как минимум, делать блокировку вокруг чтения и обновления 
+словаря для гарантии безопасности потоков. В этом примере мы выбрали 
+практический компромисс в блокировке между простотой и 
+производительностью. Наш дизайн потенциально создает очень малую 
+потенциальную не эффективность: если 2 потока одновременно вызовут этот 
+метод с одним и тем же ранее не запрашиваемым id, то метод RetrieveUser 
+был бы вызван дважды - и словарь получил бы ненужное обновление. 
+Блокировка вокруг всего метода предотвратила бы это, но создала бы еще 
+меньшую эффективность: весь кэш был бы заблокирован на время вызова 
+RetrieveUser, в течение этого времени другие потоки блокировались бы при
+ запросе любого пользователя.</p>
+<p><strong>Rich Client Applications и Thread Affinity</strong>. Обе 
+библиотеки Windows Presentation Foundation (WPF) и Windows Forms следуют
+ моделям на основе родственности потоков (thread affinity). Хотя каждая 
+из библиотек имеет отдельную реализацию, обе очень похожи по своим 
+функциям.</p>
+<p>Объекты, которые создают rich client, основаны главным образом на 
+DependencyObject в случае применения WPF, или на Control в случае 
+Windows Forms. Эти объекты имеют родственность потоков. Это означает, 
+что только поток, который который объект инстанцирует, может 
+впоследствии получить доступ к его членам. Нарушение правила приведет 
+либо к не предсказуемому поведению, либо к выбросу исключения.</p>
+<p>Положительно то, что Вам не нужно делать блокировку вокруг доступа к 
+объекту UI. Недостаток же в том, что если нужно вызвать член объекта X, 
+который был создан другим потоком Y, то Вы должны перенаправить 
+(marshal) запрос на вызов объекту Y. Вы явно можете делать это следующим
+ образом:</p>
+<p>• В WPF вызовите Invoke или BeginInvoke на элементе объекта Dispatcher.<br>• В Windows Forms вызовите Invoke или BeginInvoke на элементе управления (control).</p>
+<p>Invoke и BeginInvoke оба принимают делегата, который обращается к 
+методу на целевом элементе управления, который Вы хотите запустить. 
+Invoke работает синхронно: вызывающий код блокируется, пока 
+перенаправление (marshal) не завершится. BeginInvoke работает 
+асинхронно: вызвавший его код немедленно получает обратно управление, и 
+маршалированный запрос ставится в очередь (с использованием той же самой
+ очереди сообщений, которая поддерживает события клавиатуры, мыши и 
+таймера).</p>
+<p>Предположим, что у нас есть окно, которое содержит текстовое поле 
+ввода (text box) с именем txtMessage, содержимое которого мы хотим 
+обновлять рабочим потоком. Вот пример для WPF:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">public</span> <span style="color: #008000; font-weight: bold;">partial</span> <span style="color: #008000; font-weight: bold;">class</span> <span style="color: #0000ff; font-weight: bold;">MyWindow</span> : Window
+{
+   <span style="color: #008000; font-weight: bold;">public</span> <span style="color: #0000ff;">MyWindow</span>()
+   {
+      InitializeComponent();
+      <span style="color: #008000; font-weight: bold;">new</span> <span style="color: #0000ff;">Thread</span> (Work).Start();
+   }
+ 
+   <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Work</span>()
+   {
+      Thread.Sleep (<span style="color: #666666;">5000</span>);    <span style="color: #408080; font-style: italic;">// Симуляция интенсивных вычислений</span>
+      UpdateMessage (<span style="color: #ba2121;">"The answer"</span>);
+   }
+ 
+   <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">UpdateMessage</span> (<span style="color: #b00040;">string</span> message)
+   {
+      Action action = () =&gt; txtMessage.Text = message;
+      Dispatcher.Invoke (action);
+   }
+}
+</pre>
+</div>
+<p>Подобный код используется для Windows Forms, за исключением что мы 
+вместо Dispatcher.Invoke вызовем метод Invoke (принадлежащий классу 
+формы Form):</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">UpdateMessage</span> (<span style="color: #b00040;">string</span> message)
+{
+   Action action = () =&gt; txtMessage.Text = message;
+   <span style="color: #008000; font-weight: bold;">this</span>.Invoke (action);
+}
+</pre>
+</div>
+<p style="padding-left: 30px;"><span style="color: #008080;">Framework предоставляет две конструкции для упрощения этого процесса:&nbsp;</span></p>
+<p style="padding-left: 30px;"><span style="color: #008080;">&nbsp; &nbsp;• BackgroundWorker [16]</span><br><span style="color: #008080;">&nbsp; &nbsp;</span><span style="color: #008080;">•&nbsp;</span><span style="color: #008080;">Продолжения для Task [17]</span></p>
+<p><strong>Рабочие потоки против потоков UI</strong>. Полезно думать о 
+приложениях rich client, что они имеют две категории потоков: потоки 
+графического интерфейса пользователя (UI threads) и рабочие потоки 
+(worker threads). Потоки UI инстанцируют (и впоследствии "владеют") 
+элементами графического интерфейса UI; рабочие потоки не инстанцируют и 
+не владеют элементами UI. Worker-потоки обычно выполняют длинные 
+вычисления, такие как выборка/получение данных (если бы эти вычисления 
+были короткими, то надобности в рабочих потоках не было бы).</p>
+<p>Большинство приложений rich client имеют один поток UI (который также
+ является главным потоком приложения) и этот поток периодически 
+порождает рабочие потоки - либо напрямую, либо с использованием класса 
+BackgroundWorker [16]. Эти рабочие потоки маршалируют свои обращения 
+обратно в главный поток UI, чтобы обновлять состояние органов управления
+ или чтобы сообщать о прогрессе выполнения операции.</p>
+<p>Итак, когда у приложения может быть несколько потоков UI? Основной 
+такой сценарий возникает, когда у Вас приложение с несколькими окнами 
+верхнего уровня, что часто называют приложением Single Document 
+Interface (SDI); пример такого приложения Microsoft Word. Каждое окно 
+SDI обычно показывает само себя как отдельное "приложение" на панели 
+задач, и часто работает функционально изолированно от других окон SDI. 
+Путем назначения каждому такому окну своего собственного потока UI, 
+приложение может более отзывчивым.</p>
+<p><strong>Immutable-объекты</strong>. Не мутируемый (immutable) объект 
+это такой объект, который нельзя изменить - снаружи или внутри. Поля 
+immutable-объекта обычно декларируются как read-only, и они полностью 
+инициализируются в момент конструирования объекта.</p>
+<p>Немутируемость это признак функционального программирования, где 
+вместо мутирования объекта Вы создаете новый объект с другими 
+свойствами. LINQ следует этой парадигме. Немутируемость также важна в 
+многопоточности, чтобы избежать проблем с общим записываемым состоянием -
+ путем устранения (или минимизации) записываемых данных.</p>
+<p>Один из шаблонов использования немутируемых объектов - инкапсуляция 
+группы связанных полей для минимизации задержек блокировок. Чтобы 
+привести простой пример, предположим, что у нас есть два поля, и мы 
+хотим читать/записывать эти поля атомарно:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #b00040;">int</span> _percentComplete;<span style="color: #b00040;">string</span> _statusMessage;
+</pre>
+</div>
+<p>Вместо того, чтобы реализовать блокировку вокруг этих полей, мы могли бы определить следующий immutable-класс:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">class</span> <span style="color: #0000ff; font-weight: bold;">ProgressStatus</span>    <span style="color: #408080; font-style: italic;">// Представляет прогресс какой-то активности</span>
+{
+   <span style="color: #008000; font-weight: bold;">public</span> <span style="color: #008000; font-weight: bold;">readonly</span> <span style="color: #b00040;">int</span> PercentComplete;
+   <span style="color: #008000; font-weight: bold;">public</span> <span style="color: #008000; font-weight: bold;">readonly</span> <span style="color: #b00040;">string</span> StatusMessage;
+ 
+   <span style="color: #408080; font-style: italic;">// У этого класса может быть намного больше полей...</span>
+ 
+   <span style="color: #008000; font-weight: bold;">public</span> <span style="color: #0000ff;">ProgressStatus</span> (<span style="color: #b00040;">int</span> percentComplete, <span style="color: #b00040;">string</span> statusMessage)
+   {
+      PercentComplete = percentComplete;
+      StatusMessage = statusMessage;
+   }
+}
+</pre>
+</div>
+<p>Тогда мы могли бы определить одно поле такого типа на объекте блокировки:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">readonly</span> <span style="color: #b00040;">object</span> _statusLocker = <span style="color: #008000; font-weight: bold;">new</span> <span style="color: #b00040;">object</span>();
+ProgressStatus _status;
+</pre>
+</div>
+<p>Теперь мы можем читать/записывать значения такого типа без удержания блокировки для большего количества присваиваний, чем одно:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #b00040;">var</span> status = <span style="color: #008000; font-weight: bold;">new</span> ProgressStatus (<span style="color: #666666;">50</span>, <span style="color: #ba2121;">"Работаем с этим"</span>);</pre>
+<pre style="margin: 0; line-height: 125%;"><span style="color: #408080; font-style: italic;">// Представим, что мы присваиваем еще много полей...</span></pre>
+<pre style="margin: 0; line-height: 125%;"><span style="color: #408080; font-style: italic;">// ...</span></pre>
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">lock</span> (_statusLocker) _status = status;       <span style="color: #408080; font-style: italic;">// Очень краткая блокировка</span>
+</pre>
+</div>
+<p>Для чтения объекта сначала получаем копию объекта (в блокировке). 
+Затем можно прочитать его значения без необходимости удерживать 
+блокировку:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;">ProgressStatus statusCopy;</pre>
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">lock</span> (_locker ProgressStatus) statusCopy = _status;   <span style="color: #408080; font-style: italic;">// Снова короткая блокировка</span></pre>
+<pre style="margin: 0; line-height: 125%;"><span style="color: #b00040;">int</span> pc = statusCopy.PercentComplete;</pre>
+<pre style="margin: 0; line-height: 125%;"><span style="color: #b00040;">string</span> msg = statusCopy.StatusMessage;
+...
+</pre>
+</div>
+<p style="padding-left: 30px;"><span style="color: #008080;">Технически 
+последние 2 строки кода потокобезопасны благодаря предшествующей 
+блокировке, выполняющей неявный барьер памяти (см. [7] в 4 части этой 
+документации).</span></p>
+<p>Обратите внимание, что это свободный от блокировки способ обеспечить 
+целостность группы связанных полей. Но это не предотвратит данные от 
+изменения, когда Вы впоследствии работаете с ними - для этого обычно 
+нужна блокировка. В 5 части этой документации мы рассмотрим больше 
+примеров немутируемости для упрощения многопоточности, включая PLINQ 
+[13].</p>
+<p style="padding-left: 30px;"><span style="color: #008080;">Также можно
+ безопасно назначить новый объект ProgressStatus на основе его 
+предыдущего значения (например, можно "инкрементировать" значение 
+PercentComplete) - без блокировки больше одной строки кода. Фактически 
+мы можем делать это без использования одиночной блокировки через 
+использования явные барьеров памяти Interlocked.CompareExchange и 
+ожидание в цикле (spin-wait). Это продвинутая техника, которую мы опишем
+ позже в секции, посвященной параллельному программированию [3].</span></p>
+<p>[<strong>Сигнализация с обработкой ожидания события</strong>]</p>
+<p>Обработка ожидания события (event wait handle) используется для 
+сигнализации. Это способ обмена состоянием, когда один поток ждет 
+поступления оповещения от другого. Event wait handle это самый простой 
+вариант конструкций сигнализации, и он не связан с событиями C#. Event 
+wait handle доступны через три функции: AutoResetEvent, ManualResetEvent
+ и (из Framework 4.0) CountdownEvent. Первые два основаны на общем 
+классе EventWaitHandle откуда они наследуют весь свой функционал.</p>
+<p></p><div class="spoiler" id="2_spoiler">
+                        <input type="hidden" class="opened" value="0">
+			<div class="sp-head folded" id="2-sp-head">
+			<div class="sp-head-click" id="2-sp-head-click"><a href="javascript:void(0)">Сравнение конструкций сигнализации</a></div></div>
+			<div style="margin: 0px; position: static; overflow: hidden; height: 0px;"><div class="sp-body" id="2-sp-body" style="margin: -404px 0px 0px;"><p></p>
+<table cellspacing="1" cellpadding="3" border="0" bgcolor="#8cacbb">
+<tbody>
+<tr style="background-color: #dee7ec;">
+<td><strong>Конструкция</strong></td>
+<td><strong>Назначение</strong></td>
+<td><strong>Работает между процессами?</strong></td>
+<td><strong>Загрузка<sup>(*)</sup></strong></td>
+</tr>
+<tr style="background-color: #ffffff;">
+<td>AutoResetEvent</td>
+<td>Позволяет потоку однократно разблокироваться, когда будет получен сигнал от другого потока.</td>
+<td>ДА</td>
+<td>1000 нс</td>
+</tr>
+<tr style="background-color: #ffffff;">
+<td>ManualResetEvent</td>
+<td rowspan="2">Позволяет потоку разблокироваться навсегда, когда он получил сигнал от другого потока (до сброса).</td>
+<td>ДА</td>
+<td>1000 нс</td>
+</tr>
+<tr style="background-color: #ffffff;">
+<td>ManualResetEventSlim (добавлено в Framework 4.0)</td>
+<td>-</td>
+<td>40 нс</td>
+</tr>
+<tr style="background-color: #ffffff;">
+<td>CountdownEvent (введено в Framework 4.0)</td>
+<td>Позволяет потоку разблокироваться, когда он получил заранее определенное количество сигналов.</td>
+<td>-</td>
+<td>40 нс</td>
+</tr>
+<tr style="background-color: #ffffff;">
+<td>Barrier (добавлено в Framework 4.0)</td>
+<td>Реализует барьер выполнения потока.</td>
+<td>-</td>
+<td>80 нс</td>
+</tr>
+<tr style="background-color: #ffffff;">
+<td>Wait и Pulse</td>
+<td>Позволяет потоку блокироваться до момента удовлетворения пользовательского условия.</td>
+<td>-</td>
+<td>120 нс для Pulse</td>
+</tr>
+</tbody>
+</table>
+<p><span style="color: #808080;">Примечание (*): время, которое тратится
+ на сигнал и ожидание в конструкции на одном и том же потоке 
+(подразумевая, что другие потоки не блокируются), как это было измерено 
+на процессоре Intel Core i7 860.</span></p>
+<p></p></div></div>
+			</div><p></p>
+<p><strong>AutoResetEvent</strong>. AutoResetEvent похож на билетный 
+турникет: установка в него билета позволяет пройти через него одному 
+человеку. Префикс auto в имени класса отражает факт, что открытие 
+турникета автоматически закрывается, или сбрасывается (reset) после 
+выполнения через него нескольких шагов. Поток ожидает на турникете, или 
+блокируется, путем вызова WaitOne (ждет этого "one" турникета, пока он 
+открывается), и билет вставляется путем вызова метода Set. Если 
+несколько потоков вызовут WaitOne, то позади турникета растет очередь 
+(как и в случае с блокировками, справедливость первого доступа по 
+отношению к моменту постановки в очередь может иногда нарушаться из-за 
+нюансов реализации операционной системы). Билет может поступить от 
+одного потока; другими словами, любой (не заблокированный) поток с 
+доступом к объекту AutoResetEvent может установить Set на нем для 
+освобождения одного заблокированного потока.</p>
+<p>Вы можете создать AutoResetEvent двумя способами. Первый использует его конструктор:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #b00040;">var</span> auto = <span style="color: #008000; font-weight: bold;">new</span> AutoResetEvent (<span style="color: #008000; font-weight: bold;">false</span>);
+</pre>
+</div>
+<p>Замечание: передача true в этот конструктор эквивалентно немедленному
+ вызову Set на объекте. Второй способ создает AutoResetEvent следующим 
+образом:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #b00040;">var</span> auto = <span style="color: #008000; font-weight: bold;">new</span> EventWaitHandle (<span style="color: #008000; font-weight: bold;">false</span>, EventResetMode.AutoReset);
+</pre>
+</div>
+<p>В примере ниже запускается поток, чья работа состоит в простом ожидании сигнала от другого потока:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">class</span> <span style="color: #0000ff; font-weight: bold;">BasicWaitHandle</span>
+{
+   <span style="color: #008000; font-weight: bold;">static</span> EventWaitHandle _waitHandle = <span style="color: #008000; font-weight: bold;">new</span> AutoResetEvent (<span style="color: #008000; font-weight: bold;">false</span>);
+ 
+   <span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Main</span>()
+   {
+      <span style="color: #008000; font-weight: bold;">new</span> <span style="color: #0000ff;">Thread</span> (Waiter).Start();
+      Thread.Sleep (<span style="color: #666666;">1000</span>);    <span style="color: #408080; font-style: italic;">// Ожидание в течение секунды...</span>
+      _waitHandle.Set();      <span style="color: #408080; font-style: italic;">// В этом месте будет разбужен Waiter.</span>
+   }
+ 
+   <span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Waiter</span>()
+   {
+      Console.WriteLine (<span style="color: #ba2121;">"Ожидание..."</span>);
+      _waitHandle.WaitOne();  <span style="color: #408080; font-style: italic;">// Ожидание оповещения.</span>
+      Console.WriteLine (<span style="color: #ba2121;">"Оповещение поступило"</span>);
+   }
+}
+</pre>
+</div>
+<p>Пример выведет следующее:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #000000; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #ffffff;">Ожидание... (тут пауза) Оповещение поступило
+</span></pre>
+</div>
+<p><img src="%D0%9F%D0%BE%D1%82%D0%BE%D0%BA%D0%B8%20%D0%BD%D0%B0%20C%23.%20%D0%A7%D0%B0%D1%81%D1%82%D1%8C%202_files/CSharp-Threading-EventWaitHandle.png" alt="CSharp Threading EventWaitHandle"></p>
+<p>Если Set был вызван, когда нет ни одного потока ожидающего потока, то
+ дескриптор ожидания остается открытым, пока какой-нибудь поток не 
+вызовет WaitOne. Это поведение помогает избежать гонок между потоками в 
+голове очереди турникета при определении потока, вставляющий билет 
+("Упс, билет был вставлен слишком быстро, неудача, теперь нужно ждать 
+неопределенно долго!"). Однако повторяющиеся вызовы Set на турникете, на
+ котором нет ожидания, не даст возможности пройти всей компании потоков:
+ пройдет только один, и все предыдущие "билеты" будут потрачены впустую.</p>
+<p>Вызов Reset на AutoResetEvent закрывает турникет (если он открыт) без ожидания или блокировки.</p>
+<p>WaitOne принимает не обязательный параметр timeout, и он вернет false
+ если ожидание окончилось по причине истечения таймаута и сигнал не за 
+это время не был получен.</p>
+<p></p><div class="spoiler" id="3_spoiler">
+                        <input type="hidden" class="opened" value="0">
+			<div class="sp-head folded" id="3-sp-head">
+			<div class="sp-head-click" id="3-sp-head-click"><a href="javascript:void(0)">Расформирование (disposing) дескрипторов ожидания</a></div></div>
+			<div style="margin: 0px; position: static; overflow: hidden; height: 0px;"><div class="sp-body" id="3-sp-body" style="margin: -198px 0px 0px;"><p></p>
+<p>Как только Вы закончили работу с дескриптором ожидания, можете 
+вызвать его метод Close, чтобы освободить ресурсы операционной системы. 
+Альтернативно Вы можете просто бросить все ссылки на дескриптор ожидания
+ и позволить сборщику мусора когда-нибудь позже выполнить работу по 
+утилизации дырок (мусора) в памяти (дескрипторы ожидания реализуют 
+шаблон расформирования, который вызывается через финализирующий метод 
+Close). Это один из нескольких сценариев, где возможно приемлемо 
+полагаться на такое поведение, потому что дескрипторы ожидание слабо 
+загружают операционную систему (асинхронные делегаты [2] полагаются на 
+тот же самый механизм для реализации своего дескриптора ожидания 
+IAsyncResult).</p>
+<p>Дескрипторы ожидания освобождаются автоматически, когда выгружается из памяти домен приложения.</p>
+<p></p></div></div>
+			</div><p></p>
+<p><strong>Сигнализация в двух направлениях</strong>. Предположим, что 
+нам необходимо, чтобы основной поток сигнализировал рабочему потоку 3 
+раза подряд. Если главный поток просто вызовет Set на дескрипторе 
+ожидания несколько раз в быстрой последовательности, то второй или 
+третий сигналы могут потеряться, поскольку рабочий поток обрабатывает 
+каждый сигнал определенное время.</p>
+<p>Решение для главного потока в том, чтобы главный поток ждал, пока 
+рабочий поток не будет готов к приему нового сигнала. Это можно 
+реализовать с другим AutoResetEvent следующим образом:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">class</span> <span style="color: #0000ff; font-weight: bold;">TwoWaySignaling</span>
+{
+   <span style="color: #008000; font-weight: bold;">static</span> EventWaitHandle _ready = <span style="color: #008000; font-weight: bold;">new</span> AutoResetEvent (<span style="color: #008000; font-weight: bold;">false</span>);
+   <span style="color: #008000; font-weight: bold;">static</span> EventWaitHandle _go = <span style="color: #008000; font-weight: bold;">new</span> AutoResetEvent (<span style="color: #008000; font-weight: bold;">false</span>);
+   <span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">readonly</span> <span style="color: #b00040;">object</span> _locker = <span style="color: #008000; font-weight: bold;">new</span> <span style="color: #b00040;">object</span>();
+   <span style="color: #008000; font-weight: bold;">static</span> <span style="color: #b00040;">string</span> _message;
+ 
+   <span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Main</span>()
+   {
+      <span style="color: #408080; font-style: italic;">// Запуск рабочего потока:</span>
+      <span style="color: #008000; font-weight: bold;">new</span> <span style="color: #0000ff;">Thread</span> (Work).Start();
+ 
+      <span style="color: #408080; font-style: italic;">// Главный поток:</span>
+      _ready.WaitOne();                <span style="color: #408080; font-style: italic;">// Первое ожидание готовности рабочего потока</span>
+      <span style="color: #008000; font-weight: bold;">lock</span> (_locker) _message = <span style="color: #ba2121;">"ooo"</span>;
+      _go.Set();                       <span style="color: #408080; font-style: italic;">// Указание рабочему потоку начать задание</span>
+ 
+      _ready.WaitOne();
+      <span style="color: #008000; font-weight: bold;">lock</span> (_locker) _message = <span style="color: #ba2121;">"ahhh"</span>;<span style="color: #408080; font-style: italic;">// Передать рабочему потоку другое сообщение</span>
+      _go.Set();
+      _ready.WaitOne();
+      <span style="color: #008000; font-weight: bold;">lock</span> (_locker) _message = <span style="color: #008000; font-weight: bold;">null</span>;  <span style="color: #408080; font-style: italic;">// Сигнал рабочему потоку завершиться</span>
+      _go.Set();
+   }
+ 
+   <span style="color: #408080; font-style: italic;">// Рабочий поток:</span>
+   <span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Work</span>()
+   {
+      <span style="color: #008000; font-weight: bold;">while</span> (<span style="color: #008000; font-weight: bold;">true</span>)
+      {
+         _ready.Set();                 <span style="color: #408080; font-style: italic;">// Отправка сигнала готовности.</span>
+         _go.WaitOne();                <span style="color: #408080; font-style: italic;">// Ожидание начала...</span>
+         <span style="color: #008000; font-weight: bold;">lock</span> (_locker)
+         {
+            <span style="color: #008000; font-weight: bold;">if</span> (_message == <span style="color: #008000; font-weight: bold;">null</span>) <span style="color: #008000; font-weight: bold;">return</span>; <span style="color: #408080; font-style: italic;">// Контролируемый выход</span>
+            Console.WriteLine (_message);
+         }
+      }
+   }
+}
+</pre>
+</div>
+<p>Вывод этого примера:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #000000; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #ffffff;">ooo
+ahhh
+</span></pre>
+</div>
+<p><img src="%D0%9F%D0%BE%D1%82%D0%BE%D0%BA%D0%B8%20%D0%BD%D0%B0%20C%23.%20%D0%A7%D0%B0%D1%81%D1%82%D1%8C%202_files/CSharp-Threading-TwoWaySignaling.png" alt="CSharp Threading TwoWaySignaling"></p>
+<p>В примере использовалось сообщение null, чтобы дать указание рабочему
+ потоку завершиться. С потоками, которые работают в бесконечном цикле, 
+важно предусмотреть стратегию завершения!</p>
+<p><strong>Очередь генератор/потребитель</strong>. Очередь producer/consumer является общим требованием обмена данными между потоками. Вот как этот работает:</p>
+<p>• Настраивается очередь, чтобы описать рабочие элементы, или данные, над которыми осуществляется обработка.<br>• Когда требуется выполнение задачи, она ставится в очередь, позволяя вызывающему коду выполнять другие действия.<br>• Один или большее количество потоков работают в фоновом режиме, собирая и обрабатывая поставленные в очередь элементы.</p>
+<p>Достоинство этой модели в том, что присутствует прецизионное 
+управление, сколько рабочих потоков может быть запущено одновременно. 
+Это позволяет Вам ограничить не только траты процессорного времени, но и
+ других ресурсов. Например, если задачи выполняют интенсивный дисковый 
+ввод/вывод, у Вас может быть только один рабочий поток, чтобы избежать 
+исчерпание ресурсов операционной системы для других приложений. Другой 
+тип приложения может иметь 20 рабочих потоков. Вы также можете добавлять
+ или удалять рабочие потоки во время во время жизни очереди. Пул потоков
+ CLR сам по себе является разновидностью очереди producer/consumer.</p>
+<p>Очередь producer/consumer обычно содержит элементы, над которыми 
+выполняется (одинаковая) обработка. Например, элементами данных могут 
+быть имена файлов, и обработка может шифровать эти файлы.</p>
+<p>В примере ниже мы используем один AutoResetEvent для подачи сигнала 
+рабочему потоку, когда он ожидает на пустой очереди (другими словами, 
+ожидание происходит, когда вся работа выполнена). Мы завершим рабочий 
+поток постановкой в очередь null-задачи:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">using</span> <span style="color: #0000ff; font-weight: bold;">System</span>;</pre>
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">using</span> <span style="color: #0000ff; font-weight: bold;">System.Threading</span>;</pre>
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">using</span> <span style="color: #0000ff; font-weight: bold;">System.Collections.Generic</span>;
+ </pre>
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">class</span> <span style="color: #0000ff; font-weight: bold;">ProducerConsumerQueue</span> : IDisposable
+{
+   EventWaitHandle _wh = <span style="color: #008000; font-weight: bold;">new</span> AutoResetEvent (<span style="color: #008000; font-weight: bold;">false</span>);
+   Thread _worker;
+   <span style="color: #008000; font-weight: bold;">readonly</span> <span style="color: #b00040;">object</span> _locker = <span style="color: #008000; font-weight: bold;">new</span> <span style="color: #b00040;">object</span>();
+   Queue&lt; <span style="color: #b00040;">string</span>&gt; _tasks = <span style="color: #008000; font-weight: bold;">new</span> Queue&lt; <span style="color: #b00040;">string</span>&gt;();
+ 
+   <span style="color: #008000; font-weight: bold;">public</span> <span style="color: #0000ff;">ProducerConsumerQueue</span>()
+   {
+      _worker = <span style="color: #008000; font-weight: bold;">new</span> Thread (Work);
+      _worker.Start();
+   }
+ 
+   <span style="color: #008000; font-weight: bold;">public</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">EnqueueTask</span> (<span style="color: #b00040;">string</span> task)
+   {
+      <span style="color: #008000; font-weight: bold;">lock</span> (_locker) _tasks.Enqueue (task);
+      _wh.Set();
+   }
+ 
+   <span style="color: #008000; font-weight: bold;">public</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Dispose</span>()
+   {
+      EnqueueTask (<span style="color: #008000; font-weight: bold;">null</span>);  <span style="color: #408080; font-style: italic;">// Сигнал потребителю (рабочему потоку) выйти.</span>
+      _worker.Join();      <span style="color: #408080; font-style: italic;">// Ожидание завершения потока-потребителя.</span>
+      _wh.Close();         <span style="color: #408080; font-style: italic;">// Освобождение любых ресурсов операционной системы.</span>
+   }
+ 
+   <span style="color: #408080; font-style: italic;">// Рабочий поток:</span>
+   <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Work</span>()
+   {
+      <span style="color: #008000; font-weight: bold;">while</span> (<span style="color: #008000; font-weight: bold;">true</span>)
+      {
+         <span style="color: #b00040;">string</span> task = <span style="color: #008000; font-weight: bold;">null</span>;
+         <span style="color: #008000; font-weight: bold;">lock</span> (_locker)
+         <span style="color: #008000; font-weight: bold;">if</span> (_tasks.Count &gt; <span style="color: #666666;">0</span>)
+         {
+            task = _tasks.Dequeue();
+            <span style="color: #008000; font-weight: bold;">if</span> (task == <span style="color: #008000; font-weight: bold;">null</span>) <span style="color: #008000; font-weight: bold;">return</span>;
+         }
+         <span style="color: #008000; font-weight: bold;">if</span> (task != <span style="color: #008000; font-weight: bold;">null</span>)
+         {
+            Console.WriteLine (<span style="color: #ba2121;">"Выполнение задачи: "</span> + task);
+            Thread.Sleep (<span style="color: #666666;">1000</span>);    <span style="color: #408080; font-style: italic;">// Симуляция работы...</span>
+         }
+         <span style="color: #008000; font-weight: bold;">else</span>
+            _wh.WaitOne();          <span style="color: #408080; font-style: italic;">// Нет больше задач, ожидание сигнала.</span>
+      }
+   }
+}
+</pre>
+</div>
+<p>Чтобы гарантировать потокобезопасность, здесь мы используем 
+блокировку для защиты доступа к коллекции Queue&lt; string&gt;. Мы также
+ явно закрываем дескриптор ожидания его методом Dispose, поскольку мы 
+могли потенциально создать и уничтожить множество экземпляров этого 
+класса во время жизни приложения.</p>
+<p>Вот метод главного потока, которым тестируется очередь:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Main</span>()
+{
+   <span style="color: #008000; font-weight: bold;">using</span> (ProducerConsumerQueue q = <span style="color: #008000; font-weight: bold;">new</span> ProducerConsumerQueue())
+   {
+      q.EnqueueTask (<span style="color: #ba2121;">"Привет"</span>);
+      <span style="color: #008000; font-weight: bold;">for</span> (<span style="color: #b00040;">int</span> i = <span style="color: #666666;">0</span>; i &lt; <span style="color: #666666;">10</span>; i++) q.EnqueueTask (<span style="color: #ba2121;">"задача "</span> + i);
+      q.EnqueueTask (<span style="color: #ba2121;">"Пока!"</span>);
+   }
+ 
+   <span style="color: #408080; font-style: italic;">// Выход реализуется вызовом метода Dispose, когда</span>
+   <span style="color: #408080; font-style: italic;">// ставится в очередь null-задача, и главный поток ждет, когда</span>
+   <span style="color: #408080; font-style: italic;">// рабочий поток (потребитель данных завершит свою задачу).</span>
+}
+</pre>
+</div>
+<p>Вывод этого примера:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #000000; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #ffffff;">Выполнение задачи: Привет
+Выполнение задачи: задача 1
+Выполнение задачи: задача 2
+Выполнение задачи: задача 3
+...
+...
+Выполнение задачи: задача 9
+Пока!
+</span></pre>
+</div>
+<p style="padding-left: 30px;"><span style="color: #008080;">Framework 
+4.0 предоставляет новый класс BlockingCollection&lt; T&gt; [18], который
+ реализует функционал очереди producer/consumer. Наша написанная вручную
+ очередь producer/consumer все еще актуальна - она не только показывает 
+AutoResetEvent и безопасность потоков, но также является базой для более
+ сложных структур. Например, если Вы хотите получить ограниченную 
+очередь блокировки (с ограничением на количество поставленных в очередь 
+задач), и также хотите поддерживать отмену (и удаление) поставленных в 
+очередь элементов, этот код предоставит отличную начальную точку для 
+программирования. Пример очереди producer/consume будет впоследствии 
+использоваться при обсуждении Wait и Pulse [19].</span></p>
+<p><strong>ManualResetEvent</strong>. ManualResetEvent функционирует как
+ обычные ворота. Вызов Set открывает ворота, позволяя любому количеству 
+потоков вызвать WaitOne чтобы пройти через них. Вызов Reset закрывает 
+ворота. Потоки, которые вызвали WaitOne на закрытых воротах, будут 
+заблокированы; когда ворота откроются в следующий раз, они все 
+запустятся одновременно. Кроме этих отличий, ManualResetEvent работает 
+наподобие AutoResetEvent.</p>
+<p>С AutoResetEvent Вы можете сконструировать ManualResetEvent двумя способами:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #b00040;">var</span> manual1 = <span style="color: #008000; font-weight: bold;">new</span> ManualResetEvent (<span style="color: #008000; font-weight: bold;">false</span>);</pre>
+<pre style="margin: 0; line-height: 125%;"><span style="color: #b00040;">var</span> manual2 = <span style="color: #008000; font-weight: bold;">new</span> EventWaitHandle (<span style="color: #008000; font-weight: bold;">false</span>, EventResetMode.ManualReset);
+</pre>
+</div>
+<p style="padding-left: 30px;"><span style="color: #008080;">Framework 
+4.0 предоставил другую версию ManualResetEvent, которая называется 
+ManualResetEventSlim. Она оптимизирована для коротких времен ожидания - с
+ возможностью как опции работать с циклом ожидания на установленное 
+количество итераций. Также это более эффективная управляемая (managed) 
+реализация, позволяющая остановить Wait через CancellationToken [15]. 
+Однако это нельзя использовать для сигнализации между процессами. 
+ManualResetEventSlim не подкласс WaitHandle; однако он предоставляет 
+свойство WaitHandle, которое возвратит основанный на WaitHandle объект, 
+который будет вызван (с профилем производительности традиционного 
+дескриптора ожидания).</span></p>
+<p></p><div class="spoiler" id="4_spoiler">
+                        <input type="hidden" class="opened" value="0">
+			<div class="sp-head folded" id="4-sp-head">
+			<div class="sp-head-click" id="4-sp-head-click"><a href="javascript:void(0)">Конструкции сигнализации и производительность</a></div></div>
+			<div style="margin: 0px; position: static; overflow: hidden; height: 0px;"><div class="sp-body" id="4-sp-body" style="margin: -170px 0px 0px;"><p></p>
+<p>Ожидание сигнализации AutoResetEvent или ManualResetEvent занимает около 1 микросекунды (предполагая, что нет блокирования).</p>
+<p>ManualResetEventSlim и CountdownEvent (см. ниже) могут быть в 50 раз 
+быстрее для сценариев короткого ожидания, из-за того, что они не 
+полагаются на операционную систему и разумно используют циклы прокрутки.</p>
+<p>Однако в большинстве сценариев потери от классов сигнализации сами по
+ себе не создают узкое место. Исключение составляет код с жестким 
+одновременным выполнением, что будет обсуждаться в части 5 (см. [14]) 
+этой документации.</p>
+<p></p></div></div>
+			</div><p></p>
+<p>ManualResetEvent полезен для разрешения в одном потоке, чтобы 
+разблокировать множество других потоков. Обратный сценарий 
+обрабатывается CountdownEvent.</p>
+<p><strong>CountdownEvent</strong>. Позволяет Вам ждать больше одного 
+потока. Этот класс был введен в Framework 4.0, и для него разработана 
+эффективная, полностью управляемая (managed) реализация.</p>
+<p style="padding-left: 30px;"><span style="color: #008080;">Если Ваша 
+программа работает на предыдущей версии .NET Framework, то не все еще 
+потеряно! Позже мы покажем, как написать аналог CountdownEvent с 
+использованием Wait и Pulse [20].</span></p>
+<p>Для использования CountdownEvent инстанцируйте этот класс с количеством потоков (или счетчиком, count), которые Вы хотите ждать:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #b00040;">var</span> countdown = <span style="color: #008000; font-weight: bold;">new</span> CountdownEvent (<span style="color: #666666;">3</span>);   <span style="color: #408080; font-style: italic;">// Инициализация "count" значением 3.</span>
+</pre>
+</div>
+<p>Вызов Signal декрементирует count; вызов Wait блокирует поток, пока count не дойдет до 0. Пример:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">static</span> CountdownEvent _countdown = <span style="color: #008000; font-weight: bold;">new</span> CountdownEvent (<span style="color: #666666;">3</span>);
+ </pre>
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Main</span>()
+{
+   <span style="color: #008000; font-weight: bold;">new</span> <span style="color: #0000ff;">Thread</span> (SaySomething).Start (<span style="color: #ba2121;">"Я поток 1"</span>);
+   <span style="color: #008000; font-weight: bold;">new</span> <span style="color: #0000ff;">Thread</span> (SaySomething).Start (<span style="color: #ba2121;">"Я поток 2"</span>);
+   <span style="color: #008000; font-weight: bold;">new</span> <span style="color: #0000ff;">Thread</span> (SaySomething).Start (<span style="color: #ba2121;">"Я поток 3"</span>);
+ 
+   _countdown.Wait();   <span style="color: #408080; font-style: italic;">// Блокировка, пока Signal не будет вызван 3 раза.</span>
+   Console.WriteLine (<span style="color: #ba2121;">"Все потоки что-то сказали!"</span>);
+}
+ </pre>
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">SaySomething</span> (<span style="color: #b00040;">object</span> thing)
+{
+   Thread.Sleep (<span style="color: #666666;">1000</span>);
+   Console.WriteLine (thing);
+   _countdown.Signal();
+}
+</pre>
+</div>
+<p style="padding-left: 30px;"><span style="color: #008080;">Проблемы, 
+для которых предназначен CountdownEvent, можно иногда решить проще путем
+ использования конструкций структурированного параллелизма, которые 
+рассматриваются в части 5 [14] (PLINQ и класс Parallel).</span></p>
+<p>Вы можете добавлять увеличение значения для счетчика CountdownEvent 
+вызовом AddCount. Однако если счетчик уже достиг нуля, AddCount выбросит
+ исключение: Вы не можете "отменить" сигнал события CountdownEvent путем
+ вызова AddCount. Чтобы избежать возможности срабатывания исключения, 
+используйте вместо этого другой метод TryAddCount, который вернет false,
+ если счет достиг до 0.</p>
+<p>Для отмены сигнала события обратного счета вызовите Reset: это 
+одновременно отменит сигнал конструкции и сбросит счетчик к своему 
+оригинальному значению.</p>
+<p>Наподобие ManualResetEventSlim, CountdownEvent публикует свойство 
+WaitHandle для сценариев, где некоторый другой класс или метод ожидает 
+объект, основываясь на WaitHandle.</p>
+<p><strong>Создание EventWaitHandle для взаимодействия между процессами</strong>.
+ Конструктор EventWaitHandle позволяет создавать "именованный" 
+EventWaitHandle, который может работать между несколькими процессами 
+(чем процесс отличается от потока, см. [2]). Имя это просто строка, и у 
+неё может быть любое значение, которое не содержит нежелательного 
+конфликта с каким-то другим именем! Если это имя уже используется на 
+компьютере, где работают процессы, то Вы получите ссылку на тот же самый
+ нижележащий EventWaitHandle; иначе операционная система создаст новый. 
+Пример:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;">EventWaitHandle wh = <span style="color: #008000; font-weight: bold;">new</span> EventWaitHandle (<span style="color: #008000; font-weight: bold;">false</span>, EventResetMode.AutoReset,
+                                          <span style="color: #ba2121;">"MyCompany.MyApp.SomeName"</span>);
+</pre>
+</div>
+<p>Если каждое из двух приложений запустят этот код, то они могут 
+обмениваться сигналами друг с другом: дескриптор ожидания (wait handle) 
+может работать на всех потоках обоих процессов.</p>
+<p><strong>Дескрипторы ожидания и Thread Pool</strong>. Если в Вашем 
+приложении есть несколько потоков, которые тратят большинство своего 
+времени на дескрипторе ожидания (wait handle), то можно уменьшить трату 
+ресурсов вызовом ThreadPool.RegisterWaitForSingleObject. Этот метод 
+принимает делегата, который выполняется, когда прошел сигнал дескриптора
+ ожидания. Пока идет ожидание, это не связывает поток:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">static</span> ManualResetEvent _starter = <span style="color: #008000; font-weight: bold;">new</span> ManualResetEvent (<span style="color: #008000; font-weight: bold;">false</span>);
+ </pre>
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">public</span> <span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Main</span>()
+{
+   RegisteredWaitHandle reg = ThreadPool.RegisterWaitForSingleObject
+                              (_starter, Go, <span style="color: #ba2121;">"Какие-то данные"</span>, -<span style="color: #666666;">1</span>, <span style="color: #008000; font-weight: bold;">true</span>);
+   Thread.Sleep (<span style="color: #666666;">5000</span>);
+   Console.WriteLine (<span style="color: #ba2121;">"Сигнал для рабочего потока..."</span>);
+   _starter.Set();
+   Console.ReadLine();
+   reg.Unregister (_starter);    <span style="color: #408080; font-style: italic;">// Очистка по завершению работы.</span>
+}
+ </pre>
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">public</span> <span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Go</span> (<span style="color: #b00040;">object</span> data, <span style="color: #b00040;">bool</span> timedOut)
+{
+   Console.WriteLine (<span style="color: #ba2121;">"Запущено - "</span> + data);
+   <span style="color: #408080; font-style: italic;">// Выполнение задачи...</span>
+}
+</pre>
+</div>
+<p>Пример выведет следующее:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #000000; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #ffffff;">(задержка 5 секунд)
+Сигнал для рабочего потока...
+Запущено - Какие-то данные
+</span></pre>
+</div>
+<p>Когда прошел сигнал на дескриптор ожидания (или когда истек таймаут), делегат запустится на потоке пула.</p>
+<p>В дополнение к дескриптору ожидания и делегату 
+RegisterWaitForSingleObject принимает объект "черного ящика", который 
+передается Вашему методу делегата (наподобие ParameterizedThreadStart), а
+ также таймаут в миллисекундах (–1 означает ожидание без таймаута) и 
+bool-флаг, показывающий, однократный ли это запрос или повторяющийся.</p>
+<p>RegisterWaitForSingleObject в частности важен в сервере приложения, 
+который должен обрабатывать множество одновременных запросов. 
+Предположим, что Вам нужно блокировать выполнение на ManualResetEvent и 
+просто ждать WaitOne:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">AppServerMethod</span>()
+{
+   _wh.WaitOne();
+   <span style="color: #408080; font-style: italic;">// ... продолжение выполнения</span>
+}
+</pre>
+</div>
+<p>Если 100 клиентов вызовут этот метод, то 100 потоков сервера были бы 
+заняты на время блокирования. Замена _wh.WaitOne на 
+RegisterWaitForSingleObject позволяет методу выполнить немедленный 
+возврат, не теряя потоки:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">void</span> AppServerMethod
+{
+   RegisteredWaitHandle reg = ThreadPool.RegisterWaitForSingleObject
+      (_wh, Resume, <span style="color: #008000; font-weight: bold;">null</span>, -<span style="color: #666666;">1</span>, <span style="color: #008000; font-weight: bold;">true</span>);
+   ...
+}
+ </pre>
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Resume</span> (<span style="color: #b00040;">object</span> data, <span style="color: #b00040;">bool</span> timedOut)
+{
+   <span style="color: #408080; font-style: italic;">// ... продолжение выполнения</span>
+}
+</pre>
+</div>
+<p>Объект данных, переданный в Resume, позволяет продолжить обработку любых текущих данных.</p>
+<p><strong>WaitAny, WaitAll и SignalAndWait</strong>. В дополнение к 
+методам Set, WaitOne и Reset это статические методы класса WaitHandle, 
+решающие более сложные задачи синхронизации. Методы WaitAny, WaitAll и 
+SignalAndWait выполняют операции сигнализации и ожидания на нескольких 
+дескрипторах. Дескрипторы ожидания могут быть разных типов (включая 
+Mutex и Semphore, поскольку они также выводятся из абстрактного класса 
+WaitHandle). ManualResetEventSlim и Countdown также могут принять 
+участие в этих методах через их свойства WaitHandle.</p>
+<p style="padding-left: 30px;"><span style="color: #800000;">WaitAll и 
+SignalAndWait имеют странное соединение с устаревшей (legacy) 
+архитектурой COM: эти методы требуют, чтобы вызывающая сторона была в 
+многопоточном окружении - модель, меньше всего подходящая для 
+функциональной совместимости. Главный поток приложения WPF или Windows 
+Forms, например, в этом режиме не может взаимодействовать с буфером 
+обмена (clipboard). Мы кратко рассмотрим альтернативы ниже.</span></p>
+<p>WaitHandle.WaitAny ждет любого из массива дескрипторов ожидания; 
+WaitHandle.WaitAll атомарно ждет всех имеющихся дескрипторов. Это 
+означает следующее, если Вы ждете на двух AutoResetEvents:</p>
+<p>• WaitAny никогда не закончится "защелкиванием" обоих событий.<br>• WaitAll никогда не закончится "защелкиванием" только одного события.</p>
+<p>SignalAndWait вызовет Set на одном WaitHandle, и затем вызовет 
+WaitOne на другом WaitHandle. После сигнализации первого дескриптора 
+произойдет переход на начало очереди в ожидании второго дескриптора; это
+ помогает ему успешно выполниться (хотя операция не будет реально 
+атомарной). Вы можете думать про этот метод как "замену" одного сигнала 
+на другой, и использование его на паре EventWaitHandles, чтобы 
+установить два потока на "встречу" в одном моменте времени. Этот трюк 
+выполнит AutoResetEvent или ManualResetEvent. Первый поток выполнит 
+следующее:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;">WaitHandle.SignalAndWait (wh1, wh2);
+</pre>
+</div>
+<p>В то же время другой поток выполнит противоположное:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;">WaitHandle.SignalAndWait (wh2, wh1);
+</pre>
+</div>
+<p><strong>Альтернативы WaitAll и SignalAndWait</strong>. WaitAll и 
+SignalAndWait не будут работать в одном потоке. К счастью, есть 
+альтернативы. В случае SignalAndWait редко когда надо использовать иго 
+семантику перехода по очереди: в нашем примере "встречи" было бы 
+допустимо просто вызывать Set на первом дескрипторе ожидания, и затем 
+вызвать WaitOne на другом, если бы дескрипторы ожидания использовались 
+только для встречи. В классе Barrier [6] мы рассмотрим другой вариант 
+для реализации встречи потоков.</p>
+<p>В случае WaitAll при некоторых ситуация альтернативой будет 
+использование метода Invoke класса Parallel, который будет 
+рассматриваться в части 5 [14]. Также мы рассмотрим продолжение задачи и
+ продолжения (Tasks и continuations), и посмотрим, как TaskFactory из 
+ContinueWhenAny предоставляет альтернативу для WaitAny.</p>
+<p>Во всех других сценариях ответом будет низкоуровневый подход, который решает все проблемы сигнализации: Wait и Pulse [5].</p>
+<p>[<strong>Контексты синхронизации</strong>]</p>
+<p>Альтернативой для ручной блокировки является блокировка 
+декларативная. Путем наследования из ContextBoundObject и применения 
+атрибута Synchronization Вы инструктируете библиотеку CLR применить 
+блокировку автоматически. Пример:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">using</span> <span style="color: #0000ff; font-weight: bold;">System</span>;</pre>
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">using</span> <span style="color: #0000ff; font-weight: bold;">System.Threading</span>;</pre>
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">using</span> <span style="color: #0000ff; font-weight: bold;">System.Runtime.Remoting.Contexts</span>;</pre>
+<pre style="margin: 0; line-height: 125%;"><span style="color: #7d9029;"> </span></pre>
+<pre style="margin: 0; line-height: 125%;"><span style="color: #7d9029;">[Synchronization]</span></pre>
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">public</span> <span style="color: #008000; font-weight: bold;">class</span> <span style="color: #0000ff; font-weight: bold;">AutoLock</span> : ContextBoundObject
+{
+   <span style="color: #008000; font-weight: bold;">public</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Demo</span>()
+   {
+      Console.Write (<span style="color: #ba2121;">"Start..."</span>);
+      Thread.Sleep (<span style="color: #666666;">1000</span>);          <span style="color: #408080; font-style: italic;">// Выполнение не может быть здесь вытеснено</span>
+      Console.WriteLine (<span style="color: #ba2121;">"end"</span>);    <span style="color: #408080; font-style: italic;">// благодаря автоматической блокировке!</span>
+   } 
+}
+ </pre>
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">public</span> <span style="color: #008000; font-weight: bold;">class</span> <span style="color: #0000ff; font-weight: bold;">Test</span>
+{
+   <span style="color: #008000; font-weight: bold;">public</span> <span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Main</span>()
+   {
+      AutoLock safeInstance = <span style="color: #008000; font-weight: bold;">new</span> AutoLock();
+      <span style="color: #008000; font-weight: bold;">new</span> <span style="color: #0000ff;">Thread</span> (safeInstance.Demo).Start();   <span style="color: #408080; font-style: italic;">// Конкурентный вызов</span>
+      <span style="color: #008000; font-weight: bold;">new</span> <span style="color: #0000ff;">Thread</span> (safeInstance.Demo).Start();   <span style="color: #408080; font-style: italic;">// 3 раза метода Demo.</span>
+      safeInstance.Demo();                      <span style="color: #408080; font-style: italic;">//</span>
+   }
+}
+</pre>
+</div>
+<p>Результат работы этого примера:</p>
+<div style="background: #000000; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #ffffff;">Start... end
+Start... end
+Start... end
+</span></pre>
+</div>
+<p>Библиотека CLR гарантирует, что в любой момент времени только один 
+поток может выполнить код в safeInstance. Она делает это созданием 
+одного объекта синхронизации и блокировки на нем вокруг любого вызова 
+каждого метода или свойства safeInstance. Область блокировки в этом 
+случае весь объект safeInstance, и это называется контекстом 
+синхронизации.</p>
+<p>Как это работает? Подсказка находится в атрибуте пространства имен 
+Synchronization: System.Runtime.Remoting.Contexts. ContextBoundObject 
+можно рассматривать как "remote" (дальний) объект, что означает перехват
+ всех его вызовов. Чтобы этот перехват был возможен, когда мы 
+инстанцируем AutoLock, CLR в действительности вернет прокси - объект с 
+теми же методами и свойствами, что и объект AutoLock, который работает 
+как промежуточный. Именно через это и происходит автоматическая 
+блокировка. В целом перехват занимает около микросекунды для каждого 
+вызова метода.</p>
+<p style="padding-left: 30px;"><span style="color: #008080;">Автоматическая
+ синхронизация не может использоваться ни для защиты статических членов 
+типа, ни для классов, которые не были унаследованы от ContextBoundObject
+ (например, Windows Form).</span></p>
+<p>Блокировка применяется внутри точно так же. Вы можете ожидать, что 
+следующий пример выведет тот же самый результат, как и предыдущий 
+пример:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #7d9029;">[Synchronization]</span></pre>
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">public</span> <span style="color: #008000; font-weight: bold;">class</span> <span style="color: #0000ff; font-weight: bold;">AutoLock</span> : ContextBoundObject
+{
+   <span style="color: #008000; font-weight: bold;">public</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Demo</span>()
+   {
+      Console.Write (<span style="color: #ba2121;">"Start..."</span>);
+      Thread.Sleep (<span style="color: #666666;">1000</span>);
+      Console.WriteLine (<span style="color: #ba2121;">"end"</span>);
+   }
+ 
+   <span style="color: #008000; font-weight: bold;">public</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Test</span>()
+   {
+      <span style="color: #008000; font-weight: bold;">new</span> <span style="color: #0000ff;">Thread</span> (Demo).Start();
+      <span style="color: #008000; font-weight: bold;">new</span> <span style="color: #0000ff;">Thread</span> (Demo).Start();
+      <span style="color: #008000; font-weight: bold;">new</span> <span style="color: #0000ff;">Thread</span> (Demo).Start();
+      Console.ReadLine();
+  }
+ 
+   <span style="color: #008000; font-weight: bold;">public</span> <span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Main</span>()
+   {
+      <span style="color: #008000; font-weight: bold;">new</span> <span style="color: #0000ff;">AutoLock</span>().Test();
+   }
+}
+</pre>
+</div>
+<p>Обратите внимание, что здесь вставлен оператор Console.ReadLine. 
+Поскольку только один поток может выполнить код в любой момент времени в
+ объекте этого класса,, то три новых потока останутся заблокированными в
+ методе Demo, пока метод Test не завершится, это потребовало для 
+завершения ReadLine. В результате мы получили тот же результат, что и 
+ранее, но только после нажатия на клавишу Enter. Это хороший метод 
+потокобезопасности, подходящий для устранения проблем любой полезной 
+многопоточности в классе.</p>
+<p>Далее, мы не решили проблему, описанную ранее: если бы AutoLock был 
+классом коллекции, например, мы все еще нуждались в блокировке вокруг 
+оператора наподобие следующего, подразумевая, что он запущен из другого 
+класса (если классом этого кода не был самостоятельно синхронизируемый 
+ContextBoundObject):</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">if</span> (safeInstance.Count &gt; <span style="color: #666666;">0</span>) safeInstance.RemoveAt (<span style="color: #666666;">0</span>);
+</pre>
+</div>
+<p>Контекст синхронизации может быть расширен вне области действия 
+одного объекта. По умолчанию, если синхронизируемый объект инстанцирован
+ из кода другого объекта, то оба они используют один и тот же контекст 
+(другими словами, одну большую блокировку!). Это поведение можно 
+поменять указанием целочисленного флага в конструкторе атрибута 
+Synchronization, используя константы, определенные в классе 
+SynchronizationAttribute:</p>
+<table cellspacing="1" cellpadding="3" border="0" bgcolor="#8cacbb">
+<tbody>
+<tr style="background-color: #dee7ec;">
+<td><strong>Константа</strong></td>
+<td><strong>Назначение</strong></td>
+</tr>
+<tr style="background-color: #ffffff;">
+<td>NOT_SUPPORTED</td>
+<td>Эквивалентно не использованию атрибута Synchronized.</td>
+</tr>
+<tr style="background-color: #ffffff;">
+<td>SUPPORTED</td>
+<td>Подсоединяется к существующему контексту синхронизации, если 
+инстанцирован из другого объекта синхронизации, иначе остается не 
+синхронизированным.</td>
+</tr>
+<tr style="background-color: #ffffff;">
+<td>REQUIRED (по умолчанию)</td>
+<td>Подсоединяется к существующему контексту синхронизации, если 
+инстанцирован из другого объекта синхронизации, иначе создает новый 
+контекст.</td>
+</tr>
+<tr style="background-color: #ffffff;">
+<td>REQUIRES_NEW</td>
+<td>Всегда создает новый контекст синхронизации.</td>
+</tr>
+</tbody>
+</table>
+<p>Таким образом, если объект класса SynchronizedA инстанцирует объект 
+класса SynchronizedB, они получат отдельные контексты синхронизации, 
+если SynchronizedB был декларирован так:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #7d9029;">[Synchronization (SynchronizationAttribute.REQUIRES_NEW)]</span></pre>
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">public</span> <span style="color: #008000; font-weight: bold;">class</span> <span style="color: #0000ff; font-weight: bold;">SynchronizedB</span> : ContextBoundObject { ...
+</pre>
+</div>
+<p>Чем больше область действия контекста синхронизации, тем проще им 
+управлять, но тем менее это полезно для параллелизма. Кроме того, 
+отдельные контексты синхронизации вводят deadlock-и. Пример:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #7d9029;">[Synchronization]</span></pre>
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">public</span> <span style="color: #008000; font-weight: bold;">class</span> <span style="color: #0000ff; font-weight: bold;">Deadlock</span> : ContextBoundObject
+{
+   <span style="color: #008000; font-weight: bold;">public</span> DeadLock Other;
+   <span style="color: #008000; font-weight: bold;">public</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Demo</span>() { Thread.Sleep (<span style="color: #666666;">1000</span>); Other.Hello(); }
+   <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Hello</span>()       { Console.WriteLine (<span style="color: #ba2121;">"hello"</span>);        }
+}
+ </pre>
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">public</span> <span style="color: #008000; font-weight: bold;">class</span> <span style="color: #0000ff; font-weight: bold;">Test</span>
+{
+   <span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Main</span>()
+   {
+      Deadlock dead1 = <span style="color: #008000; font-weight: bold;">new</span> Deadlock();
+      Deadlock dead2 = <span style="color: #008000; font-weight: bold;">new</span> Deadlock();
+      dead1.Other = dead2;
+      dead2.Other = dead1;
+      <span style="color: #008000; font-weight: bold;">new</span> <span style="color: #0000ff;">Thread</span> (dead1.Demo).Start();
+      dead2.Demo();
+   }
+}
+</pre>
+</div>
+<p>Поскольку каждый экземпляр Deadlock создан внутри Test - не 
+синхронизированном классе - каждый экземпляр получает свой собственный 
+контекст синхронизации, и таким образом собственную блокировку. Когда 
+два объекта вызывают друг друга, у deadlock займет много времени (если 
+быть точным, то 1 секунду). Проблема была бы особенно коварной, если бы 
+классы Deadlock и Test были бы написаны разными командами программистов.
+ Это в отличие от явных блокировок, где deadlock-и обычно более 
+очевидны.</p>
+<p><strong>Реентрантность</strong>. Потокобезопасный метод иногда 
+называют реентрантным (повторно входимым), потому что он может быть 
+безопасно вытеснен в любой части своего выполнения тем же самым методом,
+ и затем вызван снова в другом потоке без какого-либо вредного влияния. В
+ общем смысле условия, ориентированные на безопасное многопоточное 
+выполнение и реентрантность рассматривают либо как синонимы, либо как 
+связанные друг с другом понятия.</p>
+<p>У реентрантности есть однако более зловещий оттенок в автоматических 
+режимах блокировки. Если атрибут Synchronization примененный с 
+аргументом реентрантности, равен true:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #7d9029;">[Synchronization(true)]</span>
+</pre>
+</div>
+<p>то блокировка контекста синхронизации будет временно освобождена, 
+когда выполнение покинет этот контекст. В предыдущем примере это 
+препятствовало бы возникновению deadlock, что очевидно было бы 
+желательно. Однако побочный эффект состоит в том, что во время этого 
+промежуточного периода любой поток может вызвать любой метод 
+оригинального объекта (повторно войти в контекст синхронизации, 
+"re-entering"), в результате произойдут все сложности многопоточного 
+выполнения, которых стараются избежать в первую очередь. Это проблема 
+реентрантности.</p>
+<p style="padding-left: 30px;"><span style="color: #800000;">Из-за того,
+ что [Synchronization(true)] применяется на уровне класса, этот атрибут 
+превращает любой метод, выходящий из контекста, в троянского коня для 
+реентрантности.</span></p>
+<p>Хотя реентрантность может быть опасной, иногда есть некоторые другие 
+варианты. Например предположим, что нужно реализовать многопоточность 
+внутри синхронизированного класса путем делегирования логики в рабочие 
+потоки, работающие на объектах в отдельных контекстах. Без 
+реентрантности этим рабочим потокам можно необоснованно препятствовать 
+или во взаимной коммуникации, или в коммуникации с оригинальным 
+объектом.</p>
+<p>Это высвечивает фундаментальную уязвимость автоматической 
+синхронизации: расширенная область, к которой применена блокировка, 
+может на самом деле вводить трудности, которые иначе могли и не 
+возникать. К этим сложностям относятся deadlock, реентрантность и 
+урезанный параллелизм выполнения, тогда ручная блокировка может быть 
+более приемлемой не только для простых сценариев.</p>
+<p>[<strong>Ссылки</strong>]</p>
+<p><strong>1</strong>. Threading in C# PART 2: BASIC SYNCHRONIZATION site:albahari.com.<br><strong>2</strong>. <a href="http://microsin.net/programming/pc/threading-in-csharp-part-1-getting-started.html">Потоки на C#. Часть 1: введение</a>.<br><strong>3</strong>. <a href="http://microsin.net/programming/pc/threading-in-csharp-part-5-parallel-programming.html#SpinLock_and_SpinWait">SpinLock и SpinWait</a>.<br><strong>4</strong>. <a href="http://microsin.net/programming/pc/threading-in-csharp-part-4-advanced-threading.html#Reader_Writer_Locks">Блокировки Reader/Writer</a>.<br><strong>5</strong>.&nbsp;<a href="http://microsin.net/programming/pc/threading-in-csharp-part-4-advanced-threading.html#Wait_and_Pulse">Обмен сигналами через Wait и Pulse</a>.<br><strong>6</strong>. <a href="http://microsin.net/programming/pc/threading-in-csharp-part-4-advanced-threading.html#BarrierClass">Класс Barrier</a>.<br><strong>7</strong>. <a href="http://microsin.net/programming/pc/threading-in-csharp-part-4-advanced-threading.html#Memory_Barriers_and_Volatility">Барьеры памяти и изменчивость данных</a>.<br><strong>8</strong>. <a href="http://microsin.net/programming/pc/threading-in-csharp-part-4-advanced-threading.html#volatile">Ключевое слово volatile</a>.<br><strong>9</strong>. <a href="http://microsin.net/programming/pc/threading-in-csharp-part-4-advanced-threading.html#Interlocked">Класс Interlocked</a>.<br><strong>10</strong>. <a href="http://microsin.net/programming/pc/threading-in-csharp-part-3-using-threads.html#Interrupt_and_Abort">Interrupt и AbortAbortAbort</a>.<br><strong>11</strong>. <a href="http://microsin.net/programming/pc/threading-in-csharp-part-4-advanced-threading.html#Suspend_and_Resume">Suspend и Resume</a>.<br><strong>12</strong>. <a href="http://microsin.net/programming/pc/threading-in-csharp-part-4-advanced-threading.html">Не блокирующая синхронизация</a>.<br><strong></strong><strong>13</strong>. <a href="http://microsin.net/programming/pc/threading-in-csharp-part-5-parallel-programming.html#PLINQ">PLINQ</a>.<br><strong>14</strong>.&nbsp;<a href="http://microsin.net/programming/pc/threading-in-csharp-part-5-parallel-programming.html">Потоки на C#. Часть 5: параллельное программирование</a>.<br><strong>15</strong>. <a href="http://microsin.net/programming/pc/threading-in-csharp-part-3-using-threads.html#CancellationTokens">Маркеры отмены (Cancellation Tokens)</a>.<br><strong></strong><strong>16</strong>. <a href="http://microsin.net/programming/pc/threading-in-csharp-part-3-using-threads.html#BackgroundWorker">BackgroundWorker</a>.<br><strong>17</strong>. <a href="http://microsin.net/programming/pc/threading-in-csharp-part-5-parallel-programming.html#Continuations">Продолжения (continuations)</a>.<br><strong>18</strong>. <a href="http://microsin.net/programming/pc/threading-in-csharp-part-5-parallel-programming.html#BlockingCollection">BlockingCollection</a>.<br><strong>19</strong>. <a href="http://microsin.net/programming/pc/threading-in-csharp-part-4-advanced-threading.html#Producer_Consumer_Queue">Очередь генератора/получателя (Producer/Consumer Queue)</a>.<br><strong>20</strong>. <a href="http://microsin.net/programming/pc/threading-in-csharp-part-4-advanced-threading.html#Writing_CountdownEvent">Написание CountdownEvent</a>.</p></td>
+</tr>
+
+</tbody></table>
+</html>

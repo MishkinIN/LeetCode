@@ -1,0 +1,2003 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru-ru" lang="ru-ru"><head>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+
+
+  
+  <!-- base href="http://microsin.net/programming/pc/threading-in-csharp-part-4-advanced-threading.html" -->
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="robots" content="index, follow">
+  <meta name="keywords" content="C#, threading">
+  
+  <meta name="author" content="microsin">
+  <meta name="description" content="Описание тонких моментов использования потоков на C#.">
+  
+  <title>Потоки на C#. Часть 4: продвинутое использование | pc | programming</title>
+  <link href="http://microsin.net/component/option,com_jcomments/format,raw/object_group,com_content/object_id,2255/task,rss/" rel="alternate" type="application/rss+xml" title="Потоки на C#. Часть 4: продвинутое использование">
+  <link rel="stylesheet" href="%D0%9F%D0%BE%D1%82%D0%BE%D0%BA%D0%B8%20%D0%BD%D0%B0%20C%23.%20%D0%A7%D0%B0%D1%81%D1%82%D1%8C%204_files/style.css" type="text/css">
+  <link rel="stylesheet" href="%D0%9F%D0%BE%D1%82%D0%BE%D0%BA%D0%B8%20%D0%BD%D0%B0%20C%23.%20%D0%A7%D0%B0%D1%81%D1%82%D1%8C%204_files/spoiler.css" type="text/css">
+  <link rel="stylesheet" href="%D0%9F%D0%BE%D1%82%D0%BE%D0%BA%D0%B8%20%D0%BD%D0%B0%20C%23.%20%D0%A7%D0%B0%D1%81%D1%82%D1%8C%204_files/acesearch.css" type="text/css">
+  <style type="text/css">
+    <!--
+
+    .sp-head-click a{font-size: 11px; font-style: normal; color: #000000 !important; }
+	.sp-head{border: 0px #ccc solid; font-weight: bold;
+            -webkit-border-radius: 8px;
+            -moz-border-radius: 8px;
+            -khtml-border-radius: 8px;
+            border-radius: 8px;
+            width: 85%;
+            background-color: #f0f0f0;
+            text-shadow: 0 -1px 1px rgba(0,0,0,0.25);
+            box-shadow: 0 0 5px rgba(0,0,0,0.6);
+            -moz-box-shadow: 0 0 5px rgba(0,0,0,0.6);
+	        -webkit-box-shadow: 0 0 5px rgba(0,0,0,0.6);
+	        }
+	.sp-body{font-size: 11px; font-weight: normal; background: #FFFDDD; border: 1px #ccc solid; 
+	-webkit-border-radius: 7px;
+	-moz-border-radius: 7px;
+	-khtml-border-radius: 7px;
+	border-radius: 7px;
+	width: 95%;
+	font-style: italic;
+	padding: 10px}	
+	
+    -->
+  </style>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <link rel="stylesheet" type="text/css" href="%D0%9F%D0%BE%D1%82%D0%BE%D0%BA%D0%B8%20%D0%BD%D0%B0%20C%23.%20%D0%A7%D0%B0%D1%81%D1%82%D1%8C%204_files/style_002.css">
+<link rel="stylesheet" type="text/css" href="%D0%9F%D0%BE%D1%82%D0%BE%D0%BA%D0%B8%20%D0%BD%D0%B0%20C%23.%20%D0%A7%D0%B0%D1%81%D1%82%D1%8C%204_files/comment_style.css">
+
+
+
+<link rel="stylesheet" href="%D0%9F%D0%BE%D1%82%D0%BE%D0%BA%D0%B8%20%D0%BD%D0%B0%20C%23.%20%D0%A7%D0%B0%D1%81%D1%82%D1%8C%204_files/system.css" type="text/css">
+<link rel="stylesheet" href="%D0%9F%D0%BE%D1%82%D0%BE%D0%BA%D0%B8%20%D0%BD%D0%B0%20C%23.%20%D0%A7%D0%B0%D1%81%D1%82%D1%8C%204_files/general.css" type="text/css">
+<link rel="stylesheet" href="%D0%9F%D0%BE%D1%82%D0%BE%D0%BA%D0%B8%20%D0%BD%D0%B0%20C%23.%20%D0%A7%D0%B0%D1%81%D1%82%D1%8C%204_files/template_css.css" type="text/css">
+<!-- <link rel="shortcut"   href="/templates/microsin/images/favicon16x16-8b.gif" type="image/x-icon"/> -->
+<link rel="shortcut icon" href="http://microsin.net/templates/microsin/images/favicon16x16-8b.gif">
+<meta http-equiv="Content-Language" content="en"><style type="text/css" id="ya_share_style">.b-share-popup-wrap{z-index:1073741823;position:absolute;width:500px}.b-share-popup{position:absolute;z-index:1073741823;border:1px solid #888;background:#FFF;color:#000}.b-share-popup-wrap .b-share-popup_down{top:0}.b-share-popup-wrap .b-share-popup_up{bottom:0}.b-share-popup-wrap_state_hidden{position:absolute!important;top:-9999px!important;right:auto!important;bottom:auto!important;left:-9999px!important;visibility:hidden!important}.b-share-popup,x:nth-child(1){border:0;padding:1px!important}@media all and (resolution=0){.b-share-popup,x:nth-child(1),x:-o-prefocus{padding:0!important;border:1px solid #888}}.b-share-popup__i{display:-moz-inline-box;display:inline-block;padding:5px 0!important;overflow:hidden;vertical-align:top;white-space:nowrap;visibility:visible;background:#FFF;-webkit-box-shadow:0 2px 9px rgba(0,0,0,.6);-moz-box-shadow:0 2px 9px rgba(0,0,0,.6);box-shadow:0 2px 9px rgba(0,0,0,.6)}.b-share-popup__item{font:1em/1.25em Arial,sans-serif;display:block;padding:5px 15px!important;white-space:nowrap;background:#FFF}.b-share-popup__item,a.b-share-popup__item:link,a.b-share-popup__item:visited{text-decoration:none!important;border:0!important}a.b-share-popup__item{cursor:pointer}a.b-share-popup__item .b-share-popup__item__text{display:inline;text-decoration:underline;color:#1A3DC1}a.b-share-popup__item:hover{word-spacing:0}a.b-share-popup__item:hover .b-share-popup__item__text{color:red;cursor:pointer}.b-share-popup__icon{display:-moz-inline-box;display:inline-block;margin:-3px 0 0;padding:0 5px 0 0!important;vertical-align:middle}.b-share-popup__icon_input{width:21px;height:16px;margin-top:-6px;padding:0!important}.b-share-popup__icon__input{margin-right:0;margin-left:2px;vertical-align:top}.b-share-popup__spacer{display:block;padding-top:10px!important}.b-share-popup__header{font:86%/1em Verdana,sans-serif;display:block;padding:10px 15px 5px!important;color:#999}.b-share-popup__header_first{padding-top:5px!important}.b-share-popup__input{font:86%/1em Verdana,sans-serif;display:block;padding:5px 15px!important;color:#999;text-align:left}.b-share-popup__input__input{font:1em/1em Verdana,sans-serif;display:block;width:10px;margin:5px 0 0;-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;resize:none;text-align:left;direction:ltr}.b-share-popup_down .b-share-popup_with-link .b-share-popup__input_link{position:absolute;top:5px;right:0;left:0}.b-share-popup_up .b-share-popup_with-link .b-share-popup__input_link{position:absolute;right:0;bottom:5px;left:0}.b-share-popup_down .b-share-popup_with-link{padding-top:55px!important}.b-share-popup_up .b-share-popup_with-link{padding-bottom:55px!important}.b-share-popup_down .b-share-popup_expandable .b-share-popup__main{padding-bottom:25px!important}.b-share-popup_up .b-share-popup_expandable .b-share-popup__main{padding-top:25px!important}.b-share-popup_down .b-share-popup_yandexed{padding-bottom:10px!important}.b-share-popup_up .b-share-popup_yandexed{padding-top:10px!important}.b-share-popup__yandex{position:absolute;right:4px;bottom:2px;font:78.125%/1em Verdana,sans-serif;padding:3px!important;background:0 0}a.b-share-popup__yandex:link,a.b-share-popup__yandex:visited{color:#C6C5C5;text-decoration:none}a.b-share-popup__yandex:link:hover,a.b-share-popup__yandex:visited:hover{color:red;text-decoration:underline}.b-share-popup_up .b-share-popup__yandex{top:2px;bottom:auto}.b-share-popup_expandable .b-share-popup__yandex{right:auto;left:4px}.b-share-popup_to-right .b-share-popup_expandable .b-share-popup__yandex{right:4px;left:auto}.b-share-popup__expander .b-share-popup__item{position:absolute;bottom:5px;font:86%/1em Verdana,sans-serif;margin:10px 0 0;padding:5px 10px!important;cursor:pointer;color:#999;background:0 0}.b-share-popup_to-right,.b-share-popup_to-right .b-share-popup__expander{direction:rtl}.b-share-popup_to-right .b-share-popup__expander .b-share-popup__icon{padding:0 0 0 5px!important}.b-share-popup_up .b-share-popup__expander .b-share-popup__item{top:-5px;bottom:auto}.b-share-popup__expander .b-share-popup__item:hover .b-share-popup__item__text{text-decoration:underline}.b-share-popup__expander .b-ico_action_rarr,.b-share-popup_to-right .b-share-popup__expander .b-ico_action_larr,.b-share-popup_full .b-share-popup__expander .b-ico_action_larr,.b-share-popup_to-right .b-share-popup_full .b-share-popup__expander .b-ico_action_rarr,.b-share-popup__expander .b-share-popup__item__text_collapse,.b-share-popup_full .b-share-popup__item__text_expand{display:none}.b-share-popup_to-right .b-share-popup__expander .b-ico_action_rarr,.b-share-popup_full .b-share-popup__item__text_collapse,.b-share-popup_full .b-share-popup__expander .b-ico_action_rarr,.b-share-popup_to-right .b-share-popup_full .b-share-popup__expander .b-ico_action_larr{display:inline}.b-ico_action_rarr,.b-ico_action_larr{width:8px;height:7px;border:0}.b-share-popup__main,.b-share-popup__extra{direction:ltr;vertical-align:bottom;text-align:left}.b-share-popup_down .b-share-popup__main,.b-share-popup_down .b-share-popup__extra{vertical-align:top}.b-share-popup__main{display:-moz-inline-stack;display:inline-block}.b-share-popup__extra{display:none;margin:0 -10px 0 0}.b-share-popup_full .b-share-popup__extra{display:-moz-inline-stack;display:inline-block}.b-share-popup_to-right .b-share-popup__extra{margin:0 0 0 -10px}.b-share-popup__tail{position:absolute;width:21px;height:10px;margin:0 0 0 -11px}.b-share-popup_down .b-share-popup__tail{top:-10px;background:url("//yastatic.net/share/static/b-share-popup_down__tail.gif") 0 0 no-repeat}.b-share-popup_up .b-share-popup__tail{bottom:-10px;background:url("//yastatic.net/share/static/b-share-popup_up__tail.gif") 0 0 no-repeat}.b-share-popup_down .b-share-popup__tail,x:nth-child(1){top:-9px;background-image:url("//yastatic.net/share/static/b-share-popup_down__tail.png")}.b-share-popup_up .b-share-popup__tail,x:nth-child(1){bottom:-9px;background-image:url("//yastatic.net/share/static/b-share-popup_up__tail.png")}@media all and (resolution=0){.b-share-popup_down .b-share-popup__tail,x:nth-child(1),x:-o-prefocus{top:-10px;background-image:url("//yastatic.net/share/static/b-share-popup_down__tail.gif")}.b-share-popup_up .b-share-popup__tail,x:nth-child(1),x:-o-prefocus{bottom:-10px;background-image:url("//yastatic.net/share/static/b-share-popup_up__tail.gif")}}.b-share-popup .b-share-popup_show_form_mail,.b-share-popup .b-share-popup_show_form_html{padding:0!important}.b-share-popup .b-share-popup_show_form_mail .b-share-popup__main,.b-share-popup .b-share-popup_show_form_html .b-share-popup__main,.b-share-popup .b-share-popup_show_form .b-share-popup__main,.b-share-popup .b-share-popup_show_form_mail .b-share-popup__extra,.b-share-popup .b-share-popup_show_form_html .b-share-popup__extra,.b-share-popup .b-share-popup_show_form .b-share-popup__extra{height:15px;padding:0!important;overflow:hidden;visibility:hidden}.b-share-popup_show_form_mail .b-share-popup__expander,.b-share-popup_show_form_html .b-share-popup__expander,.b-share-popup_show_form .b-share-popup__expander,.b-share-popup_show_form_mail .b-share-popup__input_link,.b-share-popup_show_form_html .b-share-popup__input_link,.b-share-popup_show_form .b-share-popup__input_link{display:none}.b-share-popup__form{position:relative;display:none;overflow:hidden;padding:5px 0 0!important;margin:0 0 -15px;white-space:normal}.b-share-popup_show_form_mail .b-share-popup__form_mail,.b-share-popup_show_form_html .b-share-popup__form_html,.b-share-popup_show_form .b-share-popup__form{display:block}.b-share-popup__form__link{padding:5px!important;margin:0 0 5px 10px;text-decoration:underline;cursor:pointer;color:#1A3DC1}.b-share-popup__form__link,.b-share-popup__form__button{font:86%/1.4545em Verdana,sans-serif;float:left;display:inline}.b-share-popup__form__button{margin:5px 0 0 15px}.b-share-popup__form__close{font:86%/1.4545em Verdana,sans-serif;float:right;display:inline;padding:5px!important;margin:0 10px 5px 0;cursor:pointer;color:#999}a.b-share-popup__form__link:hover,a.b-share-popup__form__close:hover{text-decoration:underline;color:red}.b-share-popup_font_fixed .b-share-popup__item{font-size:12.8px}.b-share-popup_font_fixed .b-share-popup__header,.b-share-popup_font_fixed .b-share-popup__input,.b-share-popup_font_fixed .b-share-popup__expander .b-share-popup__item,.b-share-popup_font_fixed .b-share-popup__form__link,.b-share-popup_font_fixed .b-share-popup__form__button,.b-share-popup_font_fixed .b-share-popup__form__close{font-size:11px}.b-share-popup_font_fixed .b-share-popup__yandex{font-size:10px}.b-share-form-button{font:86%/17px Verdana,Arial,sans-serif;display:-moz-inline-box;display:inline-block;position:relative;height:19px;margin:0 3px;padding:0 4px;cursor:default;white-space:nowrap;text-decoration:none!important;color:#000!important;border:none;outline:none;background:url("//yastatic.net/share/static/b-share-form-button.png") 0 -20px repeat-x}.b-share-form-button:link:hover,.b-share-form-button:visited:hover{color:#000!important}.b-share-form-button__before,.b-share-form-button__after{position:absolute;width:3px;height:19px;background:url("//yastatic.net/share/static/b-share-form-button.png")}.b-share-form-button__before{margin-left:-7px}.b-share-form-button__after{margin-left:4px;background-position:-3px 0}.b-share-form-button::-moz-focus-inner{border:none}button.b-share-form-button .b-share-form-button__before,button.b-share-form-button .b-share-form-button__after{margin-top:-1px}@-moz-document url-prefix(){button.b-share-form-button .b-share-form-button__after{margin-top:-2px;margin-left:6px}button.b-share-form-button .b-share-form-button__before{margin-top:-2px;margin-left:-9px}}SPAN.b-share-form-button:hover,.b-share-form-button_state_hover{background-position:0 -60px}SPAN.b-share-form-button:hover .b-share-form-button__before,.b-share-form-button_state_hover .b-share-form-button__before{background-position:0 -40px}SPAN.b-share-form-button:hover .b-share-form-button__after,.b-share-form-button_state_hover .b-share-form-button__after{background-position:-3px -40px}.b-share-form-button_state_pressed,.b-share-form-button_state_pressed .b-share-form-button_share{background-position:0 -100px!important}.b-share-form-button_state_pressed .b-share-form-button__before{background-position:0 -80px!important}.b-share-form-button_state_pressed .b-share-form-button__after{background-position:-3px -80px!important}button.b-share-form-button_state_pressed{overflow:visible}.b-share-form-button_icons{position:relative;padding:0;background-position:0 -20px!important}.b-share-form-button_icons .b-share-form-button__before{left:0;margin-left:-3px;background-position:0 0!important}.b-share-form-button_icons .b-share-form-button__after{z-index:-1;margin-left:0;background-position:-3px 0!important}.b-share-form-button_icons .b-share__handle{padding:2px!important}.b-share-form-button_icons .b-share__handle_more{position:relative;padding-right:6px!important;margin-right:-4px}.b-share-form-button_icons .b-share-icon{opacity:.5;background-image:url("//yastatic.net/share/static/b-share-icon_size_14.png")}.b-share-form-button_icons A.b-share__handle:hover .b-share-icon{opacity:1}.b-share{font:86%/1.4545em Arial,sans-serif;display:-moz-inline-box;display:inline-block;padding:1px 3px 1px 4px!important;vertical-align:middle}.b-share .b-share-form-button{font-size:1em}.b-share__text .b-share-icon{margin:0 5px 0 0;border:none}.b-share__text{margin-right:5px}.b-share__handle{float:left;height:16px;padding:5px 3px 5px 2px!important;cursor:pointer;text-align:left;text-decoration:none!important}.b-share__handle_cursor_default{cursor:default}.b-share__handle .b-share-form-button{margin-top:-2px}.b-share__hr{display:none;float:left;width:1px;height:26px;margin:0 3px 0 2px}a.b-share__handle:hover .b-share__text{text-decoration:underline;color:red}.b-share_bordered{padding:0 2px 0 3px!important;border:1px solid #E4E4E4;-moz-border-radius:5px;-webkit-border-radius:5px;border-radius:5px}.b-share_bordered .b-share__hr{display:inline;background:#E4E4E4}.b-share_link{margin:-8px 0}a.b-share_link{margin:0}.b-share_link .b-share__text{text-decoration:underline;color:#1A3DC1}.b-share-form-button_share{padding-left:26px!important;vertical-align:top}.b-share-form-button_share .b-share-form-button__before{margin-left:-29px}.b-share-form-button_share .b-share-form-button__icon{position:absolute;width:20px;height:17px;margin:1px 0 0 -23px;background:url("//yastatic.net/share/static/b-share-form-button_share__icon.png") 0 0 no-repeat}.b-share-pseudo-link{border-bottom:1px dotted;cursor:pointer;text-decoration:none!important}.b-share_font_fixed{font-size:11px}.b-share__handle_more{font-size:9px;margin-top:-1px;color:#7B7B7B}A.b-share__handle_more:hover{color:#000}.b-share__group{float:left}.b-share-icon{float:left;display:inline;overflow:hidden;width:16px;height:16px;padding:0!important;vertical-align:top;border:0;background:url("//yastatic.net/share/static/b-share-icon.png") 0 99px no-repeat}.b-share-icon_vkontakte,.b-share-icon_custom{background-position:0 0}.b-share-icon_yaru,.b-share-icon_yaru_photo,.b-share-icon_yaru_wishlist{background-position:0 -17px}.b-share-icon_lj{background-position:0 -34px}.b-share-icon_twitter{background-position:0 -51px}.b-share-icon_facebook{background-position:0 -68px}.b-share-icon_moimir{background-position:0 -85px}.b-share-icon_friendfeed{background-position:0 -102px}.b-share-icon_mail{background-position:0 -119px}.b-share-icon_html{background-position:0 -136px}.b-share-icon_postcard{background-position:0 -153px}.b-share-icon_odnoklassniki{background-position:0 -170px}.b-share-icon_blogger{background-position:0 -187px}.b-share-icon_delicious{background-position:0 -221px}.b-share-icon_gbuzz{background-position:0 -238px}.b-share-icon_linkedin{background-position:0 -255px}.b-share-icon_myspace{background-position:0 -272px}.b-share-icon_evernote{background-position:0 -289px}.b-share-icon_digg{background-position:0 -306px}.b-share-icon_juick{background-position:0 -324px}.b-share-icon_moikrug{background-position:0 -341px}.b-share-icon_yazakladki{background-position:0 -358px}.b-share-icon_liveinternet{background-position:0 -375px}.b-share-icon_tutby{background-position:0 -392px}.b-share-icon_diary{background-position:0 -409px}.b-share-icon_gplus{background-position:0 -426px}.b-share-icon_pocket{background-position:0 -443px}.b-share-icon_surfingbird{background-position:0 -460px}.b-share-icon_pinterest{background-position:0 -477px}.b-share-icon_renren{background-position:0 0}.b-share-icon_renren,.b-share-icon_sina_weibo{background:url("//yastatic.net/share/static/b-share-icon__china.png") no-repeat}.b-share-icon_sina_weibo{background-position:-18px 0}.b-share-icon_qzone{background-position:-36px 0}.b-share-icon_qzone,.b-share-icon_tencent_weibo{background:url("//yastatic.net/share/static/b-share-icon__china.png") no-repeat}.b-share-icon_tencent_weibo{background-position:-54px 0}.b-share_theme_dark .b-share-icon{background:url("//yastatic.net/share/static/b-share-icons__theme_dark.png") 99px 0 no-repeat}.b-share_theme_dark .b-share-icon_odnoklassniki{background-position:-4px -3px}.b-share_theme_dark .b-share-icon_vkontakte{background-position:-24px -3px}.b-share_theme_dark .b-share-icon_twitter{background-position:-44px -3px}.b-share_theme_dark .b-share-icon_facebook{background-position:-64px -3px}.b-share_theme_dark .b-share-icon_lj{background-position:-85px -3px}.b-share_theme_dark .b-share-icon_yaru{background-position:-105px -3px}.b-share_theme_dark .b-share-popup .b-share-icon_odnoklassniki,.b-share_theme_dark .b-share-icon_odnoklassniki:hover{background-position:-4px -28px}.b-share_theme_dark .b-share-popup .b-share-icon_vkontakte,.b-share_theme_dark .b-share-icon_vkontakte:hover{background-position:-24px -28px}.b-share_theme_dark .b-share-popup .b-share-icon_twitter,.b-share_theme_dark .b-share-icon_twitter:hover{background-position:-44px -28px}.b-share_theme_dark .b-share-popup .b-share-icon_facebook,.b-share_theme_dark .b-share-icon_facebook:hover{background-position:-64px -28px}.b-share_theme_dark .b-share-popup .b-share-icon_lj,.b-share_theme_dark .b-share-icon_lj:hover{background-position:-85px -28px}.b-share_theme_dark .b-share-popup .b-share-icon_yaru,.b-share_theme_dark .b-share-icon_yaru:hover{background-position:-105px -28px}.b-share_theme_dark .b-share-form-button_share .b-share-form-button__icon{background-image:url("//yastatic.net/share/static/b-share-form-button_share__icon_dark.png")}.b-share_theme_dark .b-share-form-button{color:#fff!important;opacity:.8}.b-share_theme_dark .b-share__handle:hover .b-share-form-button,.b-share_theme_dark .b-share-form-button:hover{opacity:1;cursor:pointer}.b-share_theme_dark .b-share-form-button,.b-share_theme_dark .b-share-form-button__before,.b-share_theme_dark .b-share-form-button__after{background:0 0}.b-share_theme_dark .b-share-popup__i{background-color:#333;border-radius:10px;-webkit-box-shadow:0 2px 9px rgba(255,255,255,.6);-moz-box-shadow:0 2px 9px rgba(255,255,255,.6);box-shadow:0 2px 9px rgba(255,255,255,.6)}.b-share_theme_dark .b-share__text{color:#AAA}.b-share_theme_dark .b-share-popup{color:#AAA;border-radius:10px;background-color:#333;background-color:rgba(50,50,50,.3)}.b-share_theme_dark .b-share-popup__item{background:0 0;color:#ccc}.b-share_theme_dark .b-share-popup .b-share-popup__item__text{color:#ccc}.b-share_theme_counter .b-share{display:inline-block;vertical-align:middle;white-space:nowrap}.b-share-counter{font:14px Arial,sans-serif;line-height:18px;display:none;float:left;margin:3px 6px 3px 3px;color:#fff}.b-share_theme_counter .b-share_type_small .b-share-counter{font-size:11px;line-height:14px;margin:2px 6px 2px 1px}.b-share_theme_counter .b-share-btn__counter .b-share-counter{display:block}.b-share-btn__counter{text-decoration:none}.b-share_theme_counter .b-share-btn__wrap{position:relative;float:left;margin-left:5px}.b-share_theme_counter .b-share_type_small .b-share-btn__wrap{margin-left:4px}.b-share_theme_counter .b-share-btn__wrap:first-child{margin-left:0}.b-share_theme_counter .b-share__link{display:inline-block;cursor:pointer;-webkit-border-radius:3px;border-radius:3px}.b-share_theme_counter .b-share_type_small .b-share__link{-webkit-border-radius:2px;border-radius:2px}.b-share_theme_counter .b-share-icon{display:block;float:left;width:24px;height:24px;background-image:url("//yastatic.net/share/static/b-share_counter_large.png");background-position:-20px 0}.b-share_theme_counter .b-share_type_small .b-share-icon{width:18px;height:18px;background-image:url("//yastatic.net/share/static/b-share_counter_small.png")}.b-share_theme_counter .b-share-icon_facebook{background-position:0 0}.b-share_theme_counter .b-share-btn__facebook{background-color:#3c5a98}.b-share_theme_counter .b-share-btn__facebook:hover{background-color:#30487a}.b-share_theme_counter .b-share-btn__facebook:active{border-top:2px solid #24365a;background-color:#334d81}.b-share_theme_counter .b-share-icon_moimir{background-position:0 -29px}.b-share_theme_counter .b-share-btn__moimir{background-color:#226eb7}.b-share_theme_counter .b-share-btn__moimir:hover{background-color:#1b5892}.b-share_theme_counter .b-share-btn__moimir:active{border-top:2px solid #14426d;background-color:#1d5e9c}.b-share_theme_counter .b-share-icon_vkontakte{background-position:0 -58px}.b-share_theme_counter .b-share-btn__vkontakte{background-color:#48729e}.b-share_theme_counter .b-share-btn__vkontakte:hover{background-color:#3a5b7e}.b-share_theme_counter .b-share-btn__vkontakte:active{border-top:2px solid #2b445e;background-color:#3d6186}.b-share_theme_counter .b-share-icon_twitter{background-position:0 -87px}.b-share_theme_counter .b-share-btn__twitter{background-color:#00aced}.b-share_theme_counter .b-share-btn__twitter:hover{background-color:#008abe}.b-share_theme_counter .b-share-btn__twitter:active{border-top:2px solid #00668d;background-color:#0092ca}.b-share_theme_counter .b-share-icon_odnoklassniki{background-position:0 -116px}.b-share_theme_counter .b-share-btn__odnoklassniki{background-color:#ff9f4d}.b-share_theme_counter .b-share-btn__odnoklassniki:hover{background-color:#cc7f3e}.b-share_theme_counter .b-share-btn__odnoklassniki:active{border-top:2px solid #975e2e;background-color:#d98742}.b-share_theme_counter .b-share-icon_gplus{background-position:0 -145px}.b-share_theme_counter .b-share-btn__gplus{background-color:#c25234}.b-share_theme_counter .b-share-btn__gplus:hover{background-color:#9b422a}.b-share_theme_counter .b-share-btn__gplus:active{border-top:2px solid #73311f;background-color:#a5462c}.b-share_theme_counter .b-share-icon_yaru{background-position:0 -174px}.b-share_theme_counter .b-share-btn__yaru{background-color:#d83933}.b-share_theme_counter .b-share-btn__yaru:hover{background-color:#ad2e29}.b-share_theme_counter .b-share-btn__yaru:active{border-top:2px solid #80221e;background-color:#b8312b}.b-share_theme_counter .b-share-icon_pinterest{background-position:0 -203px}.b-share_theme_counter .b-share-btn__pinterest{background-color:#cd1e27}.b-share_theme_counter .b-share-btn__pinterest:hover{background-color:#a4181f}.b-share_theme_counter .b-share-btn__pinterest:active{border-top:2px solid #7b1217;background-color:#ae1921}.b-share_theme_counter .b-share__link:active{height:22px}.b-share_theme_counter .b-share_type_small .b-share__link:active{height:16px}.b-share_theme_counter .b-share__link:active .b-share-icon,.b-share_theme_counter .b-share__link:active .b-share-counter{position:relative;top:-1px}.b-share_theme_counter .b-share__link::after{position:absolute;top:0;right:0;bottom:0;left:0;content:"";background-image:url(data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==)}.b-share_theme_counter .b-share__handle{height:auto;padding:0!important}</style><meta http-equiv="origin-trial" content="AxujKG9INjsZ8/gUq8+dTruNvk7RjZQ1oFhhgQbcTJKDnZfbzSTE81wvC2Hzaf3TW4avA76LTZEMdiedF1vIbA4AAABueyJvcmlnaW4iOiJodHRwczovL2ltYXNkay5nb29nbGVhcGlzLmNvbTo0NDMiLCJmZWF0dXJlIjoiVHJ1c3RUb2tlbnMiLCJleHBpcnkiOjE2NTI3NzQ0MDAsImlzVGhpcmRQYXJ0eSI6dHJ1ZX0="><meta http-equiv="origin-trial" content="Azuce85ORtSnWe1MZDTv68qpaW3iHyfL9YbLRy0cwcCZwVnePnOmkUJlG8HGikmOwhZU22dElCcfrfX2HhrBPAkAAAB7eyJvcmlnaW4iOiJodHRwczovL2RvdWJsZWNsaWNrLm5ldDo0NDMiLCJmZWF0dXJlIjoiVHJ1c3RUb2tlbnMiLCJleHBpcnkiOjE2NTI3NzQ0MDAsImlzU3ViZG9tYWluIjp0cnVlLCJpc1RoaXJkUGFydHkiOnRydWV9"><meta http-equiv="origin-trial" content="A16nvcdeoOAqrJcmjLRpl1I6f3McDD8EfofAYTt/P/H4/AWwB99nxiPp6kA0fXoiZav908Z8etuL16laFPUdfQsAAACBeyJvcmlnaW4iOiJodHRwczovL2dvb2dsZXRhZ3NlcnZpY2VzLmNvbTo0NDMiLCJmZWF0dXJlIjoiVHJ1c3RUb2tlbnMiLCJleHBpcnkiOjE2NTI3NzQ0MDAsImlzU3ViZG9tYWluIjp0cnVlLCJpc1RoaXJkUGFydHkiOnRydWV9"><meta http-equiv="origin-trial" content="AxBHdr0J44vFBQtZUqX9sjiqf5yWZ/OcHRcRMN3H9TH+t90V/j3ENW6C8+igBZFXMJ7G3Pr8Dd13632aLng42wgAAACBeyJvcmlnaW4iOiJodHRwczovL2dvb2dsZXN5bmRpY2F0aW9uLmNvbTo0NDMiLCJmZWF0dXJlIjoiVHJ1c3RUb2tlbnMiLCJleHBpcnkiOjE2NTI3NzQ0MDAsImlzU3ViZG9tYWluIjp0cnVlLCJpc1RoaXJkUGFydHkiOnRydWV9"><meta http-equiv="origin-trial" content="A88BWHFjcawUfKU3lIejLoryXoyjooBXLgWmGh+hNcqMK44cugvsI5YZbNarYvi3roc1fYbHA1AVbhAtuHZflgEAAAB2eyJvcmlnaW4iOiJodHRwczovL2dvb2dsZS5jb206NDQzIiwiZmVhdHVyZSI6IlRydXN0VG9rZW5zIiwiZXhwaXJ5IjoxNjUyNzc0NDAwLCJpc1N1YmRvbWFpbiI6dHJ1ZSwiaXNUaGlyZFBhcnR5Ijp0cnVlfQ=="><meta http-equiv="origin-trial" content="A8FHS1NmdCwGqD9DwOicnHHY+y27kdWfxKa0YHSGDfv0CSpDKRHTQdQmZVPDUdaFWUsxdgVxlwAd6o+dhJykPA0AAACWeyJvcmlnaW4iOiJodHRwczovL2RvdWJsZWNsaWNrLm5ldDo0NDMiLCJmZWF0dXJlIjoiQ29udmVyc2lvbk1lYXN1cmVtZW50IiwiZXhwaXJ5IjoxNjQzMTU1MTk5LCJpc1N1YmRvbWFpbiI6dHJ1ZSwiaXNUaGlyZFBhcnR5Ijp0cnVlLCJ1c2FnZSI6InN1YnNldCJ9"><meta http-equiv="origin-trial" content="A8zdXi6dr1hwXEUjQrYiyYQGlU3557y5QWDnN0Lwgj9ePt66XMEvNkVWOEOWPd7TP9sBQ25X0Q15Lr1Nn4oGFQkAAACceyJvcmlnaW4iOiJodHRwczovL2dvb2dsZXN5bmRpY2F0aW9uLmNvbTo0NDMiLCJmZWF0dXJlIjoiQ29udmVyc2lvbk1lYXN1cmVtZW50IiwiZXhwaXJ5IjoxNjQzMTU1MTk5LCJpc1N1YmRvbWFpbiI6dHJ1ZSwiaXNUaGlyZFBhcnR5Ijp0cnVlLCJ1c2FnZSI6InN1YnNldCJ9"><meta http-equiv="origin-trial" content="A4/Htern2udN9w3yJK9QgWQxQFruxOXsXL7cW60DyCl0EZFGCSme/J33Q/WzF7bBkVvhEWDlcBiUyZaim5CpFQwAAACceyJvcmlnaW4iOiJodHRwczovL2dvb2dsZXRhZ3NlcnZpY2VzLmNvbTo0NDMiLCJmZWF0dXJlIjoiQ29udmVyc2lvbk1lYXN1cmVtZW50IiwiZXhwaXJ5IjoxNjQzMTU1MTk5LCJpc1N1YmRvbWFpbiI6dHJ1ZSwiaXNUaGlyZFBhcnR5Ijp0cnVlLCJ1c2FnZSI6InN1YnNldCJ9"><link rel="preload" href="%D0%9F%D0%BE%D1%82%D0%BE%D0%BA%D0%B8%20%D0%BD%D0%B0%20C%23.%20%D0%A7%D0%B0%D1%81%D1%82%D1%8C%204_files/integrator_002.js" as="script"><link rel="preload" href="%D0%9F%D0%BE%D1%82%D0%BE%D0%BA%D0%B8%20%D0%BD%D0%B0%20C%23.%20%D0%A7%D0%B0%D1%81%D1%82%D1%8C%204_files/integrator.js" as="script"><link rel="preload" href="%D0%9F%D0%BE%D1%82%D0%BE%D0%BA%D0%B8%20%D0%BD%D0%B0%20C%23.%20%D0%A7%D0%B0%D1%81%D1%82%D1%8C%204_files/integrator_002.js" as="script"><link rel="preload" href="%D0%9F%D0%BE%D1%82%D0%BE%D0%BA%D0%B8%20%D0%BD%D0%B0%20C%23.%20%D0%A7%D0%B0%D1%81%D1%82%D1%8C%204_files/integrator.js" as="script"><link rel="preload" href="%D0%9F%D0%BE%D1%82%D0%BE%D0%BA%D0%B8%20%D0%BD%D0%B0%20C%23.%20%D0%A7%D0%B0%D1%81%D1%82%D1%8C%204_files/integrator_002.js" as="script"><link rel="preload" href="%D0%9F%D0%BE%D1%82%D0%BE%D0%BA%D0%B8%20%D0%BD%D0%B0%20C%23.%20%D0%A7%D0%B0%D1%81%D1%82%D1%8C%204_files/integrator.js" as="script"></head>
+
+<body aria-hidden="false" topmargin="0" rightmargin="0" leftmargin="0" bottommargin="0">
+<a name="top" id="top"></a>
+  <table style="height: auto !important;" width="780" cellspacing="0" cellpadding="0" border="0" align="center">
+    <tbody><tr height="20">
+      <td>&nbsp;</td>
+      <td width="100%">&nbsp;</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr style="height: auto !important;">
+      <td valign="top" background="%D0%9F%D0%BE%D1%82%D0%BE%D0%BA%D0%B8%20%D0%BD%D0%B0%20C%23.%20%D0%A7%D0%B0%D1%81%D1%82%D1%8C%204_files/shad_left.gif">
+      <img src="%D0%9F%D0%BE%D1%82%D0%BE%D0%BA%D0%B8%20%D0%BD%D0%B0%20C%23.%20%D0%A7%D0%B0%D1%81%D1%82%D1%8C%204_files/shad_top_left.gif" width="11" height="17" border="0"></td>
+      <td style="height: auto !important;" width="100%" valign="top">
+      <table style="height: auto !important;" width="100%" cellspacing="1" border="0" bgcolor="#000000">
+        <tbody><tr>
+          <td width="100%">
+            <table width="100%" cellspacing="0" cellpadding="0" border="0">
+              <tbody><tr>
+                <td class="pathway" valign="center" align="left"><img src="%D0%9F%D0%BE%D1%82%D0%BE%D0%BA%D0%B8%20%D0%BD%D0%B0%20C%23.%20%D0%A7%D0%B0%D1%81%D1%82%D1%8C%204_files/arrow.png" hspace="5">
+                <span class="breadcrumbs pathway">
+<a href="http://microsin.net/programming/index.html" class="pathway">Программирование</a> <img src="%D0%9F%D0%BE%D1%82%D0%BE%D0%BA%D0%B8%20%D0%BD%D0%B0%20C%23.%20%D0%A7%D0%B0%D1%81%D1%82%D1%8C%204_files/arrow.png" alt=""> <a href="http://microsin.net/programming/pc/index.html" class="pathway">PC</a> <img src="%D0%9F%D0%BE%D1%82%D0%BE%D0%BA%D0%B8%20%D0%BD%D0%B0%20C%23.%20%D0%A7%D0%B0%D1%81%D1%82%D1%8C%204_files/arrow.png" alt=""> Потоки на C#. Часть 4: продвинутое использование</span>
+
+                </td>
+                <td class="pathway" valign="center" align="right">
+                Tue, February 01 2022&nbsp;&nbsp;</td>
+              </tr>
+            </tbody></table>
+          </td>
+        </tr>
+        <tr height="80">
+          <td width="100%" bgcolor="#54647A" background="%D0%9F%D0%BE%D1%82%D0%BE%D0%BA%D0%B8%20%D0%BD%D0%B0%20C%23.%20%D0%A7%D0%B0%D1%81%D1%82%D1%8C%204_files/logo_bar_logo.jpg" align="left"></td>
+        </tr>
+        <tr>
+          <td width="100%" bgcolor="#AFC6DB" background="%D0%9F%D0%BE%D1%82%D0%BE%D0%BA%D0%B8%20%D0%BD%D0%B0%20C%23.%20%D0%A7%D0%B0%D1%81%D1%82%D1%8C%204_files/but_bar_back.gif">
+
+          		<div class="moduletable_topmenu">
+					<table width="100%" cellspacing="1" cellpadding="0" border="0"><tbody><tr><td nowrap="nowrap"><span class="mainlevel">  | </span><a href="http://microsin.net/" class="mainlevel">Главная</a><span class="mainlevel">  | </span><a href="http://microsin.net/mycontacts.html" class="mainlevel">Контакты</a><span class="mainlevel">  | </span><a href="http://microsin.net/adminstuff/index.html" class="mainlevel">Администрирование</a><span class="mainlevel">  | </span><a href="http://microsin.net/programming/index.html" class="mainlevel" id="active_menu">Программирование</a><span class="mainlevel">  | </span><a href="http://microsin.net/Ssyilki/index.html" class="mainlevel">Ссылки</a><span class="mainlevel">  | </span></td></tr></tbody></table>		</div>
+	
+
+                    </td>
+        </tr>
+        <tr style="height: auto !important;">
+          <td style="height: auto !important;" width="100%" bgcolor="#FFFFFF">
+          <table style="border-collapse: collapse; height: auto !important;" id="AutoNumber1" width="100%" cellspacing="0" cellpadding="4" border="0">
+            <tbody><tr style="height: auto !important;">
+              <!-- LEFT Modules -->
+              
+                  <td width="150" valign="top" bgcolor="#F0F0F0">
+                    <div class="modules" style="width:155px;">
+                    		<div class="moduletable">
+					<table border="0">
+<tbody>
+<tr>
+<td><img src="%D0%9F%D0%BE%D1%82%D0%BE%D0%BA%D0%B8%20%D0%BD%D0%B0%20C%23.%20%D0%A7%D0%B0%D1%81%D1%82%D1%8C%204_files/UK-flag-ico.png" alt="UK-flag-ico.png" title="English site version" border="0" align="bottom"></td>
+<td><a href="http://translate.google.ru/translate?hl=ru&amp;sl=ru&amp;tl=en&amp;u=http%3A%2F%2Fmicrosin.net%2F">English Version</a></td>
+</tr>
+<tr>
+<td><img src="%D0%9F%D0%BE%D1%82%D0%BE%D0%BA%D0%B8%20%D0%BD%D0%B0%20C%23.%20%D0%A7%D0%B0%D1%81%D1%82%D1%8C%204_files/GERMAN-flag-ico.png" alt="GERMAN-flag-ico.png" title="Die deutsche Version der Webseite" border="0" align="bottom"></td>
+<td><a href="http://translate.google.ru/translate?hl=ru&amp;sl=ru&amp;tl=de&amp;u=http%3A%2F%2Fmicrosin.net%2F">Die deutsche Version</a></td>
+</tr>
+</tbody>
+</table>
+<a href="http://microsin.net/xmap-1.html">Карта сайта</a>		</div>
+			<div class="moduletable">
+					<h3>Поделиться</h3>
+					<!-- http://api.yandex.ru/share/ -->
+ <div class="yashare-auto-init" data-yasharel10n="ru" data-yasharetype="none" data-yasharequickservices="vkontakte,facebook,twitter,moimir,lj,yaru,friendfeed"><span class="b-share"><a rel="nofollow" target="_blank" title="ВКонтакте" class="b-share__handle b-share__link b-share-btn__vkontakte" href="https://share.yandex.net/go.xml?service=vkontakte&amp;url=http%3A%2F%2Fmicrosin.net%2Fprogramming%2Fpc%2Fthreading-in-csharp-part-4-advanced-threading.html%23Wait_and_Pulse&amp;title=%D0%9F%D0%BE%D1%82%D0%BE%D0%BA%D0%B8%20%D0%BD%D0%B0%20C%23.%20%D0%A7%D0%B0%D1%81%D1%82%D1%8C%204%3A%20%D0%BF%D1%80%D0%BE%D0%B4%D0%B2%D0%B8%D0%BD%D1%83%D1%82%D0%BE%D0%B5%20%D0%B8%D1%81%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5%20%7C%20pc%20%7C%20programming" data-service="vkontakte"><span class="b-share-icon b-share-icon_vkontakte"></span></a><a rel="nofollow" target="_blank" title="Facebook" class="b-share__handle b-share__link b-share-btn__facebook" href="https://share.yandex.net/go.xml?service=facebook&amp;url=http%3A%2F%2Fmicrosin.net%2Fprogramming%2Fpc%2Fthreading-in-csharp-part-4-advanced-threading.html%23Wait_and_Pulse&amp;title=%D0%9F%D0%BE%D1%82%D0%BE%D0%BA%D0%B8%20%D0%BD%D0%B0%20C%23.%20%D0%A7%D0%B0%D1%81%D1%82%D1%8C%204%3A%20%D0%BF%D1%80%D0%BE%D0%B4%D0%B2%D0%B8%D0%BD%D1%83%D1%82%D0%BE%D0%B5%20%D0%B8%D1%81%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5%20%7C%20pc%20%7C%20programming" data-service="facebook"><span class="b-share-icon b-share-icon_facebook"></span></a><a rel="nofollow" target="_blank" title="Twitter" class="b-share__handle b-share__link b-share-btn__twitter" href="https://share.yandex.net/go.xml?service=twitter&amp;url=http%3A%2F%2Fmicrosin.net%2Fprogramming%2Fpc%2Fthreading-in-csharp-part-4-advanced-threading.html%23Wait_and_Pulse&amp;title=%D0%9F%D0%BE%D1%82%D0%BE%D0%BA%D0%B8%20%D0%BD%D0%B0%20C%23.%20%D0%A7%D0%B0%D1%81%D1%82%D1%8C%204%3A%20%D0%BF%D1%80%D0%BE%D0%B4%D0%B2%D0%B8%D0%BD%D1%83%D1%82%D0%BE%D0%B5%20%D0%B8%D1%81%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5%20%7C%20pc%20%7C%20programming" data-service="twitter"><span class="b-share-icon b-share-icon_twitter"></span></a><a rel="nofollow" target="_blank" title="Мой Мир" class="b-share__handle b-share__link b-share-btn__moimir" href="https://share.yandex.net/go.xml?service=moimir&amp;url=http%3A%2F%2Fmicrosin.net%2Fprogramming%2Fpc%2Fthreading-in-csharp-part-4-advanced-threading.html%23Wait_and_Pulse&amp;title=%D0%9F%D0%BE%D1%82%D0%BE%D0%BA%D0%B8%20%D0%BD%D0%B0%20C%23.%20%D0%A7%D0%B0%D1%81%D1%82%D1%8C%204%3A%20%D0%BF%D1%80%D0%BE%D0%B4%D0%B2%D0%B8%D0%BD%D1%83%D1%82%D0%BE%D0%B5%20%D0%B8%D1%81%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5%20%7C%20pc%20%7C%20programming" data-service="moimir"><span class="b-share-icon b-share-icon_moimir"></span></a><a rel="nofollow" target="_blank" title="LiveJournal" class="b-share__handle b-share__link b-share-btn__lj" href="https://share.yandex.net/go.xml?service=lj&amp;url=http%3A%2F%2Fmicrosin.net%2Fprogramming%2Fpc%2Fthreading-in-csharp-part-4-advanced-threading.html%23Wait_and_Pulse&amp;title=%D0%9F%D0%BE%D1%82%D0%BE%D0%BA%D0%B8%20%D0%BD%D0%B0%20C%23.%20%D0%A7%D0%B0%D1%81%D1%82%D1%8C%204%3A%20%D0%BF%D1%80%D0%BE%D0%B4%D0%B2%D0%B8%D0%BD%D1%83%D1%82%D0%BE%D0%B5%20%D0%B8%D1%81%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5%20%7C%20pc%20%7C%20programming" data-service="lj"><span class="b-share-icon b-share-icon_lj"></span></a></span></div>		</div>
+			<div class="moduletable">
+					
+
+<form id="acesearchModule-10034" action="/component/option,com_acesearch/view,search/" method="post" name="acesearchModule" onsubmit="return acesearchsubmit();">
+	<div class="search acesearch_bg_module">
+		<input type="text" name="query" value="..." id="qr-10034" class="acesearch_input_module_modif" onblur="if(this.value=='') this.value='...';" onfocus="if(this.value=='...') this.value='';" style="margin-right:5px;" autocomplete="off"><a style="float:left;padding-left:5px;" href="http://microsin.net/component/option,com_acesearch/view,advancedsearch/" title="Расширенный поиск">Расширенный поиск</a><input type="hidden" name="lang" value="ru">	</div>
+	
+	<input type="hidden" name="option" value="com_acesearch">
+	<input type="hidden" name="view" value="search">
+	<input type="hidden" name="task" value="search">
+</form>
+<div class="acesearch_clear_mod_bottom"></div>		</div>
+			<div class="moduletable">
+					<h3>Нашли опечатку?</h3>
+					Пожалуйста, сообщите об этом - просто выделите ошибочное слово или фразу и нажмите <b>Shift Enter</b>.		</div>
+			<div class="moduletable">
+					<!-- <a href="/images/stories/programming/AT90USB162fuses.JPG" target="_self"><img style="width: 120px; height: 128px; margin: 5px;" title="AT90USB162fuses.JPG" src="/images/stories/programming/AT90USB162fuses.JPG" alt="AT90USB162fuses.JPG" width="120" height="128" align="bottom" /></a> -->
+<br>
+<table>
+   <tbody>
+      <tr>
+         <td><img src="%D0%9F%D0%BE%D1%82%D0%BE%D0%BA%D0%B8%20%D0%BD%D0%B0%20C%23.%20%D0%A7%D0%B0%D1%81%D1%82%D1%8C%204_files/ronkathehead-small.jpg"></td>
+         <td><a href="https://vk.com/ronkathehead">Блог одного Сумасшествия</a></td>
+      </tr>
+   </tbody>
+</table>		</div>
+	
+<br> <!-- ��� ��� ������� �� ���������� ������ -->
+                    </div>
+                  </td>
+                                <td style="height: auto !important;" valign="top">
+              <!-- Top Modules -->
+                                          <div class="nopad" style="height: auto !important;"><table class="contentpaneopen">
+<tbody><tr>
+		<td class="contentheading" width="100%">
+					Потоки на C#. Часть 4: продвинутое использование			</td>
+				
+				<td class="buttonheading" width="100%" align="right">
+		<a href="http://microsin.net/programming/pc/threading-in-csharp-part-4-advanced-threading/Pechat.html" title="Печать" onclick="window.open(this.href,'win2','status=no,toolbar=no,scrollbars=yes,titlebar=no,menubar=no,resizable=yes,width=640,height=480,directories=no,location=no'); return false;" rel="nofollow"><img src="%D0%9F%D0%BE%D1%82%D0%BE%D0%BA%D0%B8%20%D0%BD%D0%B0%20C%23.%20%D0%A7%D0%B0%D1%81%D1%82%D1%8C%204_files/printButton.png" alt="Печать"></a>		</td>
+		
+					</tr>
+</tbody></table>
+
+<table class="contentpaneopen" style="height: auto !important;">
+<tbody><tr>
+	<td valign="top">
+		<span class="small">
+			Добавил(а) microsin		</span>
+		&nbsp;&nbsp;
+	</td>
+</tr>
+
+
+
+<tr style="height: auto !important;">
+<td style="height: auto !important;" valign="top">
+<p>[<strong>Не блокирующая синхронизация</strong>]</p>
+<p>Ранее было показано [2], что необходимость синхронизации возникает 
+даже в простом случае присвоения или инкременте поля. Блокировка всегда 
+может удовлетворить этому требованию; однако если существует ситуация, 
+когда в особо критических по производительности сценариях множество 
+потоков конкурируют друг с другом на этой блокировке, то это означает, 
+что происходят чрезмерные затраты на переключение контекста и 
+соответственно добавляются нежелательные задержки. Конструкции не 
+блокирующей синхронизация .NET Framework могут производить простые 
+операции без какого-либо блокирования, постановки на паузу или ожидания.</p>
+
+
+
+<p style="padding-left: 30px;"><span style="color: #800000;">Правильное 
+написание не блокирующего или свободного от блокировок многопоточного 
+кода довольно хитрое! Барьеры памяти, в частности, это часто самое 
+частое попадалово на баги (примерно то же самое с ключевым словом 
+volatile, с которым тоже проще всего накосячить [5]). Дважды подумайте -
+ действительно ли Вам нужно получить выгоду по быстродействию, прежде 
+чем решите отказаться от обычных блокировок. Помните о том, что захват и
+ освобождение блокировки, на которую нет конкурентного запроса, в эру 
+2010 годов займет на обычных десктопах время порядка 20 нс.</span></p>
+<p>Не блокирующая синхронизация также работает и между несколькими 
+процессами, т. е. глобально на компьютере PC Windows. Пример того, где 
+это может быть полезно - чтение и запись общей для процессов памяти 
+(process-shared memory).</p>
+<p><a name="Memory_Barriers_and_Volatility"></a></p>
+<p><strong>Барьеры памяти и изменчивость данных</strong> (volatility). Рассмотрим следующий пример:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">class</span> <span style="color: #0000ff; font-weight: bold;">Foo</span>
+{
+   <span style="color: #b00040;">int</span> _answer;
+   <span style="color: #b00040;">bool</span> _complete;
+ 
+   <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">A</span>()
+   {
+      _answer = <span style="color: #666666;">123</span>;
+      _complete = <span style="color: #008000; font-weight: bold;">true</span>;
+   }
+ 
+   <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">B</span>()
+   {
+      <span style="color: #008000; font-weight: bold;">if</span> (_complete) Console.WriteLine (_answer);
+   }
+}
+</pre>
+</div>
+<p>Если методы A и B запускаются конкурентно в разных потоках, то есть 
+ли возможность для B вывести "0"? Ответ будет "да" по следующим 
+причинам:</p>
+<p>• Компилятор, CLR или CPU могут поменять выполнение инструкций программы для повышения эффективности.<br>•
+ Компилятор, CLR или CPU могут ввести оптимизацию кэша, при которой 
+присвоение значений переменным не будет гарантированно немедленно быть 
+видимым для других потоков.</p>
+<p>C# и подсистема выполнения кода реального времени тщательно 
+гарантируют, чтобы такие оптимизации не нарушили работу обычного 
+однопоточного кода - или многопоточного кода, который правильно 
+использует блокировки. Вне этих сценариев Вы должны явно защищаться от 
+таких оптимизаций созданием барьеров памяти (которые также называют 
+"заборами" памяти, memory fences), чтобы ограничит эффекты 
+переупорядочивания выполнения инструкций и кэширования чтения/записи.</p>
+<p><strong>Полный барьер памяти</strong>. Самый простой барьер памяти 
+это полный барьер (full fence), который предотвращает любой вид 
+переупорядочивания выполнения инструкций или кэширование вокруг барьера.
+ Вызов Thread.MemoryBarrier генерирует полный барьер (full fence); мы 
+можем исправить наш пример путем наложения четырех полных барьеров 
+следующим образом:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">class</span> <span style="color: #0000ff; font-weight: bold;">Foo</span>
+{
+   <span style="color: #b00040;">int</span> _answer;
+   <span style="color: #b00040;">bool</span> _complete;
+ 
+   <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">A</span>()
+   {
+      _answer = <span style="color: #666666;">123</span>;
+      Thread.MemoryBarrier();       <span style="color: #408080; font-style: italic;">// Барьер 1</span>
+      _complete = <span style="color: #008000; font-weight: bold;">true</span>;
+      Thread.MemoryBarrier();       <span style="color: #408080; font-style: italic;">// Барьер 2</span>
+   }
+ 
+   <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">B</span>()
+   {
+      Thread.MemoryBarrier();       <span style="color: #408080; font-style: italic;">// Барьер 3</span>
+      <span style="color: #008000; font-weight: bold;">if</span> (_complete)
+      {
+         Thread.MemoryBarrier();    <span style="color: #408080; font-style: italic;">// Барьер 4</span>
+         Console.WriteLine (_answer);
+      }
+   }
+}
+</pre>
+</div>
+<p>Барьеры 1 и 4 не дадут этому примеру вывести "0". Барьеры 2 и 3 
+предоставляют гарантию "свежести": если B запустится после A, чтение 
+_complete будет вычислено как true.</p>
+<p>Полный барьер эру десктопов 2010 года занимает по времени около 10 наносекунд.</p>
+<p>Следующие конструкции неявно генерируют полный барьер:</p>
+<p>• Оператор блокировки lock (Monitor.Enter/Monitor.Exit).<br>• Все методы класса Interlocked (что будет рассмотрено далее).<br>•
+ Асинхронные функции обратного вызова (callback), которые используют пул
+ потоков. Это включает асинхронные делегаты, функции обратного вызова 
+APM, продолжения Task.<br>• Установка и ожидание конструкции сигнализации.<br>• Все что полагается на сигнализацию, что запускает Task и ждет Task.</p>
+<p>На основании последнего следующий код безопасен для многопоточности:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #b00040;">int</span> x = <span style="color: #666666;">0</span>;
+Task t = Task.Factory.StartNew (() =&gt; x++);
+t.Wait();
+Console.WriteLine (x);    <span style="color: #408080; font-style: italic;">// 1</span>
+</pre>
+</div>
+<p>Необязательно нужен полный барьер с каждым отдельным чтением или 
+записью. Если у нас есть три поля _answerX, то нам все еще нужно 
+применить только 4 барьера:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">class</span> <span style="color: #0000ff; font-weight: bold;">Foo</span>
+{
+   <span style="color: #b00040;">int</span> _answer1, _answer2, _answer3;
+   <span style="color: #b00040;">bool</span> _complete;
+ 
+   <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">A</span>()
+   {
+      _answer1 = <span style="color: #666666;">1</span>; _answer2 = <span style="color: #666666;">2</span>; _answer3 = <span style="color: #666666;">3</span>;
+      Thread.MemoryBarrier();
+      _complete = <span style="color: #008000; font-weight: bold;">true</span>;
+      Thread.MemoryBarrier();
+   }
+ 
+   <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">B</span>()
+   {
+      Thread.MemoryBarrier();
+      <span style="color: #008000; font-weight: bold;">if</span> (_complete)
+      {
+         Thread.MemoryBarrier();
+         Console.WriteLine (_answer1 + _answer2 + _answer3);
+      }
+   }
+}
+</pre>
+</div>
+<p style="padding-left: 30px;"><span style="color: #008080;">Хороший 
+способ работы с барьерами - помещать их перед и после каждой инструкции,
+ которая записывает или читает общее поле, и затем выводить за пределы 
+барьеров все, что не нужно для этой цели. Если не уверены в каком-то 
+коде, оставьте его внутри барьера. Или, что лучше: вернитесь к 
+использованию блокировок!</span></p>
+<p></p><div class="spoiler" id="1_spoiler">
+                        <input type="hidden" class="opened" value="0">
+			<div class="sp-head folded" id="1-sp-head">
+			<div class="sp-head-click" id="1-sp-head-click"><a href="javascript:void(0)">Нужны ли нам на самом деле блокировки и барьеры?</a></div></div>
+			<div style="margin: 0px; position: static; overflow: hidden; height: 0px;"><div class="sp-body" id="1-sp-body" style="margin: -394px 0px 0px;"><p></p>
+<p>Работать с общими записываемыми переменными (полями) без блокировок 
+или барьеров означает искать себе лишних приключений. Есть много 
+вводящей в заблуждение информации по этой теме (включая документацию 
+MSDN), где утверждается, что MemoryBarrier требуется только на 
+многопроцессорных системах со слабым упорядочиванием памяти, таких как 
+системы с несколькими процессорами Itanium. В следующей короткой 
+программе мы можем продемонстрировать, что барьеры памяти важны и на 
+обычных процессорах Intel Core-2 и Pentium. Вам нужно запустить этот код
+ с разрешенными оптимизациями и без отладчика (в Visual Studio выберите 
+режим компиляции Release, после чего запустите скомпилированную 
+программу без отладки):</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Main</span>()
+{
+   <span style="color: #b00040;">bool</span> complete = <span style="color: #008000; font-weight: bold;">false</span>; 
+   <span style="color: #b00040;">var</span> t = <span style="color: #008000; font-weight: bold;">new</span> Thread (() =&gt;
+   {
+      <span style="color: #b00040;">bool</span> toggle = <span style="color: #008000; font-weight: bold;">false</span>;
+      <span style="color: #008000; font-weight: bold;">while</span> (!complete) toggle = !toggle;
+   });
+   t.Start();
+   Thread.Sleep (<span style="color: #666666;">1000</span>);
+   complete = <span style="color: #008000; font-weight: bold;">true</span>;
+   t.Join();            <span style="color: #408080; font-style: italic;">// Бесконечная блокировка</span>
+}
+</pre>
+</div>
+<p>Эта программа никогда не завершится, потому что переменная complete 
+кэшируется в регистре CPU. Если вставить вызов Thread.MemoryBarrier 
+внутрь цикла while (или вокруг чтения переменной complete), то эта 
+ошибка исправится.</p>
+<p></p></div></div>
+			</div><p></p>
+<p><a name="volatile"></a></p>
+<p><strong>Ключевое слово volatile</strong>. Другой (более продвинутый, но менее понятный) способ решить эту проблему - применить ключевое слово volatile к полю _complete:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;">volatile <span style="color: #b00040;">bool</span> _complete;
+</pre>
+</div>
+<p>Ключевое слово volatile инструктирует компилятор генерировать барьер 
+на исключительный захват (acquire-fence) на каждом чтении из этого поля,
+ и освобождение барьера (release-fence) на каждой записи в это поле. 
+Acquire-fence предотвращает ситуации, когда другие операции 
+чтения/записи происходят перед барьером; release-fence предотвращает 
+ситуации, когда другие чтения/записи перемещаются за барьер. Такой 
+"половинчатый" барьер работает быстрее "полного", потому что дает 
+расширенные возможности по оптимизации для кода реального времени и 
+аппаратуры.</p>
+<p style="padding-left: 30px;"><span style="color: #800000;">Так уж 
+получилось, что процессоры Intel X86 и X64 всегда применяют барьеры 
+acquire-fence для чтений и release-fence для записей - независимо от 
+того, используете ли Вы ключевое слово volatile или нет, т. е. оно не 
+дает эффекта в аппаратуре, если Вы используете эти процессоры. Однако 
+volatile работает на оптимизациях, выполняемых компилятором и CLR - как 
+на 64-битных процессорах AMD, так и (в большей степени) на процессорах 
+Itanium. Это означает, что не следует расслабляться на основании 
+каких-то соображений, что Ваши клиенты используют только определенный 
+"проверенный" тип CPU.</span></p>
+<p style="padding-left: 30px;"><span style="color: #800000;">И еще: даже
+ если Вы используете volatile, все равно нужно быть в здоровом тонусе 
+беспокойства, что мы скоро увидим. Короче говоря, volatile на панацея от
+ всех проблем!</span></p>
+<p>Эффект от применения volatile можно обобщить следующей таблицей:</p>
+<table cellspacing="1" cellpadding="3" border="0" bgcolor="#8cacbb">
+<tbody>
+<tr style="background-color: #dee7ec;">
+<td><strong>Первая инструкция</strong></td>
+<td><b>Вторая инструкция</b></td>
+<td><b>Могут ли они поменять порядок выполнения?</b></td>
+</tr>
+<tr style="background-color: #ffffff;">
+<td>Read</td>
+<td>Read</td>
+<td>нет</td>
+</tr>
+<tr style="background-color: #ffffff;">
+<td>Read</td>
+<td>Write</td>
+<td>нет</td>
+</tr>
+<tr style="background-color: #ffffff;">
+<td>Write</td>
+<td>Write</td>
+<td>нет (CLR гарантирует, что операции запись-запись никогда не поменяют
+ порядок своего выполнения, даже если не применялось ключевое слово 
+volatile)</td>
+</tr>
+<tr style="background-color: #ffffff;">
+<td>Write</td>
+<td>Read</td>
+<td><strong>ДА!</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Имейте в виду, что применение volatile не защит от записи, за которым
+ идет чтение, от их перестановки, и это может создать головоломку. Joe 
+Duffy хорошо иллюстрирует проблему на следующем примере: если Test1 и 
+Test2 запущены одновременно в разных потоках, то может произойти 
+ситуация, когда и a, и b оба завершились со значением 0 (несмотря на 
+использование volatile на обоих переменных x и y):</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">class</span> <span style="color: #0000ff; font-weight: bold;">IfYouThinkYouUnderstandVolatile</span>
+{
+   volatile <span style="color: #b00040;">int</span> x, y;
+ 
+   <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Test1</span>()      <span style="color: #408080; font-style: italic;">// Работает в одном потоке</span>
+   {
+      x = <span style="color: #666666;">1</span>;         <span style="color: #408080; font-style: italic;">// Volatile write (release-fence)</span>
+      <span style="color: #b00040;">int</span> a = y;     <span style="color: #408080; font-style: italic;">// Volatile read (acquire-fence)</span>
+      ...
+   }
+ 
+   <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Test2</span>()      <span style="color: #408080; font-style: italic;">// Работает в другом потоке</span>
+   {
+      y = <span style="color: #666666;">1</span>;         <span style="color: #408080; font-style: italic;">// Volatile write (release-fence)</span>
+      <span style="color: #b00040;">int</span> b = x;     <span style="color: #408080; font-style: italic;">// Volatile read (acquire-fence)</span>
+      ...
+   }
+}
+</pre>
+</div>
+<p style="padding-left: 30px;"><span style="color: #800000;">Документация
+ MSDN утверждает, что ключевое слово volatile гарантирует, что в поле 
+всегда присутствует самое актуальное значение. Как мы увидели, это 
+неверно, порядок действий "запись потом чтение" может быть изменен.</span></p>
+<p>Это дает веские доводы избегать volatile: даже если Вы понимаете, что
+ на самом деле происходит в этом примере, поймут ли это также и другие 
+разработчики, работающие с подобным кодом? Полный барьер (full fence) 
+между каждым из этих присваиваний в Test1 и Test2 (или традиционная 
+блокировка) решит эту проблему.</p>
+<p>Ключевое слово volatile не поддерживается в аргументах, передаваемых 
+по ссылке, или в захваченных локальных переменных (captured local 
+variables): в этих случаях нужно использовать методы VolatileRead и 
+VolatileWrite.</p>
+<p><strong>VolatileRead</strong>, <strong>VolatileWrite</strong>. 
+Статические методы VolatileRead и VolatileWrite в классе Thread читают и
+ записывают переменную с гарантией (технически более высокой), которая 
+предоставляет ключевое слово volatile. Их реализации относительно не 
+эффективны, хотя они в действительности генерируют полные барьеры. Вот 
+их полные реализации для целочисленного типа:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">public</span> <span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">VolatileWrite</span> (<span style="color: #008000; font-weight: bold;">ref</span> <span style="color: #b00040;">int</span> address, <span style="color: #b00040;">int</span> <span style="color: #008000; font-weight: bold;">value</span>)
+{
+   MemoryBarrier(); address = <span style="color: #008000; font-weight: bold;">value</span>;
+}
+ </pre>
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">public</span> <span style="color: #008000; font-weight: bold;">static</span> <span style="color: #b00040;">int</span> <span style="color: #0000ff;">VolatileRead</span> (<span style="color: #008000; font-weight: bold;">ref</span> <span style="color: #b00040;">int</span> address)
+{
+   <span style="color: #b00040;">int</span> num = address; MemoryBarrier(); <span style="color: #008000; font-weight: bold;">return</span> num;
+}
+</pre>
+</div>
+<p>Вы можете видеть, что если произойдет вызов VolatileWrite, за которым
+ будет идти вызов VolatileRead, то между ними не будет сгенерирован 
+барьер: это подразумевает тот же сценарий головоломки, который мы выдели
+ ранее.</p>
+<p><strong>Барьеры памяти и блокировка</strong>. Как мы заметили раньше,
+ Monitor.Enter и Monitor.Exit оба генерируют полные барьеры. Поэтому 
+если мы игнорируем гарантию блокировки взаимного исключения, то можно 
+сказать, что:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">lock</span> (какое_нибудь_поле) { ... }
+</pre>
+</div>
+<p>является эквивалентом этого:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;">Thread.MemoryBarrier(); { ... } Thread.MemoryBarrier();
+</pre>
+</div>
+<p><a name="Interlocked"></a></p>
+<p><strong>Класс Interlocked</strong>. Использовать барьеры памяти не 
+всегда достаточно, когда код без блокировок читает или записывает поля. 
+Операции с 64-битными полями, инкременты и декременты с ними требуют 
+более жесткой обработки с помощью вспомогательного класса Interlocked. 
+Interlocked также предоставляет методы Exchange и CompareExchange, 
+последний позволяет операции read-modify-write без блокировки, с 
+применением малого по объему кода.</p>
+<p>Оператор изначально атомарный, если он выполняется как одна неделимая
+ инструкция на нижележащем процессоре. Строгая атомарность оператора 
+исключает любую возможность вытеснения во время его выполнения. Простое 
+чтение или запись поля 32 бита или меньше всегда атомарное, потому что 
+разрядность регистров процессора как правило не меньше 32 бит. Операции с
+ 64-битными полями гарантированно атомарными будут только в 64-битной 
+среде выполнения, и операторы, которые комбинируют больше одной операции
+ чтения/записи никогда не будут атомарными:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">class</span> <span style="color: #0000ff; font-weight: bold;">Atomicity</span>
+{
+   <span style="color: #008000; font-weight: bold;">static</span> <span style="color: #b00040;">int</span> _x, _y;
+   <span style="color: #008000; font-weight: bold;">static</span> <span style="color: #b00040;">long</span> _z;
+ 
+   <span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Test</span>()
+   {
+      <span style="color: #b00040;">long</span> myLocal;
+      _x = <span style="color: #666666;">3</span>;        <span style="color: #408080; font-style: italic;">// Атомарная операция</span>
+      _z = <span style="color: #666666;">3</span>;        <span style="color: #408080; font-style: italic;">// Не атомарная операция в 32-битном окружении </span>
+                     <span style="color: #408080; font-style: italic;">// (потому что поле _z имеет разрядность 64 бита)</span>
+      myLocal = _z;  <span style="color: #408080; font-style: italic;">// Не атомарная операция в 32-битном окружении</span>
+      _y += _x;      <span style="color: #408080; font-style: italic;">// Не атомарная операция (состоит из операций чтения И записи)</span>
+      _x++;          <span style="color: #408080; font-style: italic;">// Не атомарная операция (состоит из операций чтения И записи)</span>
+   }
+}
+</pre>
+</div>
+<p>Чтение и запись 64-битных полей не атомарные в 32-битном окружении, 
+потому что они требуют выполнения 2 отдельных инструкций: по одной для 
+каждой 32-битной ячейки памяти. Таким образом, если поток X читает 
+64-битное значение, когда поток Y обновляет его, то вытеснение потока X 
+потоком Y (или наоборот) может привести к непредсказуемым результатам 
+операции чтения: может получиться так, что результатом будет битовая 
+комбинация новых и старых значений (рваное чтение).</p>
+<p>Компилятор реализует унарные операторы вида x++ путем чтения 
+переменной, её обработки и затем записи обратно в ту же ячейку памяти. 
+Рассмотрим следующий класс:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">class</span> <span style="color: #0000ff; font-weight: bold;">ThreadUnsafe</span>
+{
+   <span style="color: #008000; font-weight: bold;">static</span> <span style="color: #b00040;">int</span> _x = <span style="color: #666666;">1000</span>;
+   <span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Go</span>() { <span style="color: #008000; font-weight: bold;">for</span> (<span style="color: #b00040;">int</span> i = <span style="color: #666666;">0</span>; i &lt; <span style="color: #666666;">100</span>; i++) _x--; }
+}
+</pre>
+</div>
+<p>Отложив проблему барьеров памяти, Вы могли бы ожидать, что если 10 
+потоков одновременно запустят Go, то последний декремент _x должен 
+закончиться на значении 0. Однако это не гарантируется, потому что 
+событие гонки между потоками приведет к тому, что какой-то поток 
+произведет вытеснение во время выполнения унарного оператора декремента 
+_x--, в результате чего значение общего поля _x станет полностью 
+недостоверным.</p>
+<p>Конечно, эту проблему можно решить, обернув не атомарные операции 
+оператором блокировки. Блокировка, если она применена правильно, 
+фактически симулирует атомарность. Однако класс Interlocked 
+предоставляет более простое и быстрое решение для таких простых 
+операций:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">class</span> <span style="color: #0000ff; font-weight: bold;">Program</span>
+{
+   <span style="color: #008000; font-weight: bold;">static</span> <span style="color: #b00040;">long</span> _sum;
+ 
+   <span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Main</span>()
+   {                                                              <span style="color: #408080; font-style: italic;">// _sum</span>
+      <span style="color: #408080; font-style: italic;">// Простые операции инкремента/декремента:</span>
+      Interlocked.Increment (<span style="color: #008000; font-weight: bold;">ref</span> _sum);                           <span style="color: #408080; font-style: italic;">// 1</span>
+      Interlocked.Decrement (<span style="color: #008000; font-weight: bold;">ref</span> _sum);                           <span style="color: #408080; font-style: italic;">// 0</span>
+ 
+      <span style="color: #408080; font-style: italic;">// Добавление/вычитание значения:</span>
+      Interlocked.Add (<span style="color: #008000; font-weight: bold;">ref</span> _sum, <span style="color: #666666;">3</span>);                              <span style="color: #408080; font-style: italic;">// 3</span>
+ 
+      <span style="color: #408080; font-style: italic;">// Чтение 64-битного поля:</span>
+      Console.WriteLine (Interlocked.Read (<span style="color: #008000; font-weight: bold;">ref</span> _sum));            <span style="color: #408080; font-style: italic;">// 3</span>
+ 
+      <span style="color: #408080; font-style: italic;">// Запись 64-битного поля с предварительным чтением предыдущего значения.</span>
+      <span style="color: #408080; font-style: italic;">// Эта операция выведет "3", после чего обновит _sum значением 10:</span>
+      Console.WriteLine (Interlocked.Exchange (<span style="color: #008000; font-weight: bold;">ref</span> _sum, <span style="color: #666666;">10</span>));    <span style="color: #408080; font-style: italic;">// 10</span>
+ 
+      <span style="color: #408080; font-style: italic;">// Обновит поле только в том случае, если оно совпадает с определенным</span>
+      <span style="color: #408080; font-style: italic;">// значением (10):</span>
+      Console.WriteLine (Interlocked.CompareExchange (<span style="color: #008000; font-weight: bold;">ref</span> _sum,
+                                                      <span style="color: #666666;">123</span>, <span style="color: #666666;">10</span>);   <span style="color: #408080; font-style: italic;">// 123</span>
+   }
+}
+</pre>
+</div>
+<p style="padding-left: 30px;"><span style="color: #008080;">Все методы 
+класса Interlocked генерируют полный барьер. Таким образом поля, к 
+которым Вы осуществляете доступ через Interlocked, не нуждаются в 
+дополнительных барьерах памяти - если в других местах программы к ним не
+ осуществляется доступ без Interlocked или блокировки.</span></p>
+<p>Математические операции Interlocked ограничены инкрементом 
+(Increment), декрементом (Decrement), и добавлением (Add). Если Вы 
+хотите применить умножение - или выполнить другое вычисление - то можете
+ выполнить это в стиле без блокировок использованием метода 
+CompareExchange (обычно вместе с циклическим ожиданием). Пример будет 
+дан в документации по параллельному программированию [6].</p>
+<p>Interlocked работает по принципу предоставления информации об атомарности для операционной системы и виртуальной машины.</p>
+<p style="padding-left: 30px;"><span style="color: #008080;">Методы 
+Interlocked обычно вовлекают дополнительную нагрузку 10 нс, половина 
+которой - вдвое меньше, чем обычная блокировка, на которой нет 
+конкурентного ожидания. Кроме того, использование методов Interlocked не
+ вносит дополнительных затрат на переключение контекста из-за 
+блокировки. Обратная сторона медали - Interlocked внутри цикла с большим
+ количеством итераций менее эффективно, чем одна блокировка вокруг всего
+ цикла (хотя Interlocked позволяет улучшить конкурентность выполнения 
+потоков).</span></p>
+<p><a name="Wait_and_Pulse"></a>[<strong>Обмен сигналами через Wait и Pulse</strong>]</p>
+<p>Ранее мы обсуждали события с обработкой ожидания (Event Wait Handles 
+[3]) - простой механизм сигнализации, где поток блокируется до момента 
+получения оповещения от другого потока.</p>
+<p>Более мощная конструкция сигнализации предоставляется классом Monitor
+ через статические методы Wait и Pulse (и PulseAll). Принцип состоит в 
+том, что Вы пишете логику сигнализации самостоятельно, используя свои 
+флаги и поля (обрамленные операторами блокировки lock), и затем 
+предоставляете команды Wait и Pulse, чтобы предотвратить циклы ожидания.
+ С этими же методами и оператором блокировки lock Вы можете достичь 
+функциональности AutoResetEvent, ManualResetEvent и Semaphore, как и (с 
+некоторыми оговорками) статических методов WaitAll и WaitAny дескриптора
+ ожидания WaitHandle.</p>
+<p>Однако сигнализация Wait и Pulse имеет некоторые недостатки по сравнению с дескрипторами событий ожидания:</p>
+<p>• Wait/Pulse не могут пересекать домены приложения (или процессы) на компьютере.<br>• Вам нужно помнить о защите всех переменных, связанных с логикой сигнализации с блокировками.<br>• Программы Wait/Pulse могут запутать разработчиков, полагающихся на документацию Microsoft.</p>
+<p>Проблема этой документации возникает потому, что не очевидно, как 
+предполагается использовать Wait и Pulse, даже когда Вы прочитали о том,
+ как они работают. Wait и Pulse также имеют особую ненависть к 
+дилетантам: будут искать любые прорехи в понимании их принципа работы, 
+после чего будут извращенно над Вами издеваться! К счастью, есть простые
+ примеры использования Wait и Pulse.</p>
+<p>С точки зрения производительности вызов Pulse занимает несколько 
+сотен наносекунд в эпоху компьютеров 2010-х годов - около трети времени,
+ которое занимает вызов Set на дескрипторе ожидания. Дополнительная 
+нагрузка на ожидание сигнала, когда нет конкурентного доступа, полностью
+ зависит от Вас - потому что именно Вы сами реализуете логику с обычными
+ полями и переменными. На практике это очень просто, и вычислительные 
+расходы не превышают время, затрачиваемое на взятие блокировки.</p>
+<p><strong>Как использовать Wait и Pulse</strong>. Рассмотрим пример:</p>
+<p><strong>1</strong>. Определим одно поле для использования в качестве объекта синхронизации:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">readonly</span> <span style="color: #b00040;">object</span> _locker = <span style="color: #008000; font-weight: bold;">new</span> <span style="color: #b00040;">object</span>();
+</pre>
+</div>
+<p><strong>2</strong>. Определим поле (или поля) для использования в Вашем пользовательском условии (условиях) блокировки. Пример:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #b00040;">bool</span> _go;
+</pre>
+</div>
+<p>или:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #b00040;">int</span> _semaphoreCount;
+</pre>
+</div>
+<p><strong>3</strong>. Всякий раз, когда Вы хотите выполнить блокировку, добавьте следующий код:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">lock</span> (_locker)
+   <span style="color: #008000; font-weight: bold;">while</span> ( &lt; условие блокировки &gt; )
+      Monitor.Wait (_locker);
+</pre>
+</div>
+<p><strong>4</strong>. Всякий раз, когда Вы меняете (или потенциально меняете) условие блокировки, добавьте следующий код:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">lock</span> (_locker)
+{
+   <span style="color: #408080; font-style: italic;">// Здесь изменяйте поле (поля) или данные, которые могут повлиять на</span>
+   <span style="color: #408080; font-style: italic;">// условие (условия) блокировки:</span>
+   <span style="color: #408080; font-style: italic;">// ...</span>
+   Monitor.Pulse(_locker);    <span style="color: #408080; font-style: italic;">// или: Monitor.PulseAll (_locker);</span>
+}
+</pre>
+</div>
+<p><span style="color: #808080;">Примечание: если Вы меняете условие блокировки и хотите ждать, то можете реализовать шаги 3 и 4 в одной блокировке.</span></p>
+<p>Этот шаблон позволяет любому потоку ждать любое время любого условия.
+ Ниже приведен простой пример, где рабочий поток ждет, когда поле _go 
+установится в true:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">class</span> <span style="color: #0000ff; font-weight: bold;">SimpleWaitPulse</span>
+{
+   <span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">readonly</span> <span style="color: #b00040;">object</span> _locker = <span style="color: #008000; font-weight: bold;">new</span> <span style="color: #b00040;">object</span>();
+   <span style="color: #008000; font-weight: bold;">static</span> <span style="color: #b00040;">bool</span> _go;
+ 
+   <span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Main</span>()
+   {                                   <span style="color: #408080; font-style: italic;">// Новый поток заблокируется,</span>
+      <span style="color: #008000; font-weight: bold;">new</span> <span style="color: #0000ff;">Thread</span> (Work).Start();       <span style="color: #408080; font-style: italic;">// потому что _go==false.</span>
+ 
+      Console.ReadLine();              <span style="color: #408080; font-style: italic;">// Ожидание, когда пользователь нажмет Enter.</span>
+ 
+      <span style="color: #008000; font-weight: bold;">lock</span> (_locker)                   <span style="color: #408080; font-style: italic;">// Позволим потоку пробудиться путем установки</span>
+      {                                <span style="color: #408080; font-style: italic;">// _go=true и вызова Pulse.</span>
+         _go = <span style="color: #008000; font-weight: bold;">true</span>;
+         Monitor.Pulse (_locker);
+      }
+   }
+ 
+   <span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Work</span>()
+   {
+      <span style="color: #008000; font-weight: bold;">lock</span> (_locker)
+         <span style="color: #008000; font-weight: bold;">while</span> (!_go)
+            Monitor.Wait (_locker);    <span style="color: #408080; font-style: italic;">// Освобождение блокировки во время ожидания.</span>
+ 
+      Console.WriteLine (<span style="color: #ba2121;">"Проснулся!!!"</span>);
+   }
+}
+</pre>
+</div>
+<p>Этот код выведет следующее (после нажатия Enter):</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #000000; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #ffffff;">Проснулся!!!
+</span></pre>
+</div>
+<p>Для безопасной работы потоков мы гарантируем, что ко всем общим полям
+ доступ осуществляется через блокировку. Следовательно, мы добавляем 
+операторы блокировки lock вокруг чтения и обновления флага _go. Это 
+основа многопоточной безопасности (если Вы не собираетесь следовать 
+принципам не блокирующей синхронизации).</p>
+<p>Метод блок это то место, где мы блокируем выполнение кода на доступе к
+ общей переменной, с ожиданием, когда флаг _go станет true. Метод 
+Monitor.Wait выполняет вот эти действия, в следующем порядке:</p>
+<p><strong>1</strong>. Освобождает блокировку на _locker.<br><strong>2</strong>. Блокируется, пока не будет вызван Pulse на _locker.<br><strong>3</strong>.
+ Заново запрашивает блокировку на _locker. Если блокировка конкурентно 
+занята, то блокируется до тех пор, пока блокировка не станет доступной.</p>
+<p>Это означает, что в любом случае не удерживается блокировка на объекте синхронизации, пока Monitor.Wait ожидает Pulse:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">lock</span> (_locker)
+{
+   <span style="color: #008000; font-weight: bold;">while</span> (!_go)
+      Monitor.Wait (_locker);  <span style="color: #408080; font-style: italic;">// Блокировка освобождена.</span>
+   <span style="color: #408080; font-style: italic;">// Блокировка взята снова.</span>
+   ...
+}
+</pre>
+</div>
+<p>Затем выполнение продолжается на следующем операторе. Monitor.Wait 
+разработан для использования внутри оператора lock; если он будет 
+использован по-другому, то будет выброшено исключение. То же самое 
+касается и Monitor.Pulse.</p>
+<p>В методе Main мы подаем сигнал для рабочего потока Work установкой 
+флага _go (внутри блокировки) и вызовом Pulse. Как только мы освободили 
+блокировку, рабочий поток возобновит выполнение, прокрутив цикл while.</p>
+<p>Методы Pulse и PulseAll освобождают потоки, заблокированные на 
+операторе Wait. Pulse освободит максимум 1 поток; PulseAll освободит их 
+все. В нашем примере так как только один поток заблокирован, то не имеет
+ значение какой метод вызвать - Pulse или PulseAll, потому что они будут
+ действовать одинаково. Если ожидают больше одного потока, то вызов 
+PulseAll обычно самый безопасный шаблон для использования.</p>
+<p style="padding-left: 30px;"><span style="color: #008080;">Чтобы ждать
+ (Wait) обмена с помощью Pulse или PulseAll, синхронизирующий объект (в 
+нашем случае _locker) должен быть один и тот же.</span></p>
+<p>В нашем шаблоне вызов Pulse показывает, что что-то могло поменяться, и
+ этот ожидающий поток должен проверить заново свои условия блокировки. В
+ методе потока Work, эта проверка осуществляется в условии цикла while. 
+Тогда ожидающий поток принимает решение о продолжении, а не оповещающий 
+поток. Если вызов Pulse само по себе берется как инструкция 
+продолжиться, конструкция Wait лишается любой реальной значимости; Вы 
+заканчиваете с низшей версией AutoResetEvent.</p>
+<p>Если мы ставим наш шаблон удалением цикла while, флага _go и ReadLine, то придем к простейшему примеру Wait/Pulse:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Main</span>()
+{
+   <span style="color: #008000; font-weight: bold;">new</span> <span style="color: #0000ff;">Thread</span> (Work).Start();
+   <span style="color: #008000; font-weight: bold;">lock</span> (_locker) Monitor.Pulse (_locker);
+}
+ </pre>
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Work</span>()
+{
+   <span style="color: #008000; font-weight: bold;">lock</span> (_locker) Monitor.Wait (_locker);
+   Console.WriteLine (<span style="color: #ba2121;">"Проснулся!!!"</span>);
+}
+</pre>
+</div>
+<p>Это не сможет отобразить вывод, потому что его поведение не 
+определенное! Произойдет гонка между главным потоком (тело процедуры 
+Main) и рабочим потоком (тело процедуры Work). Если сначала выполнится 
+Wait, то сигнал сработает. Если сначала выполнится Pulse, то этот сигнал
+ пропадет, и рабочий поток навсегда останется заблокированным. Это 
+отличается от поведения AutoResetEvent, где метод Set имеет эффект 
+памяти или "защелкивания", так что он все еще будет эффективным, если 
+вызовется перед WaitOne.</p>
+<p>У Pulse нет эффекта защелкивания, потому что Вы ожидаете записи в 
+саму защелку, для чего мы ранее использовали флаг "_go". Этот момент 
+делает Wait и Pulse универсальными: с двоичным флагом мы можем заставить
+ их работать так же, как и AutoResetEvent; с полем int мы можем написать
+ CountdownEvent или Semaphore. С более сложными структурами данных мы 
+можем пойти дальше и реализовать такие же конструкции, как очередь 
+генератора/получателя.</p>
+<p><a name="Producer_Consumer_Queue"></a></p>
+<p><strong>Очередь генератора/получателя</strong> (Producer/Consumer 
+Queue). Ранее мы описывали концепцию очереди producer/consumer, и как 
+написать её с помощью AutoResetEvent. Теперь мы приступим к написанию 
+более мощной версии с помощью Wait и Pulse.</p>
+<p>Сейчас мы позволим использовать произвольное количество рабочих потоков. Все потоки будем отслеживать в массиве:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;">Thread[] _workers;
+</pre>
+</div>
+<p>Это даст нам возможность подключаться (Join) к этим потокам позже, когда мы будем останавливать очередь.</p>
+<p>Каждый рабочий поток будет выполнять метод с именем Consume. Мы можем
+ создать потоки и запустить их в одном цикле следующим образом:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">public</span> <span style="color: #0000ff;">PCQueue</span> (<span style="color: #b00040;">int</span> workerCount)
+{
+   _workers = <span style="color: #008000; font-weight: bold;">new</span> Thread [workerCount];
+ 
+   <span style="color: #408080; font-style: italic;">// Создание и запуск отдельного потока.</span>
+   <span style="color: #008000; font-weight: bold;">for</span> (<span style="color: #b00040;">int</span> i = <span style="color: #666666;">0</span>; i &lt; workerCount; i++)
+      (_workers [i] = <span style="color: #008000; font-weight: bold;">new</span> Thread (Consume)).Start();
+}
+</pre>
+</div>
+<p>Вместо использования простой строки для описания задачи мы реализуем 
+более гибкий метод с помощью делегата. Будем использовать делегата 
+System.Action в .NET Framework, который определен следующим образом:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">public</span> <span style="color: #008000; font-weight: bold;">delegate</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Action</span>();
+</pre>
+</div>
+<p>Этот делегат соответствует любому методу без параметров - вместо 
+делегата наподобие ThreadStart. Мы все еще можем представить задачи, 
+которые вызовут методы с параметрами, хотя путем обертки вызова в 
+анонимный делегат или lambda-выражения:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;">Action myFirstTask = <span style="color: #008000; font-weight: bold;">delegate</span>
+{
+   Console.WriteLine (<span style="color: #ba2121;">"foo"</span>);
+};
+ 
+Action mySecondTask = () =&gt; Console.WriteLine (<span style="color: #ba2121;">"foo"</span>);
+</pre>
+<pre style="margin: 0; line-height: 125%;">&nbsp;</pre>
+<pre style="margin: 0; line-height: 125%;">Queue&lt; Action&gt; _itemQ = <span style="color: #008000; font-weight: bold;">new</span> Queue&lt; Action&gt;();
+</pre>
+</div>
+<p>Перед тем, как перейти к методам EnqueueItem и Consume, посмотрим сначала на полный код:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">using</span> <span style="color: #0000ff; font-weight: bold;">System</span>;</pre>
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">using</span> <span style="color: #0000ff; font-weight: bold;">System.Threading</span>;</pre>
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">using</span> <span style="color: #0000ff; font-weight: bold;">System.Collections.Generic</span>;
+ </pre>
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">public</span> <span style="color: #008000; font-weight: bold;">class</span> <span style="color: #0000ff; font-weight: bold;">PCQueue</span>
+{
+   <span style="color: #008000; font-weight: bold;">readonly</span> <span style="color: #b00040;">object</span> _locker = <span style="color: #008000; font-weight: bold;">new</span> <span style="color: #b00040;">object</span>();
+   Thread[] _workers;
+   Queue&lt; Action&gt; _itemQ = <span style="color: #008000; font-weight: bold;">new</span> Queue&lt; Action&gt;();
+ 
+   <span style="color: #008000; font-weight: bold;">public</span> <span style="color: #0000ff;">PCQueue</span> (<span style="color: #b00040;">int</span> workerCount)
+   {
+      _workers = <span style="color: #008000; font-weight: bold;">new</span> Thread [workerCount];
+ 
+      <span style="color: #408080; font-style: italic;">// Создание и запуск отдельного потока для каждой задачи:</span>
+      <span style="color: #008000; font-weight: bold;">for</span> (<span style="color: #b00040;">int</span> i = <span style="color: #666666;">0</span>; i &lt; workerCount; i++)
+         (_workers [i] = <span style="color: #008000; font-weight: bold;">new</span> Thread (Consume)).Start();
+  }
+ 
+   <span style="color: #008000; font-weight: bold;">public</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Shutdown</span> (<span style="color: #b00040;">bool</span> waitForWorkers)
+   {
+      <span style="color: #408080; font-style: italic;">// Поствим в очередь один элемент null для каждой задачи,</span>
+      <span style="color: #408080; font-style: italic;">// чтобы она завершилась:</span>
+      <span style="color: #008000; font-weight: bold;">foreach</span> (Thread worker <span style="color: #008000; font-weight: bold;">in</span> _workers)
+         EnqueueItem (<span style="color: #008000; font-weight: bold;">null</span>);
+ 
+      <span style="color: #408080; font-style: italic;">// Ожидание завершения всех рабочих задач:</span>
+      <span style="color: #008000; font-weight: bold;">if</span> (waitForWorkers)
+         <span style="color: #008000; font-weight: bold;">foreach</span> (Thread worker <span style="color: #008000; font-weight: bold;">in</span> _workers)
+            worker.Join();
+   }
+</pre>
+<pre style="margin: 0; line-height: 125%;">&nbsp;</pre>
+<pre style="margin: 0; line-height: 125%;">   <span style="color: #008000; font-weight: bold;">public</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">EnqueueItem</span> (Action item)
+   {
+      <span style="color: #008000; font-weight: bold;">lock</span> (_locker)
+      {
+         _itemQ.Enqueue (item);     <span style="color: #408080; font-style: italic;">// Мы должны вызвать Pulse, потому что</span>
+         Monitor.Pulse (_locker);   <span style="color: #408080; font-style: italic;">// поменяли условие блокировки.</span>
+      }
+   }
+ 
+   <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Consume</span>()
+   {
+      <span style="color: #008000; font-weight: bold;">while</span> (<span style="color: #008000; font-weight: bold;">true</span>)                  <span style="color: #408080; font-style: italic;">// Продолжим работу, пока не будет</span>
+      {                             <span style="color: #408080; font-style: italic;">// указано нечто другое.</span>
+         Action item;
+         <span style="color: #008000; font-weight: bold;">lock</span> (_locker)
+         {
+            <span style="color: #008000; font-weight: bold;">while</span> (_itemQ.Count == <span style="color: #666666;">0</span>) Monitor.Wait (_locker);
+            item = _itemQ.Dequeue();
+         }
+         <span style="color: #008000; font-weight: bold;">if</span> (item == <span style="color: #008000; font-weight: bold;">null</span>) <span style="color: #008000; font-weight: bold;">return</span>;  <span style="color: #408080; font-style: italic;">// Это дает нам сигнал завершиться.</span>
+         item();                    <span style="color: #408080; font-style: italic;">// Обработка элемента.</span>
+      }
+   }
+}
+</pre>
+</div>
+<p>Тут у нас также есть стратегия для завершения рабочей задачи: 
+постановка в очередь null сигнализирует потребителю завершить работу 
+после обработки всех ожидающих элементов (если мы хотим выйти быстрее, 
+то следует использовать независимый флаг отмены "cancel"). Поскольку мы 
+поддерживаем несколько потребителей, то должны поставить в очередь один 
+null-элемент на каждый поток, чтобы полностью остановить очередь.</p>
+<p>Ниже показан код метода Main, который запускает очередь 
+producer/consumer, указывая два конкурирующих потока - потребителя, и 
+затем ставит в очередь 10 делегатов, которые совместно используются 
+этими двумя потребителями:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Main</span>()
+{
+   PCQueue q = <span style="color: #008000; font-weight: bold;">new</span> PCQueue (<span style="color: #666666;">2</span>);
+ 
+   Console.WriteLine (<span style="color: #ba2121;">"Постановка в очередь 10 элементов..."</span>);
+ 
+   <span style="color: #008000; font-weight: bold;">for</span> (<span style="color: #b00040;">int</span> i = <span style="color: #666666;">0</span>; i &lt; <span style="color: #666666;">10</span>; i++)
+   {
+      <span style="color: #b00040;">int</span> itemNumber = i;        <span style="color: #408080; font-style: italic;">// Чтобы избежать захвата переменной ловушкой</span>
+      q.EnqueueItem (() =&gt;
+      {
+         Thread.Sleep (<span style="color: #666666;">1000</span>);    <span style="color: #408080; font-style: italic;">// Симуляция интенсивной вычислительной работы</span>
+         Console.Write (<span style="color: #ba2121;">" Task"</span> + itemNumber);
+      });
+   }
+ 
+   q.Shutdown (<span style="color: #008000; font-weight: bold;">true</span>);
+   Console.WriteLine();
+   Console.WriteLine (<span style="color: #ba2121;">"Рабочие потоки завершились!"</span>);
+}
+</pre>
+</div>
+<p>Этот пример выведет следующее:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #000000; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #ffffff;">Постановка в очередь 10 элементов...
+ Task1 Task0 (pause...) Task2 Task3 (pause...) Task4 Task5 (pause...)
+ Task6 Task7 (pause...) Task8 Task9 (pause...)
+Рабочие потоки завершились!
+</span></pre>
+</div>
+<p>Теперь посмотрим на метод EnqueueItem:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">public</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">EnqueueItem</span> (Action item)
+{
+   <span style="color: #008000; font-weight: bold;">lock</span> (_locker)
+   {
+      _itemQ.Enqueue (item);     <span style="color: #408080; font-style: italic;">// Мы должны выдать Pulse, потому что</span>
+      Monitor.Pulse (_locker);   <span style="color: #408080; font-style: italic;">// поменяли условие блокировки.</span>
+   }
+}
+</pre>
+</div>
+<p>Так как очередь используется несколькими потоками, то мы должны 
+обернуть все чтения/записи в блокировку. И потому, что мы изменяем 
+условие блокировки (потребитель может приступить к действию в результате
+ постановки в очередь задачи), нам нужно использовать Pulse.</p>
+<p>Ради эффективности мы мы вызываем Pulse вместо PulseAll, когда ставим
+ элемент в очередь. Причина в том, что (самое большее) один потребитель 
+должен быть разбужен на один элемент. Если у Вас есть только одно 
+мороженое, то нет смысла будить весь класс из 30 спящих детей, чтобы 
+поставить их в очередь на потребление этого мороженого; то же самое 
+произойдет и с 30 потоками - мы не получим никакой выгоды от вывода из 
+всех из сна, потому что только один приступит к работе, и остальные 29 
+бесполезно прокрутят свой цикл перед тем, как снова войти в сон. 
+Функциональность однако не нарушится, если мы заменим Pulse на PulseAll.</p>
+<p>Теперь посмотрим на метод Consume, где рабочий поток берет элемент из
+ очереди и обрабатывает его. Мы хотим, чтобы рабочий поток блокировался,
+ когда ему нечего делать, т. е. когда нет элементов в очереди. Таким 
+образом, наше условие блокировки будет _itemQ.Count==0:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;">Action item;</pre>
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">lock</span> (_locker)
+{
+   <span style="color: #008000; font-weight: bold;">while</span> (_itemQ.Count == <span style="color: #666666;">0</span>) Monitor.Wait (_locker);
+   item = _itemQ.Dequeue();
+}</pre>
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">if</span> (item == <span style="color: #008000; font-weight: bold;">null</span>) <span style="color: #008000; font-weight: bold;">return</span>;  <span style="color: #408080; font-style: italic;">// Это сигнал выйти.</span>
+item();                    <span style="color: #408080; font-style: italic;">// Выполнение полезной работы (обработка</span>
+                           <span style="color: #408080; font-style: italic;">// элемента из очереди).</span>
+</pre>
+</div>
+<p>Выход из цикла while произойдет тогда, когда _itemQ.Count не равно 0,
+ это означает, что (как минимум) один элемент ожидает обработки в 
+очереди. Мы должны выбрать элемент из очереди перед освобождением 
+блокировки, иначе элемент может уже не быть в очереди (существующий 
+другой поток может выбрать этот элемент). В частности, другой 
+потребитель данных, только что завершивший предыдущую обработку, мог бы 
+внезапно забрать наш элемент, если в этот момент не действует 
+блокировка, и мы сделали бы что-то типа этого:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;">Action item;</pre>
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">lock</span> (_locker)
+{
+   <span style="color: #008000; font-weight: bold;">while</span> (_itemQ.Count == <span style="color: #666666;">0</span>) Monitor.Wait (_locker);
+}</pre>
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">lock</span> (_locker)                <span style="color: #408080; font-style: italic;">// НЕ ПРАВИЛЬНО!</span>
+{
+   item = _itemQ.Dequeue();   <span style="color: #408080; font-style: italic;">// Элемент может уже здесь не находиться!</span>
+}
+...
+</pre>
+</div>
+<p>После того, как элемент взят из очереди, мы немедленно освобождаем 
+блокировку. Если мы удержим её на время обработки задачи, то 
+нежелательно заблокируем другие потребители данных и генераторы данных. 
+Мы не должны вызывать Pulse после выборки из очереди, так как никакой 
+другой потребитель данных никогда не сможет разблокировать при наличии 
+меньшего количества элементов в очереди.</p>
+<p style="padding-left: 30px;"><span style="color: #800000;">Краткая 
+блокировка имеет преимущество, когда Wait и Pulse (обычно) избегает 
+нежелательной блокировки других потоков. Блокировка по большому 
+количеству строк кода вполне допустима, если она выполнится за короткое 
+время. Помните, что Вам помогает Monitor.Wait освобождением нижележащей 
+блокировки при ожидании Pulse!</span></p>
+<p><strong>Таймауты ожидания</strong>. Вы можете указать таймаут, когда 
+вызываете Wait, либо в миллисекундах, либо через TimeSpan. Тогда метод 
+Wait вернет false, если он сдался в ожидании таймаута. Таймаут 
+применяется только на фазе ожидания. Таким образом, Wait с таймаутом 
+делает следующее:</p>
+<p><strong>1</strong>. Освобождает нижележащую блокировку.<br><strong>2</strong>. Блокирует выполнение до появления Pulse, или до истечения таймаута.<br><strong>3</strong>. Заново взводит нижележащую блокировку.</p>
+<p>Указание таймаута осуществляется наподобие запроса для CLR выдать 
+"виртуальный Pulse" после истечения интервала таймаута. Wait, когда 
+произошел таймаут, все еще выполнит шаг 3 и восстановит блокировку, как 
+если бы был успешно получен Pulse.</p>
+<p style="padding-left: 30px;"><span style="color: #800000;">Если Wait 
+блокирует выполнение на шаге 3 (при восстановлении блокировки), то любой
+ таймаут игнорируется. Это редко составляет проблему, хотя только когда 
+другие потоки блокируются на очень короткое время, и приложение с 
+использованием Wait/Pulse хорошо реализовано. Таким образом, повторное 
+получение блокировки должно быть почти мгновенной операцией.</span></p>
+<p>Таймауты ожидания имеют полезное применение. Иногда может быть 
+нежелательным или невозможным выдавать Pulse каждый раз при 
+возникновении разблокировки. В качестве примера может быть ситуация, 
+когда условие блокировки вовлекает вызов метода, который получает 
+информацию из периодических запросов к базе данных. Если задержка в 
+доступе не составляет проблемы, то решение простое - Вы можете указать 
+таймаут при вызове Wait следующим образом:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">lock</span> (_locker)
+   <span style="color: #008000; font-weight: bold;">while</span> ( &lt; blocking-condition&gt; )
+      Monitor.Wait (_locker, &lt; timeout&gt; );
+</pre>
+</div>
+<p>Это принуждает условие блокировки к повторной проверке после 
+интервала, указанного в timeout, как и когда произошел вызов Pulse. Чем 
+проще условие блокировки, тем меньше может быть таймаут, не создавая 
+проблемы снижения эффективности. В этом случае мы не заботимся о том, 
+получил ли Wait вызов Pulse или произошел таймаут, и игнорируем 
+возвращаемое Wait значение.</p>
+<p>Та же система работает одинаково хорошо, если Pulse не произошел 
+из-за ошибки в программе. В этом случае стоит добавить таймаут ко всем 
+командам Wait в программах, где синхронизация особенно сложная, как 
+способ восстановления из ситуаций неясных, случайно появляющихся ошибок.
+ Это также предоставляет определенную степень защиты от ошибок, если 
+программа была позже изменена, что привело к пропаданию вызова Pulse.</p>
+<p style="padding-left: 30px;"><span style="color: #008080;">Monitor.Wait
+ вернет значение bool, показывающее, был ли реальный вызов Pulse. Если 
+возвращено false, то это означает истечение таймаута: иногда полезно 
+записывать в лог такие события или выбрасывать исключения, если 
+истечение таймаута было нежелательным.</span></p>
+<p></p><div class="spoiler" id="2_spoiler">
+                        <input type="hidden" class="opened" value="0">
+			<div class="sp-head folded" id="2-sp-head">
+			<div class="sp-head-click" id="2-sp-head-click"><a href="javascript:void(0)">Ожидание на очередях</a></div></div>
+			<div style="margin: 0px; position: static; overflow: hidden; height: 0px;"><div class="sp-body" id="2-sp-body" style="margin: -476px 0px 0px;"><p></p>
+<p>Когда больше одного потока вызвали Waits на одном и том же объекте, 
+формируется "очередь ожидания" (waiting queue) позади объекта 
+синхронизации (это отличается от очереди готовности "ready queue", 
+используемой для предоставления доступа к блокировке). Тогда каждый 
+Pulse освободит один поток в голове очереди ожидания, так что он может 
+войти в очередь готовности и заново восстановить блокировку. Можно это 
+представить как автоматическая парковка автомобилей: Вы становитесь в 
+очередь сначала на станции оплаты, чтобы получить свой билет (очередь 
+ожидания, waiting queue); и снова становитесь в очередь на барьере, 
+когда хотите уехать с парковки (очередь готовности, ready queue).</p>
+<p><img src="%D0%9F%D0%BE%D1%82%D0%BE%D0%BA%D0%B8%20%D0%BD%D0%B0%20C%23.%20%D0%A7%D0%B0%D1%81%D1%82%D1%8C%204_files/CSharp-WaitPulse.png" alt="CSharp WaitPulse"></p>
+<p>Однако порядок, свойственный структуре очереди, часто не имеет 
+значения в приложениях Wait/Pulse, и в таких случаях может быть проще 
+представить "пул" ожидающих потоков. Тогда каждый Pulse освободит один 
+ожидающий поток из пула.</p>
+<p>PulseAll освободит всю очередь, или пул, потоков ожидания. Однако 
+получившие импульс потоки не запустятся точно одновременно, скорее в 
+организованной последовательности, поскольку каждый из их операторов 
+Wait пытается повторно получить ту же самую блокировку. В результате 
+PulseAll переместит всю очередь ожидания в очередь готовности, так что 
+потоки могут организованно возобновить выполнение.</p>
+<p></p></div></div>
+			</div><p></p>
+<p><strong>Сигнализация в обоих направлениях и гонки</strong>. Важная 
+особенность Monitor.Pulse в том, что это выполняется асинхронно, т. е. 
+никаким образом не блокируя самого себя и не ставя на паузу. Если другой
+ поток ждет объекта импульса, то он будет разблокирован. Иначе выдача 
+импульса не даст никакого эффекта, и просто будет тихо проигнорирована.</p>
+<p>Таким образом, Pulse дает обмен только в одну сторону: пульсирующий 
+поток (потенциально) подает сигнал ожидающему потоку. Здесь нет 
+внутреннего механизма подтверждения: не вернет значение, показывающее, 
+получил ли какой-либо поток импульс разблокировки, или нет. Кроме того, 
+когда оповещающий поток выдал импульс и тем самым освободил его 
+блокировку, нет никакой гарантии, что ожидающий разблокировки поток 
+немедленно оживет. Здесь может быть маленькая задержка с дискретностью 
+единиц планировщика, во время которой ни у одного потока нет блокировки.
+ Это означает, что выдающий импульс поток не может знать, возобновил ли 
+выполнение ожидающий поток - если Вы не реализовали специальный код для 
+передачи такой информации (например, с помощью другого флага или другой 
+комбинации Wait и Pulse).</p>
+<p>Для иллюстрации предположим, что нам нужен сигнал 5 раз подряд:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">class</span> <span style="color: #0000ff; font-weight: bold;">Race</span>
+{
+   <span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">readonly</span> <span style="color: #b00040;">object</span> _locker = <span style="color: #008000; font-weight: bold;">new</span> <span style="color: #b00040;">object</span>();
+   <span style="color: #008000; font-weight: bold;">static</span> <span style="color: #b00040;">bool</span> _go;
+ 
+   <span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Main</span>()
+   {
+      <span style="color: #008000; font-weight: bold;">new</span> <span style="color: #0000ff;">Thread</span> (SaySomething).Start();
+ 
+      <span style="color: #008000; font-weight: bold;">for</span> (<span style="color: #b00040;">int</span> i = <span style="color: #666666;">0</span>; i &lt; <span style="color: #666666;">5</span>; i++)
+      {
+         <span style="color: #008000; font-weight: bold;">lock</span> (_locker) 
+         {
+            _go = <span style="color: #008000; font-weight: bold;">true</span>;
+            Monitor.PulseAll (_locker);
+         }
+      }
+   }
+ 
+   <span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">SaySomething</span>()
+   {
+      <span style="color: #008000; font-weight: bold;">for</span> (<span style="color: #b00040;">int</span> i = <span style="color: #666666;">0</span>; i &lt; <span style="color: #666666;">5</span>; i++)
+      {
+         <span style="color: #008000; font-weight: bold;">lock</span> (_locker)
+         {
+            <span style="color: #008000; font-weight: bold;">while</span> (!_go) Monitor.Wait (_locker);
+            _go = <span style="color: #008000; font-weight: bold;">false</span>;
+            Console.WriteLine (<span style="color: #ba2121;">"Что произошло?"</span>);
+         }
+      }
+   }
+}
+</pre>
+</div>
+<p>Ожидаемый вывод:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #000000; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #ffffff;">Что произошло?
+Что произошло?
+Что произошло?
+Что произошло?
+Что произошло?
+</span></pre>
+</div>
+<p>Вот какой вывод будет в действительности:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #000000; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #ffffff;">Что произошло? (зависание)
+</span></pre>
+</div>
+<p>Эта плохо написанная программа демонстрирует состояние гонки: цикл 
+for в главном потоке может свободно прокрутить свои 5 итераций в любое 
+время, когда рабочий поток не удерживает блокировку, и это может 
+произойти даже перед запуском рабочего потока! Пример producer/consumer 
+не пострадал бы от такой проблемы, потому что если бы основной поток 
+обогнал рабочий поток, то каждый запрос стоял бы в очереди. Но в этом 
+случае нам нужно заблокировать главный поток на каждой итерации, если 
+рабочий поток все еще занят обработкой предыдущей задачи.</p>
+<p>Мы можем исправить этот код добавлением флага _ready к классу, 
+управляемому рабочим потоком. Затем главный поток ждет, пока рабочий 
+поток не будет готов (ready) к установке флага _go.</p>
+<p style="padding-left: 30px;"><span style="color: #008080;">Это аналогично предыдущему примеру, который делает то же самое с помощью двух AutoResetEvents.</span></p>
+<p>Исправленный вариант, который выведет "Что произошло?" 5 раз:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">class</span> <span style="color: #0000ff; font-weight: bold;">Solved</span>
+{
+   <span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">readonly</span> <span style="color: #b00040;">object</span> _locker = <span style="color: #008000; font-weight: bold;">new</span> <span style="color: #b00040;">object</span>();
+   <span style="color: #008000; font-weight: bold;">static</span> <span style="color: #b00040;">bool</span> _ready, _go;
+ 
+   <span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Main</span>()
+   {
+      <span style="color: #008000; font-weight: bold;">new</span> <span style="color: #0000ff;">Thread</span> (SaySomething).Start();
+ 
+      <span style="color: #008000; font-weight: bold;">for</span> (<span style="color: #b00040;">int</span> i = <span style="color: #666666;">0</span>; i &lt; <span style="color: #666666;">5</span>; i++)
+      {
+         <span style="color: #008000; font-weight: bold;">lock</span> (_locker)
+         {
+            <span style="color: #008000; font-weight: bold;">while</span> (!_ready) Monitor.Wait (_locker);
+            _ready = <span style="color: #008000; font-weight: bold;">false</span>;
+            _go = <span style="color: #008000; font-weight: bold;">true</span>;
+            Monitor.PulseAll (_locker);
+         }
+      }
+   }
+ 
+   <span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">SaySomething</span>()
+   {
+      <span style="color: #008000; font-weight: bold;">for</span> (<span style="color: #b00040;">int</span> i = <span style="color: #666666;">0</span>; i &lt; <span style="color: #666666;">5</span>; i++)
+      {
+         <span style="color: #008000; font-weight: bold;">lock</span> (_locker)
+         {
+            _ready = <span style="color: #008000; font-weight: bold;">true</span>;
+            Monitor.PulseAll (_locker);           <span style="color: #408080; font-style: italic;">// Помните, что вызов Monitor.Wait</span>
+            <span style="color: #008000; font-weight: bold;">while</span> (!_go) Monitor.Wait (_locker);  <span style="color: #408080; font-style: italic;">// освобождает и повторно</span>
+            go = <span style="color: #008000; font-weight: bold;">false</span>;                           <span style="color: #408080; font-style: italic;">// захватывает блокировку.</span>
+            Console.WriteLine (<span style="color: #ba2121;">"Что произошло?"</span>);
+         }
+      }
+   }
+}
+</pre>
+</div>
+<p>В методе Main (главный поток) мы очищаем флаг _ready, устанавливаем 
+флаг _go и вызываем Pulse, и все это делаем в одном операторе блокировки
+ lock. Преимущество такого подхода - устойчивость, если мы позже добавим
+ третий поток. Представим себе, что другой поток пытается в то же самое 
+время подавать сигнал рабочему потоку. В этом сценарии наша логика не 
+нарушится: в действительности мы атомарно делаем действия по очистке 
+_ready и установке _go.</p>
+<p><strong>Симуляция дескрипторов ожидания</strong> (Wait Handle). Вы возможно заметили, что в у шаблона предыдущего примера следующая структура:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">lock</span> (_locker)
+{
+   <span style="color: #008000; font-weight: bold;">while</span> (!_flag) Monitor.Wait (_locker);
+   _flag = <span style="color: #008000; font-weight: bold;">false</span>;
+   ...
+}
+</pre>
+</div>
+<p>Здесь _flag устанавливается в true другим потоком. В результате 
+получается эффект использования AutoResetEvent. Если мы пропустим 
+_flag=false, то получим базовый шаблон ManualResetEvent.</p>
+<p>Давайте подробно представим код для ManualResetEvent, использующего Wait и Pulse:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">readonly</span> <span style="color: #b00040;">object</span> _locker = <span style="color: #008000; font-weight: bold;">new</span> <span style="color: #b00040;">object</span>();</pre>
+<pre style="margin: 0; line-height: 125%;"><span style="color: #b00040;">bool</span> _signal;
+ </pre>
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">WaitOne</span>()
+{
+   <span style="color: #008000; font-weight: bold;">lock</span> (_locker)
+   {
+      <span style="color: #008000; font-weight: bold;">while</span> (!_signal) Monitor.Wait (_locker);
+   }
+}
+ </pre>
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Set</span>()
+{
+   <span style="color: #008000; font-weight: bold;">lock</span> (_locker) { _signal = <span style="color: #008000; font-weight: bold;">true</span>; Monitor.PulseAll (_locker); }
+}
+ </pre>
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Reset</span>() { <span style="color: #008000; font-weight: bold;">lock</span> (_locker) _signal = <span style="color: #008000; font-weight: bold;">false</span>; }
+</pre>
+</div>
+<p>Мы использовали PulseAll, потому что здесь может быть любое количество заблокированных ожидающих потоков.</p>
+<p>Написание AutoResetEvent произойдет простой заменой кода в WaitOne на следующий:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">lock</span> (_locker)
+{
+   <span style="color: #008000; font-weight: bold;">while</span> (!_signal) Monitor.Wait (_locker);
+   _signal = <span style="color: #008000; font-weight: bold;">false</span>;
+}
+</pre>
+</div>
+<p>и заменой PulseAll на Pulse в методе Set:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">lock</span> (_locker) { _signal = <span style="color: #008000; font-weight: bold;">true</span>; Monitor.Pulse (_locker); }
+</pre>
+</div>
+<p style="padding-left: 30px;"><span style="color: #008080;">Воздержитесь
+ от использования PulseAll на очереди с ожидающими потоками, потому что 
+каждый вызов PulseAll приведет к повреждению очереди и затем к её 
+повторному формированию.</span></p>
+<p>Замена _signal на целочисленное поле создаст базовый шаблон для Semaphore.</p>
+<p>Симуляция статических методов, которые работают с набором 
+дескрипторов ожидания, легко реализуется в простых сценариях. Эквивалент
+ вызова WaitAll это ничто иное, как условие блокировки, включающее все 
+флаги, используемые вместо дескрипторов ожидания:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">lock</span> (_locker)
+   <span style="color: #008000; font-weight: bold;">while</span> (!_flag1 &amp;&amp; !_flag2 &amp;&amp; !_flag3...)
+      Monitor.Wait (_locker);
+</pre>
+</div>
+<p>Это может быть особенно полезно, если учесть, что WaitAll часто 
+нельзя использовать из-за проблем устаревшего COM. Симуляция WaitAny это
+ просто вопрос замены оператора &amp;&amp; оператором ||.</p>
+<p style="padding-left: 30px;"><span style="color: #008080;">Если у Вас 
+много флагов, то этот метод становится менее эффективным, потому что все
+ эти флаги должны использовать один объект синхронизации, чтобы 
+сигнализация работала атомарно. В этом случае использование дескрипторов
+ ожидания получает преимущество.</span></p>
+<p><a name="Writing_CountdownEvent"></a></p>
+<p><strong>Написание CountdownEvent</strong>. С помощью Wait и Pulse мы можем реализовать полный функционал CountdownEvent следующим образом:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">public</span> <span style="color: #008000; font-weight: bold;">class</span> <span style="color: #0000ff; font-weight: bold;">Countdown</span>
+{
+   <span style="color: #b00040;">object</span> _locker = <span style="color: #008000; font-weight: bold;">new</span> <span style="color: #b00040;">object</span> ();
+   <span style="color: #b00040;">int</span> _value;
+ 
+   <span style="color: #008000; font-weight: bold;">public</span> <span style="color: #0000ff;">Countdown</span>() { }
+   <span style="color: #008000; font-weight: bold;">public</span> <span style="color: #0000ff;">Countdown</span> (<span style="color: #b00040;">int</span> initialCount) { _value = initialCount; }
+ 
+   <span style="color: #008000; font-weight: bold;">public</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Signal</span>() { AddCount (-<span style="color: #666666;">1</span>); }
+ 
+   <span style="color: #008000; font-weight: bold;">public</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">AddCount</span> (<span style="color: #b00040;">int</span> amount)
+   {
+      <span style="color: #008000; font-weight: bold;">lock</span> (_locker) 
+      { 
+         _value += amount;
+         <span style="color: #008000; font-weight: bold;">if</span> (_value &lt; <span style="color: #666666;">1</span>) Monitor.PulseAll (_locker);
+      }
+   }
+ 
+   <span style="color: #008000; font-weight: bold;">public</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Wait</span>()
+   {
+      <span style="color: #008000; font-weight: bold;">lock</span> (_locker)
+         <span style="color: #008000; font-weight: bold;">while</span> (_value &gt; <span style="color: #666666;">0</span>)
+            Monitor.Wait (_locker);
+   }
+}
+</pre>
+</div>
+<p>Этот шаблон кода похож на тот, что мы видели раньше, за исключением условия блокировки на основе целочисленного поля.</p>
+<p><strong>Встреча потоков</strong>. Мы можем использовать класс 
+Countdown для написания рандеву двух потоков - как мы это делали ранее 
+[3] с WaitHandle.SignalAndWait:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">class</span> <span style="color: #0000ff; font-weight: bold;">Rendezvous</span>
+{
+   <span style="color: #008000; font-weight: bold;">static</span> <span style="color: #b00040;">object</span> _locker = <span style="color: #008000; font-weight: bold;">new</span> <span style="color: #b00040;">object</span>();
+ 
+   <span style="color: #408080; font-style: italic;">// В Framework 4.0 мы могли бы вместо этого использовать</span>
+   <span style="color: #408080; font-style: italic;">// встроенный класс CountdownEvent.</span>
+   <span style="color: #008000; font-weight: bold;">static</span> Countdown _countdown = <span style="color: #008000; font-weight: bold;">new</span> Countdown(<span style="color: #666666;">2</span>);
+ 
+   <span style="color: #008000; font-weight: bold;">public</span> <span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Main</span>()
+   {
+      <span style="color: #408080; font-style: italic;">// Перевод каждого потока в сон на случайное время.</span>
+      Random r = <span style="color: #008000; font-weight: bold;">new</span> Random();
+      <span style="color: #008000; font-weight: bold;">new</span> <span style="color: #0000ff;">Thread</span> (Mate).Start (r.Next (<span style="color: #666666;">10000</span>));
+      Thread.Sleep (r.Next (<span style="color: #666666;">10000</span>));
+ 
+      _countdown.Signal();
+      _countdown.Wait();
+ 
+      Console.Write (<span style="color: #ba2121;">"Mate! "</span>);
+   }
+ 
+   <span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Mate</span> (<span style="color: #b00040;">object</span> delay)
+   {
+      Thread.Sleep ((<span style="color: #b00040;">int</span>) delay);
+ 
+      _countdown.Signal();
+      _countdown.Wait();
+    
+      Console.Write (<span style="color: #ba2121;">"Mate! "</span>);
+   }
+}
+</pre>
+</div>
+<p>В этом примере каждый поток засыпает на случайное количество времени и
+ затем ждет другой поток, в результате оба выводят сообщение "Mate" 
+(скорее всего) одновременно. Это называется барьером выполнения потока 
+(thread execution barrier), и может быть расширено на любое количество 
+потоков (настройкой начального значения счетчика обратного отсчета 
+Countdown).</p>
+<p>Барьеры выполнения потока полезны, когда Вы хотите удержать несколько
+ потоков на определенном шаге в процессе выполнения серии задач. Однако 
+наше текущее решение ограничено, в нем мы не можем снова использовать 
+тот же самый объект Countdown для организации встречи пoтоков второй раз
+ - по крайней мере не без дополнительных конструкций сигнализации. Чтобы
+ решить эту проблему, Framework 4.0 предоставляет новый класс Barrier.</p>
+<p><a name="BarrierClass"></a>[<strong>Класс Barrier</strong>]</p>
+<p>Barrier представляет в Framework 4.0 новую конструкцию сигнализации. 
+Он реализует барьер выполнения потока, что позволяет любому количеству 
+потоков встретиться в определенное время. Этот класс очень быстрый и 
+эффективный, в он построен на основе Wait, Pulse и блокировок прокруток 
+цикла (spinlocks).</p>
+<p>Чтобы использовать этот класс:</p>
+<p><strong>1</strong>. Инстанцируйте его, указав количество потоков, 
+которые должны принять участие в встрече (Вы это можете поменять позже 
+вызовом AddParticipants/RemoveParticipants).<br><strong>2</strong>. В каждом потоке вызовите SignalAndWait, когда хотите, чтобы он ожидал встречи.</p>
+<p>Инстанциация Barrier со значением 3 приведет к тому, что 
+SignalAndWait будет блокировать выполнение, пока этот метод не будет 
+вызван 3 раза. Но в отличие от CountdownEvent барьер запускается 
+автоматически: вызов SignalAndWait снова заблокирует выполнение, пока не
+ будет вызван еще 3 раза. Это позволяет сохранять несколько потоков на 
+одном шаге, когда они выполняют серию задач.</p>
+<p><img src="%D0%9F%D0%BE%D1%82%D0%BE%D0%BA%D0%B8%20%D0%BD%D0%B0%20C%23.%20%D0%A7%D0%B0%D1%81%D1%82%D1%8C%204_files/CSharp-Barrier.png" alt="CSharp Barrier"></p>
+<p>В следующем примере каждый из 3 потоков записывает числа от 0 до 4, делая это по шагам с другими потоками:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">static</span> Barrier _barrier = <span style="color: #008000; font-weight: bold;">new</span> Barrier (<span style="color: #666666;">3</span>);
+ </pre>
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Main</span>()
+{
+   <span style="color: #008000; font-weight: bold;">new</span> <span style="color: #0000ff;">Thread</span> (Speak).Start();
+   <span style="color: #008000; font-weight: bold;">new</span> <span style="color: #0000ff;">Thread</span> (Speak).Start();
+   <span style="color: #008000; font-weight: bold;">new</span> <span style="color: #0000ff;">Thread</span> (Speak).Start();
+}
+ </pre>
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Speak</span>()
+{
+   <span style="color: #008000; font-weight: bold;">for</span> (<span style="color: #b00040;">int</span> i = <span style="color: #666666;">0</span>; i &lt; <span style="color: #666666;">5</span>; i++)
+   {
+      Console.Write (i + <span style="color: #ba2121;">" "</span>);
+      _barrier.SignalAndWait();
+   }
+}
+</pre>
+</div>
+<p>Результат работы этого примера:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #000000; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #ffffff;">0 0 0 1 1 1 2 2 2 3 3 3 4 4 4
+</span></pre>
+</div>
+<p>Реально полезная функция Barrier в том, что при его конструировании 
+также можно указать для него дополнительное действие (действие 
+пост-фазы), совпадающее со "встречей". Это делегат, который будет вызван
+ после того, как SignalAndWait был вызван n раз, но перед перед тем, как
+ потоки будут разблокированы. В нашем примере, если мы инстанциировали 
+барьер следующим образом:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">static</span> Barrier _barrier = <span style="color: #008000; font-weight: bold;">new</span> Barrier (<span style="color: #666666;">3</span>, barrier =&gt; Console.WriteLine());
+</pre>
+</div>
+<p>то вывод получится таким:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #000000; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #ffffff;">0 0 0 
+1 1 1 
+2 2 2 
+3 3 3 
+4 4 4 
+</span></pre>
+</div>
+<p>Действие пост-фазы может быть полезным, когда нужно объединить 
+данные, которые были произведены каждым из встретившихся рабочих 
+потоков. Не нужно заботиться о вытеснении, потому что все рабочие потоки
+ блокируются в ожидании завершения каждым обработки свой части работы.</p>
+<p><a name="Reader_Writer_Locks"></a>[<strong>Блокировки Reader/Writer</strong>]</p>
+<p>Довольно часто экземпляры типа потокобезопасны для одновременных 
+операций чтения, но не для одновременных операций обновления (ни тем 
+более для одновременных чтения и обновления). Это может быть 
+справедливым с таким ресурсом, как файл. Хотя защита экземпляров такого 
+типа простой исключительной блокировкой для всех режимов доступа обычно 
+добивается цели, она нежелательно ограничивает одновременный доступ, 
+если есть множество читающих потоков и только иногда происходят 
+обновления. Пример такого случая - сервер бизнес-приложений, где часто 
+используемые данные кэшируются в статических полях для быстрого доступа.
+ Класс ReaderWriterLockSlim был разработан для предоставления 
+максимальной доступности данных при блокировке в таком сценарии.</p>
+<p style="padding-left: 30px;"><span style="color: #008080;">Класс 
+ReaderWriterLockSlim был представлен в Framework 3.5, заменив старый 
+"толстый" класс ReaderWriterLock. Последний обладает похожей 
+функциональностью, но в несколько раз медленнее и содержит ошибку в 
+своем механизме обработки обновлений блокировки. Однако в сравнении с 
+обычной блокировкой (Monitor.Enter/Exit) класс ReaderWriterLockSlim 
+работает в 2 раза медленнее.</span></p>
+<p>В обоих классах здесь есть два базовых вида блокировки - блокировка чтения (read lock) и блокировка записи (write lock):</p>
+<p>• Блокировка записи универсально исключительная.<br>• Блокировка чтения совместима с другими блокировками чтения.</p>
+<p>Таким образом поток, удерживающий блокировку записи, будет 
+блокировать все другие потоки, пытающиеся получить блокировку чтения или
+ блокировку записи (и наоборот). Но если нет потоков, удерживающих 
+блокировку записи, то любое количество потоков могут одновременно 
+получить блокировку чтения.</p>
+<p>ReaderWriterLockSlim определяет следующие методы для получения и освобождения блокировок чтения/записи:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">public</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">EnterReadLock</span>();</pre>
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">public</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">ExitReadLock</span>();</pre>
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">public</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">EnterWriteLock</span>();</pre>
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">public</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">ExitWriteLock</span>();
+</pre>
+</div>
+<p>Дополнительно есть версии "Try" всех методов EnterXXX, которые 
+принимают аргумент таймаута в стиле Monitor.TryEnter (таймауты могут 
+произойти довольно легко, если за ресурс очень высокая конкуренция). 
+ReaderWriterLock предоставляет подобные методы AcquireXXX и ReleaseXXX. 
+Вместо возврата false они выбрасывают исключение ApplicationException, 
+если произошел таймаут.</p>
+<p>Следующая программа демонстрирует ReaderWriterLockSlim. 3 потока 
+постоянно проходят по списку, где 2 потока каждую секунду добавляют 
+случайное число к списку. Блокировка чтения защищает читающие список 
+потоки, и блокировка записи защищает записывающие в список потоки:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">class</span> <span style="color: #0000ff; font-weight: bold;">SlimDemo</span>
+{
+   <span style="color: #008000; font-weight: bold;">static</span> ReaderWriterLockSlim _rw = <span style="color: #008000; font-weight: bold;">new</span> ReaderWriterLockSlim();
+   <span style="color: #008000; font-weight: bold;">static</span> List&lt; <span style="color: #b00040;">int</span>&gt; _items = <span style="color: #008000; font-weight: bold;">new</span> List&lt; <span style="color: #b00040;">int</span>&gt;();
+   <span style="color: #008000; font-weight: bold;">static</span> Random _rand = <span style="color: #008000; font-weight: bold;">new</span> Random();
+ 
+   <span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Main</span>()
+   {
+      <span style="color: #008000; font-weight: bold;">new</span> <span style="color: #0000ff;">Thread</span> (Read).Start();
+      <span style="color: #008000; font-weight: bold;">new</span> <span style="color: #0000ff;">Thread</span> (Read).Start();
+      <span style="color: #008000; font-weight: bold;">new</span> <span style="color: #0000ff;">Thread</span> (Read).Start();
+ 
+      <span style="color: #008000; font-weight: bold;">new</span> <span style="color: #0000ff;">Thread</span> (Write).Start (<span style="color: #ba2121;">"A"</span>);
+      <span style="color: #008000; font-weight: bold;">new</span> <span style="color: #0000ff;">Thread</span> (Write).Start (<span style="color: #ba2121;">"B"</span>);
+  }
+ 
+   <span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Read</span>()
+   {
+      <span style="color: #008000; font-weight: bold;">while</span> (<span style="color: #008000; font-weight: bold;">true</span>)
+      {
+         _rw.EnterReadLock();
+         <span style="color: #008000; font-weight: bold;">foreach</span> (<span style="color: #b00040;">int</span> i <span style="color: #008000; font-weight: bold;">in</span> _items) Thread.Sleep (<span style="color: #666666;">10</span>);
+         _rw.ExitReadLock();
+      }
+   }
+ 
+   <span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Write</span> (<span style="color: #b00040;">object</span> threadID)
+   {
+      <span style="color: #008000; font-weight: bold;">while</span> (<span style="color: #008000; font-weight: bold;">true</span>)
+      {
+         <span style="color: #b00040;">int</span> newNumber = GetRandNum (<span style="color: #666666;">100</span>);
+         _rw.EnterWriteLock();
+         _items.Add (newNumber);
+         _rw.ExitWriteLock();
+         Console.WriteLine (<span style="color: #ba2121;">"Поток "</span> + threadID + <span style="color: #ba2121;">" добавил "</span> + newNumber);
+         Thread.Sleep (<span style="color: #666666;">100</span>);
+      }
+   }
+ 
+   <span style="color: #008000; font-weight: bold;">static</span> <span style="color: #b00040;">int</span> <span style="color: #0000ff;">GetRandNum</span> (<span style="color: #b00040;">int</span> max) { <span style="color: #008000; font-weight: bold;">lock</span> (_rand) <span style="color: #008000; font-weight: bold;">return</span> _rand.Next(max); }
+}
+</pre>
+</div>
+<p style="padding-left: 30px;"><span style="color: #008080;">В коде 
+релиза обычно добавляют блоки try/finally, чтобы гарантировать, что все 
+блокировки были освобождены, если было выброшено исключение.</span></p>
+<p>Результат выполнения этого примера:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #000000; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #ffffff;">Поток B добавил 61
+Поток A добавил 83
+Поток B добавил 55
+Поток A добавил 33
+...
+</span></pre>
+</div>
+<p>ReaderWriterLockSlim позволяет большей одновременной активности 
+чтения Read, чем простая блокировка. Мы может показать это вставкой 
+следующий код в метод Write, в начало цикла while:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;">Console.WriteLine (_rw.CurrentReadCount + <span style="color: #ba2121;">" одновременно читающих"</span>);
+</pre>
+</div>
+<p>В результате всегда будут выведены "3 одновременно читающих" (методы 
+Read тратят большинство своего времени внутри циклов foreach). Как и 
+CurrentReadCount, класс ReaderWriterLockSlim предоставляет следующие 
+свойства для мониторинга блокировок:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">public</span> <span style="color: #b00040;">bool</span> IsReadLockHeld            { <span style="color: #008000; font-weight: bold;">get</span>; }</pre>
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">public</span> <span style="color: #b00040;">bool</span> IsUpgradeableReadLockHeld { <span style="color: #008000; font-weight: bold;">get</span>; }</pre>
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">public</span> <span style="color: #b00040;">bool</span> IsWriteLockHeld           { <span style="color: #008000; font-weight: bold;">get</span>; }
+ </pre>
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">public</span> <span style="color: #b00040;">int</span>  WaitingReadCount          { <span style="color: #008000; font-weight: bold;">get</span>; }</pre>
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">public</span> <span style="color: #b00040;">int</span>  WaitingUpgradeCount       { <span style="color: #008000; font-weight: bold;">get</span>; }</pre>
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">public</span> <span style="color: #b00040;">int</span>  WaitingWriteCount         { <span style="color: #008000; font-weight: bold;">get</span>; }
+ </pre>
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">public</span> <span style="color: #b00040;">int</span>  RecursiveReadCount        { <span style="color: #008000; font-weight: bold;">get</span>; }</pre>
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">public</span> <span style="color: #b00040;">int</span>  RecursiveUpgradeCount     { <span style="color: #008000; font-weight: bold;">get</span>; }</pre>
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">public</span> <span style="color: #b00040;">int</span>  RecursiveWriteCount       { <span style="color: #008000; font-weight: bold;">get</span>; }
+</pre>
+</div>
+<p><strong>Обновляемые блокировки и рекурсия</strong>. Иногда полезно 
+поменять блокировку чтения на блокировку записи в одной атомарной 
+операции. Для примера предположим, что Вы хотите добавить элемент к 
+списку только если он в нем уже не присутствует. Идеальным было бы 
+минимизировать затраты времени на удержание (исключительной) блокировки 
+записи, для чего можно выполнить обработку следующим образом:</p>
+<p><strong>1</strong>. Получить блокировку чтения.<br><strong>2</strong>. Проверить, если уже этот элемент в списке, и если это так, освободить блокировку и выполнить возврат.<br><strong>3</strong>. Освободить блокировку чтения.<br><strong>4</strong>. Получить блокировку записи.<br><strong>5</strong>. Добавить элемент в список.</p>
+<p>Проблема тут в том, что другой поток может подкрасться и изменить 
+список (т. е. добавить такой же элемент) между шагами 3 и 4. 
+ReaderWriterLockSlim решает эту проблему третьим видом блокировки, 
+которая называется обновляемая блокировка (upgradeable lock). 
+Обновляемая блокировка подобна блокировке чтения, с тем исключением, что
+ она может быть повышена до блокировки чтения в атомарной операции. Вот 
+как это следует использовать:</p>
+<p><strong>1</strong>. Сделать вызов EnterUpgradeableReadLock.<br><strong>2</strong>. Выполнить действия по чтению (например, проверить, есть ли интересующий элемент в списке).<br><strong>3</strong>. Вызвать EnterWriteLock (это преобразует обновляемую блокировку в блокировку записи).<br><strong>4</strong>. Выполнить действия по записи (например, добавление этого элемента в список).<br><strong>5</strong>. Вызвать ExitWriteLock (это преобразует блокировку записи обратно в обновляемую блокировку).<br><strong>6</strong>. Выполнить любые другие операции по чтению.<br><strong>7</strong>. Вызвать ExitUpgradeableReadLock.</p>
+<p>С точки зрения вызывающего кода это скорее похоже на вложенную или 
+рекурсивную блокировку. Однако функционально на шаге 3 класс 
+ReaderWriterLockSlim атомарно освободит блокировку чтения и получит 
+чистую блокировку записи (обе эти операции выполнятся атомарно, как одно
+ неделимое действие).</p>
+<p>Есть и другое важное отличие между обновляемыми блокировками и 
+блокировками чтения. В то время как обновляемая блокировка может 
+сосуществовать одновременно с любым количеством блокировок чтения, сама 
+по себе обновляемая блокировка в любой момент времени может быть только 
+одна. Это предотвращает появление глухой блокировки при преобразовании 
+уровня блокировки (conversion deadlock) путем сериализации одновременных
+ преобразований блокировки - также как это делает блокировка обновления 
+(update lock) SQL Server:</p>
+<table cellspacing="1" cellpadding="3" border="0" bgcolor="#8cacbb">
+<tbody>
+<tr style="background-color: #dee7ec;">
+<td><strong>SQL Server</strong></td>
+<td><b>ReaderWriterLockSlim</b></td>
+</tr>
+<tr style="background-color: #ffffff;">
+<td>Share lock</td>
+<td>Read lock</td>
+</tr>
+<tr style="background-color: #ffffff;">
+<td>Exclusive lock</td>
+<td>Write lock</td>
+</tr>
+<tr style="background-color: #ffffff;">
+<td>Update lock</td>
+<td>Upgradeable lock</td>
+</tr>
+</tbody>
+</table>
+<p>Мы можем продемонстрировать обновляемую блокировку изменением метода 
+Write в предыдущем примере так, чтобы он добавлял число к списку только 
+если этого числа пока в списке нет:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">while</span> (<span style="color: #008000; font-weight: bold;">true</span>)
+{
+   <span style="color: #b00040;">int</span> newNumber = GetRandNum (<span style="color: #666666;">100</span>);
+   _rw.EnterUpgradeableReadLock();
+   <span style="color: #008000; font-weight: bold;">if</span> (!_items.Contains (newNumber))
+   {
+      _rw.EnterWriteLock();
+      _items.Add (newNumber);
+      _rw.ExitWriteLock();
+      Console.WriteLine (<span style="color: #ba2121;">"Поток "</span> + threadID + <span style="color: #ba2121;">" добавил "</span> + newNumber);
+   }
+   _rw.ExitUpgradeableReadLock();
+   Thread.Sleep (<span style="color: #666666;">100</span>);
+}
+</pre>
+</div>
+<p style="padding-left: 30px;"><span style="color: #008080;">ReaderWriterLock
+ может также делать преобразования блокировки - но это ненадежно, потому
+ что не поддерживается концепция обновляемых блокировок. По этой причине
+ разработчики ReaderWriterLockSlim с нуля разработали новый класс.</span></p>
+<p><strong>Рекурсия блокировки</strong>. Обычно вложенная или 
+рекурсивная блокировка запрещена с ReaderWriterLockSlim. Следовательно, 
+следующий код выбросит исключение:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #b00040;">var</span> rw = <span style="color: #008000; font-weight: bold;">new</span> ReaderWriterLockSlim();
+rw.EnterReadLock();
+rw.EnterReadLock();
+rw.ExitReadLock();
+rw.ExitReadLock();
+</pre>
+</div>
+<p>Однако этот код запустится без ошибки, если Вы сконструируете экземпляр класса ReaderWriterLockSlim следующим образом:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #b00040;">var</span> rw = <span style="color: #008000; font-weight: bold;">new</span> ReaderWriterLockSlim (LockRecursionPolicy.SupportsRecursion);
+</pre>
+</div>
+<p>Это гарантирует, что может происходить рекурсивная блокировка, если 
+Вам это действительно нужно. Рекурсивные блокировки добавляют 
+нежелательную сложность в программу, потому что можно получить больше 
+одного вида блокировки:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;">rw.EnterWriteLock();
+rw.EnterReadLock();
+Console.WriteLine (rw.IsReadLockHeld);    <span style="color: #408080; font-style: italic;">// True</span>
+Console.WriteLine (rw.IsWriteLockHeld);   <span style="color: #408080; font-style: italic;">// True</span>
+rw.ExitReadLock();
+rw.ExitWriteLock();
+</pre>
+</div>
+<p>Базовое правило состоит в том, что как только Вы получили блокировку,
+ последующие блокировки должны быть меньше, но не больше, следовать 
+уровням: Read Lock (блокировка чтения), Upgradeable Lock (обновляемая 
+блокировка), Write Lock (блокировка записи).</p>
+<p>Однако запрос на повышение уровня обновляемой блокировки на блокировку записи всегда остается легальным.</p>
+<p><a name="Suspend_and_Resume"></a>[<strong>Suspend и Resume</strong>]</p>
+<p>Поток может быть явно приостановлен (suspend) и затем может быть 
+возобновлено его выполнение (resume) с помощью устаревших методов 
+Thread.Suspend и Thread.Resume. Этот механизм полностью отделен от 
+блокировок. Обе системы независимы друг от друга и работают параллельно.</p>
+<p>Поток может приостановить самого себя или другой поток. Вызов Suspend
+ приведет к краткому входу потока в состояние SuspendRequested, затем по
+ достижению точки безопасности для сбора мусора, поток входит в 
+состояние Suspended. Начиная с этого момента выполнение потока может 
+быть возобновлено только с помощью другого потока, который вызовет его 
+метод Resume. Resume будет работать только на приостановленном потоке, 
+но не заблокированном потоке.</p>
+<p>Начиная с .NET 2.0 Suspend и Resume стали устаревшими, их 
+использование не рекомендуется из-за опасности произвольной приостановки
+ другим потоком. Если приостановить поток, который находится в 
+блокировке на критическом ресурсе, то все приложение (или компьютер) 
+может получить deadlock. Это намного опаснее, чем вызов Abort - который в
+ результате приведет к освобождению любых таких блокировок (как минимум 
+теоретически) на основании кода в блоках finally.</p>
+<p>Однако безопасным является вызов Suspend на текущем потоке - и таким 
+способом можно реализовать простой механизм синхронизации - рабочий 
+поток в цикле выполняет свою задачу, вызывает Suspend для самого себя, и
+ затем ждет возобновления ("пробуждения") основным потоком, когда будет 
+готова для обработки другая задача. Хотя тут есть сложность в 
+определении, приостановлен ли поток. Рассмотрим следующий код:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;">worker.NextTask = <span style="color: #ba2121;">"MowTheLawn"</span>;
+ </pre>
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">if</span> ((worker.ThreadState &amp; ThreadState.Suspended) &gt; <span style="color: #666666;">0</span>)
+   worker.Resume;</pre>
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">else</span>
+   <span style="color: #408080; font-style: italic;">// Мы не можем вызывать Resume, поскольку поток работает.</span>
+   <span style="color: #408080; font-style: italic;">// Вместо этого дайте сигнал рабочему потоку через флаг:</span>
+   worker.AnotherTaskAwaits = <span style="color: #008000; font-weight: bold;">true</span>;
+</pre>
+</div>
+<p>Это ужасно небезопасно для многопоточной работы: этот код может быть 
+вытеснен в любом месте этих строк, в то время как рабочий поток может 
+поменять свое состояние. Хотя эту проблему можно обойти, решение 
+становится более сложным, чем альтернатива использовать конструкцию 
+синхронизации, такую как AutoResetEvent или Wait и Pulse. Это делает 
+Suspend и Resume совершенно бесполезными.</p>
+<p style="padding-left: 30px;"><span style="color: #800000;">Устаревшие методы Suspend и Resume имеют два режима: опасно и бесполезно!</span></p>
+<p><a name="AbortingThreads"></a>[<strong>Прекращение работы потока</strong>]</p>
+<p>Вы можете принудительно завершить поток методом Abort:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">class</span> <span style="color: #0000ff; font-weight: bold;">Abort</span>
+{
+   <span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Main</span>()
+   {
+      Thread t = <span style="color: #008000; font-weight: bold;">new</span> Thread (<span style="color: #008000; font-weight: bold;">delegate</span>() { <span style="color: #008000; font-weight: bold;">while</span>(<span style="color: #008000; font-weight: bold;">true</span>); } );    <span style="color: #408080; font-style: italic;">// Бесконечное зацикливание</span>
+      t.Start();
+      Thread.Sleep (<span style="color: #666666;">1000</span>);          <span style="color: #408080; font-style: italic;">// Позволим этому циклу крутиться 1 секунду...</span>
+      t.Abort();                    <span style="color: #408080; font-style: italic;">// ... затем оборвем.</span>
+   }
+}
+</pre>
+</div>
+<p>Поток, работа которого обрывается, немедленно входит в состояние 
+AbortRequested. Если он затем завершается как ожидалось, то переходит в 
+состояние Stopped. Вызвавший код может ждать появления этого состояния 
+вызовом Join:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">class</span> <span style="color: #0000ff; font-weight: bold;">Abort</span>
+{
+   <span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Main</span>()
+   {
+      Thread t = <span style="color: #008000; font-weight: bold;">new</span> Thread (<span style="color: #008000; font-weight: bold;">delegate</span>() { <span style="color: #008000; font-weight: bold;">while</span> (<span style="color: #008000; font-weight: bold;">true</span>); } );
+ 
+      Console.WriteLine (t.ThreadState);     <span style="color: #408080; font-style: italic;">// Поток t не запущен (Unstarted)</span>
+ 
+      t.Start();
+      Thread.Sleep (<span style="color: #666666;">1000</span>);
+      Console.WriteLine (t.ThreadState);     <span style="color: #408080; font-style: italic;">// Работает (Running)</span>
+ 
+      t.Abort();
+      Console.WriteLine (t.ThreadState);     <span style="color: #408080; font-style: italic;">// Запрос на обрыв работы (AbortRequested)</span>
+ 
+      t.Join();
+      Console.WriteLine (t.ThreadState);     <span style="color: #408080; font-style: italic;">// Остановлен (Stopped)</span>
+   }
+}
+</pre>
+</div>
+<p>Abort вызывает к выбросу исключения ThreadAbortException на целевом 
+потоке, в большинстве случаев, когда поток работает. Поток, выполнение 
+которого останавливается таким способом, может выбрать обработку этого 
+исключения, однако тогда исключение автоматически повторно выбрасывается
+ в конец блока catch (чтобы помочь гарантировать потоку завершиться так,
+ как это ожидалось). Однако есть возможность предотвратить 
+автоматическое повторное выбрасывание исключения вызовом 
+Thread.ResetAbort внутри блока catch. Тогда поток вернется в состояние 
+Running (с которого он потенциально снова может получить Abort). В 
+следующем примере рабочий поток возвращается к жизни всякий раз, когда 
+сделана попытка оборвать его выполнение вызовом Abort:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">class</span> <span style="color: #0000ff; font-weight: bold;">Terminator</span>
+{
+   <span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Main</span>()
+   {
+      Thread t = <span style="color: #008000; font-weight: bold;">new</span> Thread (Work);
+      t.Start();
+      Thread.Sleep (<span style="color: #666666;">1000</span>); t.Abort();
+      Thread.Sleep (<span style="color: #666666;">1000</span>); t.Abort();
+      Thread.Sleep (<span style="color: #666666;">1000</span>); t.Abort();
+   }
+ 
+   <span style="color: #008000; font-weight: bold;">static</span> <span style="color: #008000; font-weight: bold;">void</span> <span style="color: #0000ff;">Work</span>()
+   {
+      <span style="color: #008000; font-weight: bold;">while</span> (<span style="color: #008000; font-weight: bold;">true</span>)
+      {
+         <span style="color: #008000; font-weight: bold;">try</span> { <span style="color: #008000; font-weight: bold;">while</span> (<span style="color: #008000; font-weight: bold;">true</span>); }
+         <span style="color: #008000; font-weight: bold;">catch</span> (ThreadAbortException) { Thread.ResetAbort(); }
+         Console.WriteLine (<span style="color: #ba2121;">"I will not die!"</span>);
+      }
+   }
+}
+</pre>
+</div>
+<p>ThreadAbortException обрабатывается при выполнении программы, не 
+заставляя завершаться все приложение если ThreadAbortException не было 
+обработано, в отличие от всех других типов исключений.</p>
+<p>Abort будет работать на потоке в любом его состоянии - running, 
+blocked, suspended или stopped. Однако если обрывается поток в состоянии
+ suspended, будет выброшено исключение ThreadStateException - на этот 
+раз в вызывающем потоке - и остановка потока не завершится, пока работа 
+останавливаемого потока не будет возобновлена (resume). Вот так следует 
+обрывать приостановленный поток:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">try</span> { suspendedThread.Abort(); }</pre>
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">catch</span> (ThreadStateException) { suspendedThread.Resume(); }</pre>
+<pre style="margin: 0; line-height: 125%;"><span style="color: #408080; font-style: italic;">// Теперь приостановленный поток suspendedThread будет оборван.</span>
+</pre>
+</div>
+<p><strong>Сложности, связанные с Thread.Abort</strong>. Если 
+предположить, что обрываемый поток не вызвал ResetAbort, то Вы можете 
+ожидать, что завершение потока произойдет очень быстро. Однако как это 
+происходит с хорошим адвокатом, поток может оставаться в камере 
+смертников довольно долго! Вот несколько факторов, которые могут 
+сохранить поток на некоторое время в состоянии AbortRequested:</p>
+<p>• Конструкторы статического класса никогда не прерываются таким 
+способом (чтобы потенциально не отравить оставшуюся жизнь домена 
+приложения).<br>• Все блоки catch/finally сохраняют работу, и никогда не обрываются посередине.<br>•
+ Если обрывается поток в необслуживаемом коде (unmanaged code), то 
+выполнение продолжится до момента достижения следующего оператора 
+обслуживаемого кода (managed code).</p>
+<p>Последний фактор может быть в частности проблематичным в том, что 
+сама платформа .NET часто вызывает необслуживаемый код, оставаясь в нем 
+на довольно долгое время. Примерами могут служить класс, обслуживающий 
+работу с сетью, или класс, работающий с базой данных. Если сетевой 
+ресурс недоступен, или медленно отвечает, то есть возможность, что 
+выполнение останется на это время полностью в необслуживаемом коде 
+возможно на минуты, в зависимости от реализации этого класса. В таких 
+случаях, конечно, не хотелось бы подключаться (Join) к обрываемому 
+потоку - по крайней мере без таймаута!</p>
+<p>Оборвать выполнение кода .NET менее проблематично, пока блоки 
+try/finally или операторы гарантируют правильную очистку при 
+выбрасывании исключения ThreadAbortException. Однако даже в этом случае 
+все еще можно быть уязвимым для неприятных неожиданностей. Для примера 
+рассмотрим следующее:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">using</span> (StreamWriter w = File.CreateText (<span style="color: #ba2121;">"myfile.txt"</span>))
+   w.Write (<span style="color: #ba2121;">"Abort-Safe?"</span>);
+</pre>
+</div>
+<p>Оператор using языка C# это просто синтаксический ярлычок, который в этом случае раскрывается в следующее:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;">StreamWriter w;
+w = File.CreateText (<span style="color: #ba2121;">"myfile.txt"</span>);</pre>
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">try</span>     { w.Write (<span style="color: #ba2121;">"Abort-Safe"</span>); }</pre>
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">finally</span> { w.Dispose();            }
+</pre>
+</div>
+<p>Может произойти так, что Abort произойдет после того, как создан 
+StreamWriter, но перед началом блока try. Фактически, если углубиться в 
+дебри IL (Intermediate Language, промежуточный язык), можно увидеть, что
+ запуск Abort может произойти между созданием StreamWriter и присвоением
+ его переменной w:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;">IL_0001:  ldstr      <span style="color: #ba2121;">"myfile.txt"</span>
+IL_0006:  call       <span style="color: #008000; font-weight: bold;">class</span> [<span style="color: #0000ff; font-weight: bold;">mscorlib</span>]System.IO.StreamWriter</pre>
+<pre style="margin: 0; line-height: 125%;"><span style="color: #7d9029;">                     [mscorlib]</span>System.IO.File::CreateText(<span style="color: #b00040;">string</span>)
+IL_000b:  stloc.<span style="color: #666666;">0</span>
+.<span style="color: #008000; font-weight: bold;">try</span>
+{
+   ...
+</pre>
+</div>
+<p>Так или иначе вызов метода Dispose в блоке finally будет обойден, в 
+результате останется заброшенным открытый дескриптор файла, что не даст 
+возможности последующим попыткам создать файл myfile.txt до завершения 
+процесса.</p>
+<p>В реальной ситуации этого примера все может быть еще хуже, потому что
+ Abort мог произойти в реализации File.CreateText. Это так называемый 
+непрозрачный код, для которого нет исходника. К счастью, код .NET 
+никогда не бывает по-настоящему непрозрачным: мы все еще можем 
+воспользоваться ILDASM - или еще лучше утилитой Reflector автора Lutz 
+Roeder, и увидеть, что File.CreateText вызвал конструктор StreamWriter, у
+ которого следующая логика:</p>
+<!-- HTML generated using hilite.me -->
+<div style="background: #f8f8f8; overflow: auto; width: auto; border: solid gray; border-width: .1em .1em .1em .8em; padding: .2em .6em;">
+<pre style="margin: 0; line-height: 125%;"><span style="color: #008000; font-weight: bold;">public</span> <span style="color: #0000ff;">StreamWriter</span> (<span style="color: #b00040;">string</span> path, <span style="color: #b00040;">bool</span> append, ...)
+{
+   ...
+   ...
+   Stream stream1 = StreamWriter.CreateFile (path, append);
+   <span style="color: #008000; font-weight: bold;">this</span>.Init (stream1, ...);
+}
+</pre>
+</div>
+<p>Нигде в этом конструкторе нет блока try/catch, что означает, что если
+ Abort будет вызван в (не тривиальном) методе Init, новый созданный 
+поток будет заброшен, и не останется способа закрыть нижележащий 
+дескриптор файла.</p>
+<p>Это ставит вопрос о том, как все-таки написать метод, дружественный к
+ Abort. Самый общий способ обойти эту проблему - вообще не обрывать 
+другой поток, реализовав вместо этого шаблоном кооперативной отмены 
+активности, как это было описано ранее (см. [4], секция "Безопасная 
+отмена операции потока").</p>
+<p><strong>Завершение доменов приложения</strong>. Другой способ 
+реализовать рабочий поток, дружественный к Abort - запустить его в своем
+ собственном домене приложения. После вызова Abort Вы снесете под корень
+ и заново создадите домен приложения. Это позаботиться о плохом 
+состоянии, вызванном частичной или неправильной инициализацией (хотя, к 
+сожалению, не дает гарантии защиты от сценариев неудачного случая, 
+описанного выше - обрыв работы конструктора StreamWriter все еще может 
+привести к утечке необслуживаемого дескриптора).</p>
+<p>Строго говоря, первый шаг - Abort потока - не нужен, потому что когда
+ выгружается домен приложения, все его выполняющиеся потоки 
+автоматически обрывают свое выполнение. Однако недостаток такого 
+поведения в том, что если оборванные потоки своевременно не завершатся 
+(возможно из-за зависания в блоках finally, или по другим причинам, 
+которые мы обсуждали раньше), то домен приложения не будет выгружен, и в
+ вызывающем коде будет выброшено исключение 
+CannotUnloadAppDomainException. По этой причине лучше явно оборвать 
+выполнение рабочего потока, затем вызвать Join с некоторым таймаутом 
+(над которым Вы имеете контроль) перед выгрузкой домена приложения.</p>
+<p>Создание и уничтожение домена приложения относительно затратно по 
+времени мире, где активно множество потоков (может занять несколько 
+миллисекунд, если не больше), так что это нечто такое, что следует 
+делать не регулярно, и уж точно не в цикле! Также разделение кода, 
+вводимое доменом приложения, вводит другой элемент, который может нести в
+ себе преимущество или вред, в зависимости от цели, которую ставит перед
+ собой приложение. В контексте тестирования модулей (unit-testing), 
+например, запуск потоков в отдельных доменах приложения дает выгоду.</p>
+<p><strong>Завершение процессов</strong>. Другой способ, каким можно 
+завершить поток - завершение родительского процесса. Один из примеров 
+такой ситуации - когда свойство IsBackground рабочего потока установлено
+ в true (рабочий поток получает свойство фонового потока), и главный 
+поток завершается, когда рабочий поток еще работает. Фоновый поток не 
+способен поддерживать работу приложения, и поэтому при завершении 
+процесса фоновый поток завершается вместе с ним.</p>
+<p>Когда поток завершается из-за завершение его родительского процесса, он немедленно умирает, и его блоки finally не выполняются.</p>
+<p>Та же самая ситуация возникает, когда пользователь завершает не 
+отвечающее приложение с помощью Менеджера Задач Windows (утилита Task 
+Manager), или прибивает процесс программно вызовом Process.Kill.</p>
+<p>[<strong>Ссылки</strong>]</p>
+<p><strong>1</strong>. Threading in C# PART 4: ADVANCED THREADING site:albahari.com.<br><strong>2</strong>. <a href="http://microsin.net/programming/pc/threading-in-csharp-part-1-getting-started.html">Потоки на C#. Часть 1: введение</a>.<br><strong>3</strong>. <a href="http://microsin.net/programming/pc/threading-in-csharp-part-2-basic-synchronization.html">Потоки на C#. Часть 2: основы синхронизации</a>.<br><strong>4</strong>. <a href="http://microsin.net/programming/pc/threading-in-csharp-part-3-using-threads.html">Потоки на C#. Часть 3: использование потоков</a>.<br><strong>5</strong>. <a href="http://microsin.net/programming/avr/nine-ways-to-break-your-systems-code-using-volatile.html">9 способов испортить код с помощью volatile</a>.<br><strong>6</strong>. <a href="http://microsin.net/programming/pc/threading-in-csharp-part-5-parallel-programming.html#SpinLock_and_SpinWait">SpinLock и SpinWait</a>.</p></td>
+</tr>
+
+</tbody></table>
+<span class="article_separator">&nbsp;</span>
+
+</html>

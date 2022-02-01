@@ -13,14 +13,14 @@ namespace LeetCode {
                 keys[k] = k;
             }
             Array.Sort(nums, keys);
-            int i, j = 0;
+            int i;
             for (i = 0; i < length - 1; i++) {
-                j = Array.BinarySearch(nums, i + 1, length - i - 1, target - nums[i]);
+                int j = Array.BinarySearch(nums, i + 1, length - i - 1, target - nums[i]);
                 if (j > 0) {
                     return new int[] { keys[i], keys[j] };
                 }
             }
-            throw new ArgumentOutOfRangeException();
+            throw new ArgumentOutOfRangeException(nameof(target));
         }
         public static bool IsPalindrome(int x) {
             if (x < 0)
@@ -114,7 +114,7 @@ namespace LeetCode {
                 current = '_';
                 prefLength++;
             }
-            return strs[0].Substring(0, prefLength);
+            return strs[0][..prefLength];
 
         }
         /// <summary>
@@ -161,9 +161,8 @@ namespace LeetCode {
             int flLength = fl.Length;
             if (2 * n > flLength + 1)
                 return false;
-            bool isRightAdjanced = false;
             while (i < flLength - 1) {
-                isRightAdjanced = fl[i + 1] != 0;
+                bool isRightAdjanced = fl[i + 1] != 0;
                 if (isRightAdjanced) {
                     i += 3;
                     //isRightAdjanced=false;

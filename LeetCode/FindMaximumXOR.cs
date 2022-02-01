@@ -32,7 +32,7 @@ namespace LeetCode {
             int a = nums[^1];
             int a_mask = GetMask(a);
             int pattern1 = 0;
-            (int st, int l) sec1 = new(0, nums.Length), sec2 = sec1;
+            (int st, int l) sec1 = new(0, nums.Length);
             var pair = FindBestPair(nums, sec1, pattern1, a_mask);
             return pair.a ^ pair.b;
         }
@@ -42,8 +42,8 @@ namespace LeetCode {
             (int st, int l) sec2;
             do {
                 pattern2 = pattern1;
-                pattern1 = pattern1 | (a_mask ^ (a_mask >> 1));
-                a_mask = a_mask >> 1;
+                pattern1 |= (a_mask ^ (a_mask >> 1));
+                a_mask >>= 1;
                 sec2 = FindInterval(nums, sec1, pattern2, a_mask);
                 sec1 = FindInterval(nums, sec1, pattern1, a_mask);
                 if (sec1.l < sec2.l) {

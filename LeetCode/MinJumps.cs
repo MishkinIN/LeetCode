@@ -25,7 +25,7 @@ Notice that you can not jump outside of the array at any time.
     1 <= arr.length <= 5 * 104
     -108 <= arr[i] <= 108
 */
-        private struct point { internal int i; internal int val; };
+        private struct Point { internal int i; internal int val; };
         public static int MinJumps(int[] arr)
         {
 
@@ -69,7 +69,7 @@ Notice that you can not jump outside of the array at any time.
                 indexes[i] = i;
             }
             Array.Sort(keys, indexes);
-            List<point> leftPoints = new(), leftPointsNextStep = new(), rightPoints = new(), rightPointsNextStep = new();
+            List<Point> leftPoints = new(), leftPointsNextStep = new(), rightPoints = new(), rightPointsNextStep = new();
             i = 1; j = 1;
 
             {
@@ -80,14 +80,14 @@ Notice that you can not jump outside of the array at any time.
                 }
                 else if (arr[1] != leftColor)
                 {
-                    leftPoints.Add(new point { i = 1, val = arr[1] });
+                    leftPoints.Add(new Point { i = 1, val = arr[1] });
                     arr[1] = leftColor;
                 }
                 foreach (var p_c in SearceAll(keys, indexes, leftColor))
                 {
                     if (p_c > 0)
                     {
-                        leftPoints.Add(new point { i = p_c, val = arr[p_c] });
+                        leftPoints.Add(new Point { i = p_c, val = arr[p_c] });
                         arr[p_c] = leftColor;
                     }
                 }
@@ -100,14 +100,14 @@ Notice that you can not jump outside of the array at any time.
                 }
                 else if (arr[p - 1] != rightColor)
                 {
-                    rightPoints.Add(new point { i = p - 1, val = arr[p - 1] });
+                    rightPoints.Add(new Point { i = p - 1, val = arr[p - 1] });
                     arr[p - 1] = rightColor;
                 }
                 foreach (var p_c in SearceAll(keys, indexes, rightColor))
                 {
                     if (p_c < p)
                     {
-                        rightPoints.Add(new point { i = p_c, val = arr[p_c] });
+                        rightPoints.Add(new Point { i = p_c, val = arr[p_c] });
                         arr[p_c] = rightColor;
                     }
                 }
@@ -127,7 +127,7 @@ Notice that you can not jump outside of the array at any time.
                     }
                     else if (arr[p + 1] != leftColor)
                     {
-                        leftPointsNextStep.Add(new point { i = p+1, val = arr[p+1] });
+                        leftPointsNextStep.Add(new Point { i = p+1, val = arr[p+1] });
                         arr[p + 1] = leftColor;
                     }
                     if (arr[p - 1] == rightColor)
@@ -136,7 +136,7 @@ Notice that you can not jump outside of the array at any time.
                     }
                     else if (arr[p - 1] != leftColor)
                     {
-                        leftPointsNextStep.Add(new point { i = p-1, val = arr[p-1] });
+                        leftPointsNextStep.Add(new Point { i = p-1, val = arr[p-1] });
                         arr[p - 1] = leftColor;
                     }
                     if (levelColors.Add(color))
@@ -149,7 +149,7 @@ Notice that you can not jump outside of the array at any time.
                             }
                             else if (arr[p_c] != leftColor & p_c != p)
                             {
-                                leftPointsNextStep.Add(new point { i = p_c, val = arr[p_c] } );
+                                leftPointsNextStep.Add(new Point { i = p_c, val = arr[p_c] } );
                                 arr[p_c] = leftColor;
                             }
                         }
@@ -168,7 +168,7 @@ Notice that you can not jump outside of the array at any time.
                     }
                     else if (arr[p + 1] != rightColor)
                     {
-                        rightPointsNextStep.Add(new point { i = p+1, val = arr[p+1] });
+                        rightPointsNextStep.Add(new Point { i = p+1, val = arr[p+1] });
                         arr[p + 1] = rightColor;
                     }
                     if (arr[p - 1] == leftColor)
@@ -177,7 +177,7 @@ Notice that you can not jump outside of the array at any time.
                     }
                     else if (arr[p - 1] != rightColor)
                     {
-                        rightPointsNextStep.Add(new point { i = p-1, val = arr[p-1] });
+                        rightPointsNextStep.Add(new Point { i = p-1, val = arr[p-1] });
                         arr[p - 1] = rightColor;
                     }
                     if (levelColors.Add(color))
@@ -190,7 +190,7 @@ Notice that you can not jump outside of the array at any time.
                             }
                             else if (arr[p_c] != rightColor & p_c != p)
                             {
-                                rightPointsNextStep.Add(new point { i = p_c, val = arr[p_c] });
+                                rightPointsNextStep.Add(new Point { i = p_c, val = arr[p_c] });
                                 arr[p_c] = rightColor;
                             }
                         }

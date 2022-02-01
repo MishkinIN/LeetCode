@@ -87,7 +87,7 @@ namespace LeetCode
     pos is -1 or a valid index in the linked-list.
 
          */
-        public bool HasCycle(ListNode head) {
+        public static bool HasCycle(ListNode head) {
             var ln2 = head?.next?.next;
             var ln3 = head?.next?.next?.next;
             while (head!=ln2 && head !=ln3) {
@@ -110,7 +110,7 @@ namespace LeetCode
     0 <= val <= 50
 
          */
-        public ListNode RemoveElements(ListNode head, int val) {
+        public static ListNode RemoveElements(ListNode head, int val) {
             while (head!=null && head.val==val) {
                 head = head.next;
             }
@@ -138,11 +138,11 @@ namespace LeetCode
         Follow up: A linked list can be reversed either iteratively or recursively. 
         Could you implement both?
          */
-        public ListNode ReverseList(ListNode head) {
+        public static ListNode ReverseList(ListNode head) {
             if (head==null) {
                 return null;
             }
-            ListNode tail = new ListNode(head.val), shuttle;
+            ListNode tail = new(head.val), shuttle;
             head = head.next;
             while (head!=null) {
                 shuttle = head.next;

@@ -26,7 +26,7 @@ namespace LeetCode
             int maxWealth = 0;
             foreach (var cust in accounts) {
                 var custWealth = cust.Sum();
-                maxWealth = Math.Max(maxWealth, custWealth);
+                maxWealth = System.Math.Max(maxWealth, custWealth);
             }
             return maxWealth;
         }

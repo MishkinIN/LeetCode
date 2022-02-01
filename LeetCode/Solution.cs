@@ -181,9 +181,7 @@ namespace LeetCode {
             else
                 return false;
         }
-        public static int Search(int[] nums, int target) {
-            return Array.BinarySearch(nums, target) < 0 ? -1 : Array.BinarySearch(nums, target);
-        }
+ 
         const int lCount = 26;
         public static string ConvertToTitle(int columnNumber) {
             Stack<char> title = new();
@@ -197,5 +195,6 @@ namespace LeetCode {
             }
             return sb.ToString();
         }
+ 
     }
 }

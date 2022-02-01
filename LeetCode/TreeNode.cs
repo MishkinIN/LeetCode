@@ -407,9 +407,9 @@ Sum of every tilt : 0 + 0 + 0 + 2 + 7 + 6 = 15
             int dept_rl = grandChield == null ? 1 : Dept(grandChield) + 2;
             grandChield = node.right?.right;
             int dept_rr = grandChield == null ? 1 : Dept(grandChield) + 2;
-            int dept = Math.Max(
-                Math.Max(dept_ll, dept_lr),
-                Math.Max(dept_rl, dept_rr));
+            int dept = System.Math.Max(
+                System.Math.Max(dept_ll, dept_lr),
+                System.Math.Max(dept_rl, dept_rr));
             if (dept == 1 && !(node.left == null && node.right == null)) {
                 return 2;
             }

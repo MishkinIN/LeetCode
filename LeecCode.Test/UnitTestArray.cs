@@ -409,14 +409,6 @@ int[] nums;
             Console.WriteLine($"Time to calculate LargestRectangleArea_I is {sw.Elapsed}");
             Assert.AreEqual(expected, actual);
         }
-        [Test]
-        public void LargestRectangleArea_I_BigArray() {
-           int expected = 416438779;
-            sw.Restart();
-            var actual = Solution.LargestRectangleArea_I(largeNums);
-            sw.Stop();
-            Console.WriteLine($"Time to calculate LargestRectangleArea_I is {sw.Elapsed}");
-            Assert.AreEqual(expected, actual);
-        }
+       
     }
 }

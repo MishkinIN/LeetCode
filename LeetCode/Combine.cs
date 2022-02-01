@@ -19,31 +19,24 @@ namespace LeetCode {
          
          */
         public static IList<IList<int>> Combine(int n, int k) {
+            List<IList<int>> lists = new();
+            int[] vs = new int[k];
+            Combine(lists, vs, n, k);
+            return lists;
+        }
+        private static void Combine(List<IList<int>> lists, int[] vs, int n, int k) {
             if (k == 1) {
-                List<IList<int>> lists = new();
-                for (int i = 0; i < n; i++) {
-                    var list = new List<int> { i + 1 };
-                    lists.Add(list);
+                for (int i = 1; i < n + 1; i++) {
+                    vs[0] = i;
+                    lists.Add(new List<int>(vs));
                 }
-                return lists;
             }
             else {
-                var lists = Combine(n, k - 1);
-                for (int i = lists.Count - 1; i > -1; i--) {
-                    var list = lists[i];
-                    if (list[k - 2] == n) {
-                        lists.Remove(list);
-                        continue;
-                    }
-                    for (int j = list[k - 2]+1; j < n; j++) {
-                        var lst = new List<int>(list) { j };
-                        lists.Add(lst);
-                    }
-                    list.Add(n);
+                for (int i = k; i < n+1; i++) {
+                    vs[k-1] = i;
+                    Combine(lists, vs, i-1, k-1);
                 }
-                return lists;
             }
         }
-
     }
 }

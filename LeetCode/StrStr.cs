@@ -269,6 +269,105 @@ namespace LeetCode
                 ==0 && nums[10] ==0 && nums[11] ==0 && nums[12] ==0 && nums[13] ==0 && nums[14] ==0 && nums[15] ==0 && nums[16] ==0 && nums[17] ==0 && nums[18] ==0 && nums[19]
                 ==0 && nums[20] ==0 && nums[21] ==0 && nums[22] ==0 && nums[23] ==0 && nums[24] ==0 && nums[25]== 0;
         }
+        /*
+         * 438. Find All Anagrams in a String
+         * Medium
+         * Given two strings s and p, return an array of all the start indices of p's anagrams in s.
+         * You may return the answer in any order.
+         * An Anagram is a word or phrase formed by rearranging the letters of a different word or phrase,
+         * typically using all the original letters exactly once.
+         * 
+         * Constraints:
 
+    1 <= s.length, p.length <= 3 * 10^4
+    s and p consist of lowercase English letters.
+
+        */
+        public static IList<int> FindAnagrams(string s, string p) {
+            List<int> lists = new();
+            if (p.Length>s.Length) {
+                return lists;
+            }
+            int n = p.Length;
+            int i = 0;
+            var pHash = GetHash(p);
+            int sHash = 0;
+            for (; i < n-1; i++) {
+                sHash += GetHash(s[i]);
+            }
+            int j = 0;
+            for (; i < s.Length; i++) {
+                sHash += GetHash(s[i]);
+                if (sHash== pHash && IsSubstrAnagram(s, start:j, template:p)) {
+                    lists.Add(j);
+                }
+                sHash -= GetHash(s[j]);
+                j++;
+            }
+            return lists;
+        }
+        private static int GetHash(char ch) {
+            return (ch - 'a') * 32+1;
+        }
+        private static int GetHash(string s) {
+            int hash = 0;
+            foreach (var ch in s) {
+                hash += GetHash(ch);
+            }
+            return hash;
+        }
+        private static bool IsSubstrAnagram(string s, int start, string template) {
+            int[] chars = new int[26];
+            for(int i=start; i< start+template.Length; i++) {
+                chars[s[i] - 'a']++;
+            }
+            foreach (var ch in template) {
+                chars[ch - 'a']--;
+            }
+            foreach (var item in chars) {
+                if (item != 0) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        public static IList<int> FindAnagrams_LC(string s, string p) {
+            int ns = s.Length, np = p.Length;
+            if (ns < np)
+                return new List<int>();
+
+            int[] pCount = new int[26];
+            int[] sCount = new int[26];
+            for (int i = 0; i < p.Length; i++) {
+                pCount[p[i] - 'a']++;
+            }
+
+            List<int> output = new List<int>();
+            for (int i = 0; i < ns; ++i) {
+                // add one more letter 
+                // on the right side of the window
+                sCount[s[i] - 'a']++;
+                // remove one letter 
+                // from the left side of the window
+                if (i >= np) {
+                    sCount[s[i - np] - 'a']--;
+                }
+                // compare array in the sliding window
+                // with the reference array
+                if (isarrayequal(sCount, pCount)) {
+                    output.Add(i - np + 1);
+                }
+            }
+            return output;
+        }
+
+        private static bool isarrayequal(int[] a, int[] b) {
+            for (int i = 0; i < a.Length; i++) {
+                if (a[i] != b[i])
+                    return false;
+            }
+            return true;
+        }
     }
 }

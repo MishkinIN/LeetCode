@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace LeetCode {
 
@@ -16,19 +14,32 @@ namespace LeetCode {
     0 <= k <= 10^5
 
 */
+        const int IntSize = 4;
         public static void Rotate(int[] nums, int k) {
             if (nums.Length < 2) {
                 return;
             }
             int nLength = nums.Length;
             int shift = k % nLength;
-            if (shift == 0)
-                return;
             int n = nums.Length - shift;
-            int[] shiftNums = new int[n];
-            Array.Copy(nums, 0, shiftNums, 0, n);
-            Array.Copy(nums, n, nums, 0, shift);
-            Array.Copy(shiftNums, 0, nums, shift, n);
+            if (shift>n) {
+                int[] shiftNums = new int[n];
+                //Array.Copy(nums, 0, shiftNums, 0, n);
+                Buffer.BlockCopy(nums, 0, shiftNums, 0, n * IntSize);
+                //Array.Copy(nums, n, nums, 0, shift);
+                Buffer.BlockCopy(nums, n * IntSize, nums, 0, shift * IntSize);
+                //shiftNums.CopyTo(nums, shift);
+                Buffer.BlockCopy(shiftNums, 0, nums, shift * IntSize, n * IntSize);
+            }
+            else {
+                int[] shiftNums = new int[shift];
+                //Array.Copy(nums, n, shiftNums, 0, shift);
+                Buffer.BlockCopy(nums, n * IntSize, shiftNums, 0, shift * IntSize);
+                //Array.Copy(nums, 0, nums, shift, n);
+                Buffer.BlockCopy(nums, 0, nums, shift*IntSize, n*IntSize);
+                //shiftNums.CopyTo(nums,0);
+                Buffer.BlockCopy(shiftNums, 0, nums, 0, shift * IntSize);
+            }
         }
         public static void Rotate_lc(int[] nums, int k) {
             var length = nums.Length;
@@ -261,6 +272,34 @@ namespace LeetCode {
             }
             return maxProfit;
         }
+        /*
+         * 746. Min Cost Climbing Stairs
+         * Easy
+         * You are given an integer array cost where cost[i] is the cost of ith step on a staircase.
+         * Once you pay the cost, you can either climb one or two steps.
+         * You can either start from the step with index 0, or the step with index 1.
+         * Return the minimum cost to reach the top of the floor.
+         * 
+         * Constraints:
 
+    2 <= cost.length <= 1000
+    0 <= cost[i] <= 999
+
+         */
+        public static int MinCostClimbingStairs(int[] costs) {
+            var mc = GetMinCostClimbing(costs, costs.Length);
+            return mc.n0;
+        }
+        private static (int n1, int n0) GetMinCostClimbing(int[] costs, int n) {
+            switch (n) {
+                case 1:
+                    return (0, 0);
+                case 2:
+                    return (0, System.Math.Min(costs[n - 1], costs[n - 2]));
+                default:
+                    var mc = GetMinCostClimbing(costs, n - 1);
+                    return (mc.n0, System.Math.Min(mc.n0 + costs[n - 1], mc.n1 + costs[n-2]));
+            }
+        }
     }
 }

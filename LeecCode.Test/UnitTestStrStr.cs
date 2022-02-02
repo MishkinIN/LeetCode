@@ -3,6 +3,8 @@ using LeetCode;
 using System.Text;
 using System.Collections.Generic;
 using System;
+using System.Linq;
+using System.Diagnostics;
 
 namespace LeecCode.Test
 {
@@ -10,6 +12,8 @@ namespace LeecCode.Test
         private string bigPattern;
         private string bigPatternString;
         private string bigNotPatternString;
+        private readonly Stopwatch sw = new();
+
         [SetUp]
         public void Setup() {
             StringBuilder sbBigPattern = new();
@@ -101,6 +105,53 @@ namespace LeecCode.Test
             s = "aaaa123";
             Assert.AreEqual(4, Solution.LengthOfLongestSubstring(s));
             Console.WriteLine(Solution.LengthOfLongestSubstring(bigPatternString));
+        }
+        [Test]
+        public void FindAnagrams() {
+            string s, p;
+            s = "cbaebabacd";
+            p = "abc";
+            var actual = Solution.FindAnagrams(s, p)
+                .ToArray();
+            int[] expected = new int[] { 0, 6 };
+            Assert.IsTrue(UnitTestArray.Equal(expected, actual));
+
+            s = "abab";
+            p = "ab";
+            actual = Solution.FindAnagrams(s, p)
+                .ToArray();
+            expected = new int[] { 0,1,2};
+            Assert.IsTrue(UnitTestArray.Equal(expected, actual));
+        }
+        [Test]
+        public void FindAnagrams_w30_000() {
+            Random random = new ();
+            StringBuilder sb = new ();
+            for (int i = 0; i < 3_000_000; i++) {
+                sb.Append((char)random.Next('a', 'z'));
+            }
+            string s = sb.ToString();
+            string p = s.Substring(10_000, 25);
+            sw.Restart();
+            var actual = Solution.FindAnagrams(s, p);
+            sw.Stop();
+            Console.WriteLine($"Time Solution.FindAnagrams in {sw.Elapsed}");
+            Assert.IsTrue(actual.Contains(10_000)); 
+        }
+        [Test]
+        public void FindAnagrams_w30_000_LC() {
+            Random random = new ();
+            StringBuilder sb = new ();
+            for (int i = 0; i < 3_000_000; i++) {
+                sb.Append((char)random.Next('a', 'z'));
+            }
+            string s = sb.ToString();
+            string p = s.Substring(10_000, 25);
+            sw.Restart();
+            var actual = Solution.FindAnagrams_LC(s, p);
+            sw.Stop();
+            Console.WriteLine($"Time Solution.FindAnagrams in {sw.Elapsed}");
+            Assert.IsTrue(actual.Contains(10_000)); 
         }
     }
 }

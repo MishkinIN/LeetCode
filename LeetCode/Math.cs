@@ -65,5 +65,31 @@ namespace LeetCode {
                     return (p.n1, p.n2 , p.n+p.n1+p.n2);
             }
         }
+        /*
+         * 70. Climbing Stairs
+         * Easy
+         * You are climbing a staircase. It takes n steps to reach the top.
+         * Each time you can either climb 1 or 2 steps. In how many distinct ways can you climb to the top?
+         * 
+         * Constraints:
+
+    1 <= n <= 45
+
+         */
+        public static int ClimbStairs(int n) {
+            return GetClimb(n).n0;
+
+        }
+        private static (int n1, int n0) GetClimb(int n) {
+            switch (n) {
+                case 1:
+                    return (0, 1);
+                case 2:
+                    return (1, 2);
+                default:
+                    var cl = GetClimb(n - 1);
+                    return (cl.n0, cl.n0 + cl.n1);
+            }
+        }
     }
 }

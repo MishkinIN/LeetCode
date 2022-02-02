@@ -409,6 +409,17 @@ int[] nums;
             Console.WriteLine($"Time to calculate LargestRectangleArea_I is {sw.Elapsed}");
             Assert.AreEqual(expected, actual);
         }
-       
+       [Test]
+       public void MinCostClimbingStairs() {
+            int[] costs;
+            int actual;
+            costs = new int[] { 10, 15, 20 };
+            actual = Solution.MinCostClimbingStairs(costs);
+            Assert.AreEqual(15, actual);
+            costs = new int[] { 1, 100, 1, 1, 1, 100, 1, 1, 100, 1 };
+            actual = Solution.MinCostClimbingStairs(costs);
+            Assert.AreEqual(6, actual);
+
+        }
     }
 }

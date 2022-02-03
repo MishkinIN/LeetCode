@@ -436,11 +436,20 @@ namespace LeecCode.Test {
         [Test]
         public void Rob_II() {
             int[] nums;
+            nums = new int[] { 0 };
+            int expected = 0;
+            Assert.AreEqual(expected, Solution.Rob_II(nums));
+            nums = new int[] { 2, 3 };
+            expected = 3;
+            Assert.AreEqual(expected, Solution.Rob_II(nums));
             nums = new int[] { 2, 3, 2 };
-            int expected = 3;
+            expected = 3;
             Assert.AreEqual(expected, Solution.Rob_II(nums));
             nums = new int[] { 1, 2, 3, 1 };
             expected = 4;
+            Assert.AreEqual(expected, Solution.Rob_II(nums));
+            nums = new int[] { 1, 3, 1, 3, 100 };
+            expected = 103;
             Assert.AreEqual(expected, Solution.Rob_II(nums));
             nums = new int[] { 1, 2, 3 };
             expected = 3;
@@ -602,16 +611,16 @@ namespace LeecCode.Test {
         [Test]
         public void DeleteAndEarn() {
             int[] nums;
-            nums = new int[] { 3,4,2 };
+            nums = new int[] { 3, 4, 2 };
             int expected = 6;
             Assert.AreEqual(expected, Solution.DeleteAndEarn(nums));
-            nums = new int[] {1, 1, 1, 2, 4, 5, 5, 5, 6 };
+            nums = new int[] { 1, 1, 1, 2, 4, 5, 5, 5, 6 };
             expected = 18;
             Assert.AreEqual(expected, Solution.DeleteAndEarn(nums));
-             nums = new int[] { 2, 2, 3, 3, 3, 4 };
+            nums = new int[] { 2, 2, 3, 3, 3, 4 };
             expected = 9;
             Assert.AreEqual(expected, Solution.DeleteAndEarn(nums));
-            nums = new int[] { 3,1 };
+            nums = new int[] { 3, 1 };
             expected = 4;
             Assert.AreEqual(expected, Solution.DeleteAndEarn(nums));
         }

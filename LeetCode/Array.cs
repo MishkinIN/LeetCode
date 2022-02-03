@@ -354,16 +354,18 @@ namespace LeetCode {
 
          */
         public static int Rob_II(int[] nums) {
-            var rob1 = GetRob_II(nums, nums.Length - 1);
+            var rob1 = GetRob_II(nums, nums.Length - 2, start: 0);
             var rob2 = GetRob_II(nums, nums.Length - 1, start: 1);
             return System.Math.Max(rob1.r0, rob2.r0);
         }
         private static (int r1, int r0) GetRob_II(int[] nums, int i, int start = 0) {
             switch (i - start) {
+                case < 0:
+                    return (0, nums[0]);
                 case 0:
-                    return (0, nums[start]);
+                    return (0, nums[i]);
                 case 1:
-                    return (nums[start], System.Math.Max(nums[start], nums[start + 1]));
+                    return (nums[start], System.Math.Max(nums[i], nums[start]));
                 default:
                     break;
             }

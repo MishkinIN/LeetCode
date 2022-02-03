@@ -22,7 +22,7 @@ namespace LeetCode {
             int nLength = nums.Length;
             int shift = k % nLength;
             int n = nums.Length - shift;
-            if (shift>n) {
+            if (shift > n) {
                 int[] shiftNums = new int[n];
                 //Array.Copy(nums, 0, shiftNums, 0, n);
                 Buffer.BlockCopy(nums, 0, shiftNums, 0, n * IntSize);
@@ -36,7 +36,7 @@ namespace LeetCode {
                 //Array.Copy(nums, n, shiftNums, 0, shift);
                 Buffer.BlockCopy(nums, n * IntSize, shiftNums, 0, shift * IntSize);
                 //Array.Copy(nums, 0, nums, shift, n);
-                Buffer.BlockCopy(nums, 0, nums, shift*IntSize, n*IntSize);
+                Buffer.BlockCopy(nums, 0, nums, shift * IntSize, n * IntSize);
                 //shiftNums.CopyTo(nums,0);
                 Buffer.BlockCopy(shiftNums, 0, nums, 0, shift * IntSize);
             }
@@ -263,7 +263,7 @@ namespace LeetCode {
             int bestPriceToBuy = int.MaxValue;
             int maxProfit = 0;
             foreach (var price in prices) {
-                if (price< bestPriceToBuy) {
+                if (price < bestPriceToBuy) {
                     bestPriceToBuy = price;
                 }
                 else if (price - bestPriceToBuy > maxProfit) {
@@ -298,8 +298,284 @@ namespace LeetCode {
                     return (0, System.Math.Min(costs[n - 1], costs[n - 2]));
                 default:
                     var mc = GetMinCostClimbing(costs, n - 1);
-                    return (mc.n0, System.Math.Min(mc.n0 + costs[n - 1], mc.n1 + costs[n-2]));
+                    return (mc.n0, System.Math.Min(mc.n0 + costs[n - 1], mc.n1 + costs[n - 2]));
             }
+        }
+        /*
+         * 198. House Robber
+         * Medium
+         * You are a professional robber planning to rob houses along a street. 
+         * Each house has a certain amount of money stashed, 
+         * the only constraint stopping you from robbing each of them is 
+         * that adjacent houses have security systems connected and 
+         * it will automatically contact the police if two adjacent houses were broken into on the same night.
+         * Given an integer array nums representing the amount of money of each house, 
+         * return the maximum amount of money you can rob tonight without alerting the police.
+         * 
+         * Constraints:
+
+    1 <= nums.length <= 100
+    0 <= nums[i] <= 400
+
+         */
+        public static int Rob(int[] nums) {
+            var rob = GetRob(nums, nums.Length - 1);
+            return rob.r0;
+        }
+        private static (int r1, int r0) GetRob(int[] nums, int i) {
+            switch (i) {
+                case 0:
+                    return (0, nums[0]);
+                case 1:
+                    return (nums[0], System.Math.Max(nums[0], nums[1]));
+                default:
+                    break;
+            }
+            var getRob = GetRob(nums, i - 1);
+            return (getRob.r0, System.Math.Max(getRob.r0, getRob.r1 + nums[i]));
+        }
+
+        /*
+         * 213. House Robber II
+         * Medium
+         * You are a professional robber planning to rob houses along a street. 
+         * Each house has a certain amount of money stashed.
+         * All houses at this place are arranged in a circle.
+         * That means the first house is the neighbor of the last one.
+         * Meanwhile, adjacent houses have a security system connected,
+         * and it will automatically contact the police if two adjacent houses were broken into on the same night.
+         * Given an integer array nums representing the amount of money of each house,
+         * return the maximum amount of money you can rob tonight without alerting the police.
+         * 
+         * Constraints:
+
+    1 <= nums.length <= 100
+    0 <= nums[i] <= 1000
+
+         */
+        public static int Rob_II(int[] nums) {
+            var rob1 = GetRob_II(nums, nums.Length - 1);
+            var rob2 = GetRob_II(nums, nums.Length - 1, start: 1);
+            return System.Math.Max(rob1.r0, rob2.r0);
+        }
+        private static (int r1, int r0) GetRob_II(int[] nums, int i, int start = 0) {
+            switch (i - start) {
+                case 0:
+                    return (0, nums[start]);
+                case 1:
+                    return (nums[start], System.Math.Max(nums[start], nums[start + 1]));
+                default:
+                    break;
+            }
+            var getRob = GetRob_II(nums, i - 1, start);
+            return (getRob.r0, System.Math.Max(getRob.r0, getRob.r1 + nums[i]));
+        }
+
+        /*
+         * 454. 4Sum II
+         * Medium
+         * Given four integer arrays nums1, nums2, nums3, and nums4 all of length n,
+         * return the number of tuples (i, j, k, l) such that:
+         * 0 <= i, j, k, l < n
+         * nums1[i] + nums2[j] + nums3[k] + nums4[l] == 0
+         * 
+         * Constraints:
+
+    n == nums1.length
+    n == nums2.length
+    n == nums3.length
+    n == nums4.length
+    1 <= n <= 200
+    -228 <= nums1[i], nums2[i], nums3[i], nums4[i] <= 228
+
+         */
+        public static int FourSumCount(int[] nums1, int[] nums2, int[] nums3, int[] nums4) {
+            Dictionary<int, int> dic1 = new();
+            foreach (var n1 in nums1) {
+                foreach (var n2 in nums2) {
+                    int sum = n1 + n2;
+                    dic1.TryGetValue(sum, out int c);
+                    dic1[sum] = c + 1;
+                }
+            }
+            Dictionary<int, int> dic2 = new();
+            foreach (var n in nums3) {
+                foreach (var d in dic1.Keys) {
+                    int sum = n + d;
+                    dic2.TryGetValue(sum, out int c);
+                    dic2[sum] = c + dic1[d];
+                }
+            }
+            int count = 0;
+            foreach (var n in nums4) {
+                if (dic2.ContainsKey(-1 * n)) {
+                    count += dic2[-1 * n];
+                }
+            }
+            return count;
+        }
+        public static int FourSumCount_II(int[] nums1, int[] nums2, int[] nums3, int[] nums4) {
+            int count = 0;
+            foreach (var n1 in nums1) {
+                foreach (var n2 in nums2) {
+                    foreach (var n3 in nums3) {
+                        foreach (var n4 in nums4) {
+                            if (n1 + n2 + n3 + n4 == 0)
+                                count++;
+                        }
+                    }
+                }
+            }
+            return count;
+        }
+        public static int FourSumCount_I(int[] nums1, int[] nums2, int[] nums3, int[] nums4) {
+            Dictionary<int, int> dic1 = new();
+            foreach (var n1 in nums1) {
+                foreach (var n2 in nums2) {
+                    if (dic1.ContainsKey(n1 + n2)) {
+                        dic1[n1 + n2]++;
+                    }
+                    else {
+                        dic1[n1 + n2] = 1;
+                    }
+                }
+            }
+            Dictionary<int, int> dic2 = new();
+            foreach (var n3 in nums3) {
+                foreach (var d1 in dic1.Keys) {
+                    if (dic2.ContainsKey(n3 + d1)) {
+                        dic2[n3 + d1] += dic1[d1];
+                    }
+                    else
+                        dic2[n3 + d1] = dic1[d1];
+                }
+            }
+            Dictionary<int, int> dic3 = new();
+            foreach (var n4 in nums4) {
+                foreach (var d2 in dic2.Keys) {
+                    if (dic3.ContainsKey(n4 + d2)) {
+                        dic3[n4 + d2] += dic2[d2];
+                    }
+                    else
+                        dic3[n4 + d2] = dic2[d2];
+                }
+            }
+            if (dic3.ContainsKey(0)) {
+                return dic3[0];
+            }
+            else
+                return 0;
+        }
+        public static int FourSumCount_Slow(int[] nums1, int[] nums2, int[] nums3, int[] nums4) {
+            Array.Sort(nums1);
+            Array.Sort(nums2);
+            Array.Sort(nums3);
+            Array.Sort(nums4);
+            var vs1 = GetAllSums(nums1, nums2);
+            var vs2 = GetAllSums(nums3, nums4);
+            int i = 0, j = vs2.Length - 1, count = 0;
+            while (i < vs1.Length && j >= 0) {
+                int sum = vs1[i] + vs2[j];
+                if (sum == 0) {
+                    int count_i = 0;
+                    int count_j = 0;
+                    int vs_i = vs1[i];
+                    int vs_j = vs2[j];
+                    while (vs1[i] == vs_i) {
+                        count_i++;
+                        if (++i == vs1.Length)
+                            break;
+                    }
+                    while (vs2[j] == vs_j) {
+                        count_j++;
+                        if (--j < 0)
+                            break;
+                    }
+                    count += count_i * count_j;
+                }
+                else if (sum > 0) {
+                    j--;
+                }
+                else {
+                    i++;
+                }
+            }
+            return count;
+        }
+        internal static int[] GetAllSums(int[] nums1, int[] nums2) {
+            int n = nums1.Length;
+            int m = nums2.Length;
+            int nm = n * m;
+            int[] vs = new int[nm];
+            int index = (n - 1) * m;
+            int n1 = nums1[^1];
+            foreach (var item in nums2) {
+                vs[index++] = n1 + item;
+            }
+            for (int i = n - 2; i >= 0; i--) {
+                n1 = nums1[i];
+                index = i * m;
+                int cursor = index + m;
+                foreach (var item in nums2) {
+                    //vs[index++] += n1 + item;
+                    int sum = item + n1;
+                    while (cursor < nm && sum > vs[cursor]) {
+                        vs[index++] = vs[cursor++];
+                    }
+                    vs[index++] = sum;
+                }
+            }
+            return vs;
+        }
+        /*
+         * 740. Delete and Earn
+         * Medium
+         * You are given an integer array nums. You want to maximize the number of points you get
+         * by performing the following operation any number of times:
+         * Pick any nums[i] and delete it to earn nums[i] points. 
+         * Afterwards, you must delete every element equal to nums[i] - 1 
+         * and every element equal to nums[i] + 1.
+         * Return the maximum number of points you can earn 
+         * by applying the above operation some number of times.
+         * 
+         * Constraints:
+
+    1 <= nums.length <= 2 * 10^4
+    1 <= nums[i] <= 10^4
+
+         */
+        public static int DeleteAndEarn(int[] nums) {
+            SortedDictionary<int, int> dic = new();
+            foreach (var n in nums) {
+                dic.TryGetValue(n, out int c);
+                dic[n] = c + n;
+            }
+
+            int lastKey, val_1, val_2, val;
+            var en = dic.GetEnumerator();
+            en.MoveNext();
+            var kvp = en.Current;
+            if (dic.Count == 1) {
+                return kvp.Value;
+            }
+            lastKey = kvp.Key;
+            val_2 = kvp.Value;
+            en.MoveNext();
+            kvp = en.Current;
+            val = val_1 = System.Math.Max(val_2
+                , kvp.Key - lastKey > 1 ? val_2 + kvp.Value : kvp.Value);
+            lastKey = kvp.Key;
+            int i = 2;
+            while (en.MoveNext()) {
+                kvp = en.Current;
+                val = System.Math.Max(val_1
+                    , kvp.Key - lastKey > 1 ? val_1 + kvp.Value : val_2 + kvp.Value);
+                lastKey = kvp.Key;
+                i++;
+                val_2 = val_1;
+                val_1 = val;
+            }
+            return val;
         }
     }
 }

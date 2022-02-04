@@ -63,16 +63,31 @@ namespace LeetCode
                 s[right] = acc;
             }
         }
+        /*
+         * 557. Reverse Words in a String III
+         * Easy
+         * Given a string s, reverse the order of characters in each word 
+         * within a sentence while still preserving whitespace and initial word order.
+         * 
+         * Constraints:
+
+    1 <= s.length <= 5 * 10^4
+    s contains printable ASCII characters.
+    s does not contain any leading or trailing spaces.
+    There is at least one word in s.
+    All the words in s are separated by a single space.
+         */
         public static string ReverseWords(string s) {
             StringBuilder sb = new();
-            var space = "";
-            foreach (string word in Split(s, ' ')) {
-                sb.Append(space);
-                space = " ";
+            var space = " ";
+            var words = s.Split(' '); // Split(string s, char sep) is better
+            foreach (string word in words) {
                 for (int i = word.Length-1; i >=0 ; i--) {
                     sb.Append(word[i]);
                 }
+                sb.Append(space);
             }
+            sb.Remove(sb.Length - 1, 1);
             return sb.ToString();
         }
         private static IEnumerable<string> Split(string s, char sep) {

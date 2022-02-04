@@ -579,5 +579,167 @@ namespace LeetCode {
             }
             return val;
         }
+        /*
+         * 525. Contiguous Array
+         * Medium
+         * Given a binary array nums, return the maximum length of a contiguous subarray
+         * with an equal number of 0 and 1.
+         * 
+         * Example 2:
+
+Input: nums = [0,1,0]
+Output: 2
+Explanation: [0, 1] (or [1, 0]) is a longest contiguous subarray with equal number of 0 and 1.
+Input: nums =         [0,1,0,1]
+Output = 4
+
+         * Constraints:
+
+    1 <= nums.length <= 10^5
+    nums[i] is either 0 or 1.
+
+         */
+        public static int FindMaxLength(int[] nums) {
+            int maxLength = 0;
+            int[] num_intervals = new int[nums.Length+1];
+            int cursor = 0;
+            int headValue = nums[0];
+            int i_start = 0;
+            (int min, int max)[] intervals = new (int min, int max)[] { (0, 0), (0, 0) };
+            (int min, int max) interval;
+            int i_intervals = 1;
+            for (int i = 0; i < nums.Length; i++) {
+                if (nums[i] != headValue) {
+                    i_intervals = (i_intervals + 1) % 2;
+                    interval = intervals[i_intervals];
+                    num_intervals[cursor++] = i - i_start;
+                    interval.max += i - i_start;
+                    intervals[i_intervals] = interval;
+                    headValue +=1;
+                    headValue %= 2;
+                    i_start = i;
+                }
+            }
+            i_intervals = (i_intervals + 1) % 2;
+            interval = intervals[i_intervals];
+            num_intervals[cursor] = nums.Length - i_start;
+            interval.max += nums.Length - i_start;
+            intervals[i_intervals] = interval;
+
+            var interval1 = intervals[0];
+            var interval2 = intervals[1];
+            if (i_intervals == 0)
+                cursor++;
+            int l_cursor = 0;
+            interval1.min = interval1.max - num_intervals[l_cursor];
+            interval2.min = interval2.max - num_intervals[cursor];
+            while (l_cursor <= cursor) {
+                int max = System.Math.Min(interval1.max, interval2.max);
+                int min = System.Math.Max(interval1.min, interval2.min);
+                if (max >= min) {
+                    return 2 * max;
+                }
+
+                if ( (interval2.max > interval1.max )
+                     ^ (num_intervals[l_cursor]- num_intervals[l_cursor+1]
+                        > num_intervals[cursor-1] - num_intervals[cursor])) {
+                    interval1.min -= num_intervals[l_cursor];
+                    interval1.max -= num_intervals[l_cursor++];
+                    interval2.min -= num_intervals[l_cursor];
+                    interval2.max -= num_intervals[l_cursor++];
+                }
+                else {
+                    interval2.min -= num_intervals[cursor];
+                    interval2.max -= num_intervals[cursor--];
+                    interval1.min -= num_intervals[cursor];
+                    interval1.max -= num_intervals[cursor--];
+                }
+            }
+            return maxLength;
+        }
+        private static int GetMaxLength(int[] num_intervals, int l_cursor, int r_cursor,
+            (int min, int max) interval1, (int min, int max) interval2) {
+
+        } 
+
+        /*
+         * 55. Jump Game
+         * Medium
+         * You are given an integer array nums. 
+         * You are initially positioned at the array's first index, 
+         * and each element in the array represents your maximum jump length at that position.
+         * Return true if you can reach the last index, or false otherwise.
+         * 
+         * Constraints:
+
+    1 <= nums.length <= 10^4
+    0 <= nums[i] <= 10^5
+
+         */
+        public static bool CanJump(int[] nums) {
+            int lastIndex = nums.Length - 1;
+            for (int i = lastIndex - 1; i >= 0; i--) {
+                if (lastIndex - i <= nums[i]) {
+                    lastIndex = i;
+                }
+            }
+            return lastIndex == 0;
+        }
+        /*
+         * 45. Jump Game II
+         * Medium
+         * Given an array of non-negative integers nums, 
+         * you are initially positioned at the first index of the array.
+         * Each element in the array represents your maximum jump length at that position.
+         * Your goal is to reach the last index in the minimum number of jumps.
+         * You can assume that you can always reach the last index.
+         *
+         *Constraints:
+
+    1 <= nums.length <= 10^4
+    0 <= nums[i] <= 1000
+
+         */
+        public static int Jump_II(int[] nums) {
+            int m = nums.Length;
+            int[] stack = new int[m + 1];
+            int st_current = 0;
+            stack[st_current] = m - 1;
+            for (int i = m - 2; i >= 0; i--) {
+                int maxJumpIndex = i + nums[i];
+                int j;
+                for (j = 0; j < st_current; j++) {
+                    if (stack[j] <= maxJumpIndex)
+                        break;
+                }
+                st_current = j + 1;
+                stack[st_current] = i;
+            }
+            return st_current;
+        }
+        public static int Jump_II_slow(int[] nums) {
+            int m = nums.Length;
+            int[] jumps = new int[m];
+            for (int i = m - 2; i >= 0; i--) {
+                int val = nums[i];
+                if (val == 0) {
+                    jumps[i] = int.MaxValue;
+                    continue;
+                }
+                else if (val > m - i - 2) {
+                    jumps[i] = 1;
+                    continue;
+                }
+                int minJ = int.MaxValue;
+                for (int j = i + val; j > i; j--) {
+                    minJ = System.Math.Min(minJ, Inc(jumps[j]));
+                }
+                jumps[i] = minJ;
+            }
+            return jumps[0];
+        }
+        private static int Inc(int i) {
+            return i == int.MaxValue ? int.MaxValue : i + 1;
+        }
     }
 }

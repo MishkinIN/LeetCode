@@ -26,6 +26,20 @@ namespace LeetCode {
 
          */
         public static int[][] MatrixReshape(int[][] mat, int r, int c) {
+            int m = mat.Length, n = mat[0].Length;
+            if (m * n != r * c) {
+                return mat;
+            }
+            int[][] res = new int[r][];
+            for (int i = 0; i < r; i++) {
+                res[i] = new int[c];
+            }
+            for (int k = 0; k < m*n; k++) {
+                res[k / c][k % c] = mat[k / n][k % n];
+            }
+            return res;
+        }
+        public static int[][] MatrixReshape_I(int[][] mat, int r, int c) {
             if (r * c == 0) {
                 return mat;
             }

@@ -67,6 +67,39 @@ namespace LeecCode.Test {
             Assert.AreEqual(3, Solution.MaxDistToClosest(nums));
         }
         [Test]
+        public void MinJumps_II() {
+            int[] nums;
+            nums = new int[] { 2, 3, 1, 1, 4 };
+            Assert.AreEqual(2, Solution.Jump_II(nums));
+            nums = new int[] { 0 };
+            Assert.AreEqual(0, Solution.Jump_II(nums));
+            nums = new int[] { 1 };
+            Assert.AreEqual(0, Solution.Jump_II(nums));
+            nums = new int[] { 1, 0 };
+            Assert.AreEqual(1, Solution.Jump_II(nums));
+            nums = new int[] { 1, 1 };
+            Assert.AreEqual(1, Solution.Jump_II(nums));
+            nums = new int[] { 1, 1, 1 };
+            Assert.AreEqual(2, Solution.Jump_II(nums));
+            nums = new int[] { 2, 0, 1 };
+            Assert.AreEqual(1, Solution.Jump_II(nums));
+             nums = new int[] { 2, 3, 0, 1, 4 };
+            Assert.AreEqual(2, Solution.Jump_II(nums));
+            nums = new int[] { 5, 0, 0 };
+            Assert.AreEqual(1, Solution.Jump_II(nums));
+            nums = new int[] { 1, 3, 0,0,0 };
+            Assert.AreEqual(2, Solution.Jump_II(nums));
+        }
+        [Test]
+        public void CanJump() {
+            int[] nums;
+            nums = new int[] { 2, 3, 1, 1, 4 };
+            Assert.IsTrue(Solution.CanJump(nums));
+            nums = new int[] { 3, 2, 1, 0, 4 };
+            Assert.IsFalse(Solution.CanJump(nums));
+           
+        }
+        [Test]
         public void ContainsDuplicate() {
             int[] nums;
             nums = new int[] { 0 };
@@ -623,6 +656,25 @@ namespace LeecCode.Test {
             nums = new int[] { 3, 1 };
             expected = 4;
             Assert.AreEqual(expected, Solution.DeleteAndEarn(nums));
+        }
+        [Test]
+        public void FindMaxLength() {
+            int[] nums;
+            nums = new int[] { 0, 1, 1, 0, 1, 1, 1, 0 };
+            int expected = 4;
+            Assert.AreEqual(expected, Solution.FindMaxLength(nums));
+            nums = new int[] { 0,1,0,1 };
+            expected = 4;
+            Assert.AreEqual(expected, Solution.FindMaxLength(nums));
+            nums = new int[] { 0,1 };
+            expected = 2;
+            Assert.AreEqual(expected, Solution.FindMaxLength(nums));
+            nums = new int[] { 0,1,0 };
+            expected = 2;
+            Assert.AreEqual(expected, Solution.FindMaxLength(nums));
+            nums = new int[] { 0,0,0,0,0,1,1,1,0,0,1,0,0,0,0,0,0,0,0,1,1,1,1,1,1,0,0,0,0,0,0,0 };
+            expected = 20;
+            Assert.AreEqual(expected, Solution.FindMaxLength(nums));
         }
 
     }

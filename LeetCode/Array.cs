@@ -599,68 +599,84 @@ Output = 4
     nums[i] is either 0 or 1.
 
          */
-        public static int FindMaxLength(int[] nums) {
+        public static int FindMaxLength(int[] nums) { // идея нерабочая
             int maxLength = 0;
-            int[] num_intervals = new int[nums.Length+1];
-            int cursor = 0;
-            int headValue = nums[0];
-            int i_start = 0;
-            (int min, int max)[] intervals = new (int min, int max)[] { (0, 0), (0, 0) };
-            (int min, int max) interval;
-            int i_intervals = 1;
-            for (int i = 0; i < nums.Length; i++) {
-                if (nums[i] != headValue) {
-                    i_intervals = (i_intervals + 1) % 2;
-                    interval = intervals[i_intervals];
-                    num_intervals[cursor++] = i - i_start;
-                    interval.max += i - i_start;
-                    intervals[i_intervals] = interval;
-                    headValue +=1;
-                    headValue %= 2;
-                    i_start = i;
-                }
-            }
-            i_intervals = (i_intervals + 1) % 2;
-            interval = intervals[i_intervals];
-            num_intervals[cursor] = nums.Length - i_start;
-            interval.max += nums.Length - i_start;
-            intervals[i_intervals] = interval;
-
-            var interval1 = intervals[0];
-            var interval2 = intervals[1];
-            if (i_intervals == 0)
-                cursor++;
-            int l_cursor = 0;
-            interval1.min = interval1.max - num_intervals[l_cursor];
-            interval2.min = interval2.max - num_intervals[cursor];
-            while (l_cursor <= cursor) {
-                int max = System.Math.Min(interval1.max, interval2.max);
-                int min = System.Math.Max(interval1.min, interval2.min);
-                if (max >= min) {
-                    return 2 * max;
-                }
-
-                if ( (interval2.max > interval1.max )
-                     ^ (num_intervals[l_cursor]- num_intervals[l_cursor+1]
-                        > num_intervals[cursor-1] - num_intervals[cursor])) {
-                    interval1.min -= num_intervals[l_cursor];
-                    interval1.max -= num_intervals[l_cursor++];
-                    interval2.min -= num_intervals[l_cursor];
-                    interval2.max -= num_intervals[l_cursor++];
+            Nexus last = new(0, 0);
+            int n = nums[0], sign=1, zl=0;
+            foreach (var item in nums) {
+                if (item==n) {
+                    zl += sign;
                 }
                 else {
-                    interval2.min -= num_intervals[cursor];
-                    interval2.max -= num_intervals[cursor--];
-                    interval1.min -= num_intervals[cursor];
-                    interval1.max -= num_intervals[cursor--];
+                    last = last + zl;
+                    sign *= -1;
+                    zl = sign;
+                    n=item;
                 }
             }
+            last = last + zl;
+            while (last != null) {
+                maxLength = System.Math.Max(maxLength, last.p);
+                last = last.parent;
+            }
+
             return maxLength;
         }
-        private static int GetMaxLength(int[] num_intervals, int l_cursor, int r_cursor,
-            (int min, int max) interval1, (int min, int max) interval2) {
+        private record Nexus(int z, int p, Nexus parent = null) {
+            static public Nexus operator +(Nexus left, int zr) {
+                if (left == null)
+                    return new Nexus(zr, 0);
+                var (zl, pl, nextl) = left;
+                if (zr==0) {
+                    return left;
+                }
+                if (zl > 0 ^ zr >= 0) {
+                    int mzl = zl > 0 ? zl : -zl;
+                    int mzr = zr > 0 ? zr : -zr;
+                    if (mzl > mzr) {
+                        return left.parent + new Nexus(zl + zr, pl + (2 * mzr));
+                    }
+                    else {
+                        return left.parent + new Nexus(zl + zr, pl + 2 * mzl);
+                    }
+                }
+                else if (pl == 0)
+                    return new Nexus(zr + zl, 0, left.parent);
+                else
+                    return new Nexus(zr, 0, left);
+            }
+            // right.parent must be null
+            static public Nexus operator +(Nexus left, Nexus right) {
+                if (left == null)
+                    return right;
+                if (right == null) {
+                    return left;
+                }
+                var (zl, pl, nextl) = left;
+                var (zr, pr, nextr) = right;
+                if (zr == 0) { 
+                    return new Nexus(zl,pl+pr, nextl);
+                }
+                if (zl > 0 ^ zr > 0) {
+                    int mzl = zl > 0 ? zl : -zl;
+                    int mzr = zr > 0 ? zr : -zr;
+                    if (mzl > mzr) {
+                        return new Nexus(zl + zr, pl +pr + (2 * mzr), nextl);
+                    }
+                    else {
+                        return (nextl+new Nexus(0, pl + 2 * mzl))+new Nexus(zl+zr,pr);
+                    }
+                }
+                else if (pl == 0) {
+                    return new Nexus(zr + zl, pr, left.parent);
+                }
+                else {
+                    return new Nexus(zr, pr, left);
+                }
+            }
+        }
 
-        } 
+
 
         /*
          * 55. Jump Game

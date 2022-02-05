@@ -164,7 +164,6 @@ namespace LeetCode
 The number of nodes in both lists is in the range [0, 50].
 -100 <= Node.val <= 100
 Both list1 and list2 are sorted in non-decreasing order.
-
  */
         public static ListNode MergeTwoLists(ListNode list1, ListNode list2) {
             if (list1 == null | list2 == null) {
@@ -224,6 +223,49 @@ Both list1 and list2 are sorted in non-decreasing order.
                 list1.next = shuttle;
             }
             return root;
+        }
+        /*
+         * 23. Merge k Sorted Lists
+         * Hard
+         * You are given an array of k linked-lists lists,
+         * each linked-list is sorted in ascending order.
+         * Merge all the linked-lists into one sorted linked-list and return it.
+         * 
+         * Constraints:
+
+    k == lists.length
+    0 <= k <= 10^4
+    0 <= lists[i].length <= 500
+    -10^4 <= lists[i][j] <= 10^4
+    lists[i] is sorted in ascending order.
+    The sum of lists[i].length won't exceed 10^4.
+
+         */
+        public static ListNode MergeKLists(ListNode[] lists) {
+            var lists1 = MergeKSortedLists(lists);
+            return lists1[0];
+        }
+        private static ListNode[] MergeKSortedLists(ListNode[] lists) {
+            if (lists.Length == 1) {
+                return lists;
+            }
+            else if (lists.Length == 2) {
+                return new ListNode[] {
+                    MergeTwoLists(lists[0], lists[1])
+                };
+            }
+            else {
+                ListNode[] lists1 = new ListNode[lists.Length / 2];
+                Array.Copy(lists, 0, lists1, 0, lists.Length / 2);
+                var l1 = MergeKSortedLists(lists1);
+                ListNode[] lists2 = new ListNode[lists.Length - lists1.Length];
+                Array.Copy(lists, lists.Length / 2, lists2, 0, lists.Length - lists1.Length);
+                var l2 = MergeKSortedLists(lists2);
+                ListNode[] lists3 = new ListNode[l1.Length + l2.Length];
+                l1.CopyTo(lists3, 0);
+                l2.CopyTo(lists3, l1.Length);
+                return MergeKSortedLists(lists3);
+            }
         }
 
     }

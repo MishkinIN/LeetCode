@@ -242,6 +242,8 @@ Both list1 and list2 are sorted in non-decreasing order.
 
          */
         public static ListNode MergeKLists(ListNode[] lists) {
+            if (lists == null || lists.Length == 0)
+                return null;
             var lists1 = MergeKSortedLists(lists);
             return lists1[0];
         }

@@ -292,8 +292,32 @@ namespace LeecCode.Test {
         }
         [Test]
         public void GeneratePascalTriangle() {
-            var res = Solution.GeneratePascalTriangle(7);
-
+            sw.Restart();
+            int n = 7;
+            var res = Solution.GeneratePascalTriangle(n);
+            sw.Stop();
+            var list = res[n-1];
+            Console.WriteLine($"Time to PascalTiangle({n}): {sw.Elapsed}");
+            n = 30;
+            sw.Restart();
+            res = Solution.GeneratePascalTriangle(n);
+            sw.Stop();
+            list= res[n-1];
+            Console.WriteLine($"Time to PascalTiangle({n}): {sw.Elapsed}");
+            n = 300;
+            sw.Restart();
+            res = Solution.GeneratePascalTriangle(n);
+            sw.Stop();
+            list= res[n-1];
+            Console.WriteLine($"Time to PascalTiangle({n}): {sw.Elapsed}");
+       }
+        [Test]
+        public void TestConvert() {
+            for (char i = '0'; i <='9' ; i++) {
+                var expected = Solution.Convert_I(i);
+                var actual = Solution.Convert(i);
+                Assert.AreEqual(expected, actual);
+            }
         }
         [Test]
         public void IsValidSudoku() {
@@ -307,6 +331,16 @@ namespace LeecCode.Test {
                 ,new char[] {'.', '6', '.', '.', '.', '.', '2', '8', '.'}
                 ,new char[] {'.', '.', '.', '4', '1', '9', '.', '.', '5'}
                 ,new char[] {'.', '.', '.', '.', '8', '.', '.', '7', '9'} };
+            char[][] sudoku1 = new char[][]{
+                new char[] { '.', '.', '.', '.', '5', '.', '.', '1', '.' }
+                ,new char[] { '.', '4', '.', '3', '.', '.', '.', '.', '.' }
+                ,new char[] { '.', '.', '.', '.', '.', '3', '.', '.', '1' }
+                ,new char[] { '8', '.', '.', '.', '.', '.', '.', '2', '.' }
+                ,new char[] { '.', '.', '2', '.', '7', '.', '.', '.', '.' }
+                ,new char[] { '.', '1', '5', '.', '.', '.', '.', '.', '.' }
+                ,new char[] { '.', '.', '.', '.', '.', '2', '.', '.', '.' }
+                ,new char[] { '.', '2', '.', '9', '.', '.', '.', '.', '.' }
+                ,new char[] { '.', '.', '4', '.', '.', '.', '.', '.', '.' } };
             char[][] inValidSudoku = new char[][]{
                 new char[] {'8', '3', '.', '.', '7', '.', '.', '.', '.'}
                 ,new char[] {'6', '.', '.', '1', '9', '5', '.', '.', '.'}
@@ -319,6 +353,7 @@ namespace LeecCode.Test {
                 ,new char[] {'.', '.', '.', '.', '8', '.', '.', '7', '9'} };
 
             Assert.IsTrue(Solution.IsValidSudoku(validSudoku));
+            Assert.IsFalse(Solution.IsValidSudoku(sudoku1));
             Assert.IsFalse(Solution.IsValidSudoku(inValidSudoku));
 
         }

@@ -27,17 +27,24 @@ namespace LeetCode {
     board[i][j] is a digit 1-9 or '.'.
 
          */
-        private const ulong _0 = 0x0;
-        private const ulong _1 = 0x1;
-        private const ulong _2 = 0x10;
-        private const ulong _3 = 0x100;
-        private const ulong _4 = 0x1000;
-        private const ulong _5 = 0x10000;
-        private const ulong _6 = 0x100000;
-        private const ulong _7 = 0x1000000;
-        private const ulong _8 = 0x10000000;
-        private const ulong _9 = 0x100000000;
-        private static ulong Convert(char ch) {
+        internal const ulong _0 = 0x0;
+        internal const ulong _1 = 0x1;
+        internal const ulong _2 = 0x10;
+        internal const ulong _3 = 0x100;
+        internal const ulong _4 = 0x1000;
+        internal const ulong _5 = 0x10000;
+        internal const ulong _6 = 0x100000;
+        internal const ulong _7 = 0x1000000;
+        internal const ulong _8 = 0x10000000;
+        internal const ulong _9 = 0x100000000;
+        internal static ulong Convert(char ch) {
+            int n = ch - '1';
+            if (n >= 0 & n < 10) {
+                return 1UL << n * 4;
+            }
+            return 0;
+        }
+        internal static ulong Convert_I(char ch) {
             return ch switch {
                 '1' => _1,
                 '2' => _2,
@@ -51,17 +58,25 @@ namespace LeetCode {
                 _ => _0,
             };
         }
+        private static ulong uniqueMask = ~(Convert('1')
+                             + Convert('2')
+                             + Convert('3')
+                             + Convert('4')
+                             + Convert('5')
+                             + Convert('6')
+                             + Convert('7')
+                             + Convert('8')
+                             + Convert('9'));
         public static bool IsValidSudoku(char[][] board) {
-            ulong uniqueMask = ~(_1 + _2 + _3 + _4 + _5 + _6 + _7 + _8 + _9);
+            
             ulong[] sumColumns = new ulong[9];
-            ulong[] sumRows = new ulong[9];
             ulong[] sumBoxes = new ulong[9];
             char[] row;
-            
+
             for (int rowInd = 0; rowInd < 9; rowInd++) {
                 int boxRow = rowInd / 3;
                 row = board[rowInd];
-                ulong s_row = sumRows[rowInd];
+                ulong s_row = 0;
                 for (int boxCol = 0; boxCol < 3; boxCol++) {
                     int boxInd = boxRow * 3 + boxCol;
                     ulong s_box = sumBoxes[boxInd];
@@ -74,20 +89,27 @@ namespace LeetCode {
                         s_row += ch;
                     }
                     {
-                        ch =Convert(row[colInd + 1]);
+                        ch = Convert(row[colInd + 1]);
                         sumColumns[colInd + 1] = sumColumns[colInd + 1] + ch;
                         s_box += ch;
                         s_row += ch;
                     }
                     {
-                        ch =Convert(row[colInd + 2]);
+                        ch = Convert(row[colInd + 2]);
                         sumColumns[colInd + 2] = sumColumns[colInd + 2] + ch;
                         s_box += ch;
                         s_row += ch;
                     }
+                    if ((rowInd % 3 == 2)
+                        && ((s_box & uniqueMask) != 0 )) {
+                        return false;
+                    }
+
                     sumBoxes[boxInd] = s_box;
                 }
-                sumRows[rowInd] = s_row;
+                if ((s_row & uniqueMask) != 0 )
+                    return false;
+               
             }
 
             bool isColumnsHaveRepetition =
@@ -100,30 +122,9 @@ namespace LeetCode {
                 | sumColumns[6] & uniqueMask
                 | sumColumns[7] & uniqueMask
                 | sumColumns[8] & uniqueMask)
-                > 0;
-            bool isRowsHaveRepetition =
-                (sumRows[0] & uniqueMask
-                | sumRows[1] & uniqueMask
-                | sumRows[2] & uniqueMask
-                | sumRows[3] & uniqueMask
-                | sumRows[4] & uniqueMask
-                | sumRows[5] & uniqueMask
-                | sumRows[6] & uniqueMask
-                | sumRows[7] & uniqueMask
-                | sumRows[8] & uniqueMask)
-                > 0;
-            bool isBoxesHaveRepetition =
-                (sumBoxes[0] & uniqueMask
-                | sumBoxes[1] & uniqueMask
-                | sumBoxes[2] & uniqueMask
-                | sumBoxes[3] & uniqueMask
-                | sumBoxes[4] & uniqueMask
-                | sumBoxes[5] & uniqueMask
-                | sumBoxes[6] & uniqueMask
-                | sumBoxes[7] & uniqueMask
-                | sumBoxes[8] & uniqueMask)
-                > 0;
-            return !(isBoxesHaveRepetition | isColumnsHaveRepetition | isRowsHaveRepetition);
+                != 0;
+            
+            return !isColumnsHaveRepetition;
         }
     }
 }

@@ -188,6 +188,32 @@ namespace LeecCode.Test {
             Console.WriteLine($"Time to calculate Solution.Rotate is {sw.Elapsed}");
         }
 
+         [Test]
+        public void MaxSubarraySumCircular() {
+            int[] nums;
+            int expected, actual;
+            nums = new int[] { 1, -2, 3, -2 };
+            expected = 3;
+            actual = Solution.MaxSubarraySumCircular(nums);
+            Assert.AreEqual(expected, actual);
+            nums = new int[] { 5, -3, 5 };
+            expected = 10;
+            actual = Solution.MaxSubarraySumCircular(nums);
+            Assert.AreEqual(expected, actual);
+            nums = new int[] { -3, -2, -3 };
+            expected = -2;
+            actual = Solution.MaxSubarraySumCircular(nums);
+            Assert.AreEqual(expected, actual);
+            nums = new int[] { 5, 8, -2, -2, -2, 1, 5, -3, 5 };
+            expected = 21;
+            actual = Solution.MaxSubarraySumCircular(nums);
+            Assert.AreEqual(expected, actual);
+            nums = new int[] { 1,1,1,1 };
+            expected = 4;
+            actual = Solution.MaxSubarraySumCircular(nums);
+            Assert.AreEqual(expected, actual);
+
+        }
         public static bool Equal(int[] left, int[] right) {
             if (left == right) {
                 return true;
@@ -201,7 +227,23 @@ namespace LeecCode.Test {
             }
             return isEquals;
         }
-        [Test]
+        public static bool Equal(int[] left, int[] right, int length) {
+            if (left == right) {
+                return true;
+            }
+            if ((left == null | right == null) 
+                || left.Length < length
+                || right.Length< length) {
+                return false;
+            }
+            for (int i = 0; i < length; i++) {
+                if(left[i] != right[i])
+                    return false;
+            }
+            return true;
+            ;
+        }
+       [Test]
         public void MinEatingSpeed() {
             int[] nums;
             int h, k;
@@ -710,6 +752,107 @@ namespace LeecCode.Test {
             nums = new int[] { 0,0,0,0,0,1,1,1,0,0,1,0,0,0,0,0,0,0,0,1,1,1,1,1,1,0,0,0,0,0,0,0 };
             expected = 20;
             Assert.AreEqual(expected, Solution.FindMaxLength(nums));
+        }
+        [Test]
+        public void RemoveDuplicates() {
+            int[] nums, expectedNums;
+            int expected, actual;
+            nums = new int[] { 0, 1, 1,  1, 1, 1, 2 };
+            expectedNums = new int[] { 0, 1, 1, 2 };
+            expected = 4;
+            actual = Solution.RemoveDuplicates(nums);
+            Assert.AreEqual(expected, actual);
+            Assert.IsTrue(Equal(expectedNums, nums, actual));
+        }
+        [Test]
+        public void MaxProduct() {
+            int[] nums;
+            int expected, actual;
+            nums = new int[] { 0 };
+            expected = 0;
+            actual = Solution.MaxProduct(nums);
+            Assert.AreEqual(expected, actual);
+            nums = new int[] { -2, 0, -1 };
+            expected = 0;
+            actual = Solution.MaxProduct(nums);
+            Assert.AreEqual(expected, actual);
+            nums = new int[] { 2, 0, -2, 4 };
+            expected = 4;
+            actual = Solution.MaxProduct(nums);
+            Assert.AreEqual(expected, actual);
+            nums = new int[] { 2, 3, -2, 4 };
+            expected = 6;
+            actual = Solution.MaxProduct(nums);
+            Assert.AreEqual(expected, actual);
+            nums = new int[] { 2, 3, -2, 4, 2 };
+            expected = 8;
+            actual = Solution.MaxProduct(nums);
+            Assert.AreEqual(expected, actual);
+            nums = new int[] { 2, 3, -2, -4 };
+            expected = 2*3*4*2;
+            actual = Solution.MaxProduct(nums);
+            Assert.AreEqual(expected, actual);
+            nums = new int[] { 2, 3, -2, -4, 0, 2, 3, -2, 4, 2 };
+            expected = 48;
+            actual = Solution.MaxProduct(nums);
+            Assert.AreEqual(expected, actual);
+            nums = new int[] { 2, 3, -2, -4, 0, -2, -3, -2, 4, 2, -1 };
+            expected = 96;
+            actual = Solution.MaxProduct(nums);
+            Assert.AreEqual(expected, actual);
+
+            nums = new int[] { 2, -5, -2, -4, 3 };
+            expected = 24;
+            actual = Solution.MaxProduct(nums);
+            Assert.AreEqual(expected, actual);
+
+        }
+        [Test]
+        public void GetMaxProductLen() {
+            int[] nums;
+            int expected, actual;
+            nums = new int[] { 0 };
+            expected = 0;
+            actual = Solution.GetMaxLen(nums);
+            Assert.AreEqual(expected, actual);
+            nums = new int[] { -2, 0, -1 };
+            expected = 0;
+            actual = Solution.GetMaxLen(nums);
+            Assert.AreEqual(expected, actual);
+            nums = new int[] { 2, 0, -2, 4 };
+            expected = 1;
+            actual = Solution.GetMaxLen(nums);
+            Assert.AreEqual(expected, actual);
+            nums = new int[] { 2, 3, -2, 4 };
+            expected = 2;
+            actual = Solution.GetMaxLen(nums);
+            Assert.AreEqual(expected, actual);
+            nums = new int[] { 2, 3, -2, 4, 2 };
+            expected = 2;
+            actual = Solution.GetMaxLen(nums);
+            Assert.AreEqual(expected, actual);
+            nums = new int[] { 2, 3, -2, -4 };
+            expected = 4;
+            actual = Solution.GetMaxLen(nums);
+            Assert.AreEqual(expected, actual);
+            nums = new int[] { 2, 3, -2, -4, 0, 2, 3, -2, 4, 2 };
+            expected = 4;
+            actual = Solution.GetMaxLen(nums);
+            Assert.AreEqual(expected, actual);
+            nums = new int[] { 2, 3, -2, 0, -2, -3, -2, 4, 2, -1 };
+            expected = 6;
+            actual = Solution.GetMaxLen(nums);
+            Assert.AreEqual(expected, actual);
+            nums = new int[] { 2, 3, -2, 0, -2, -3, -2, 4, 2 };
+            expected = 4;
+            actual = Solution.GetMaxLen(nums);
+            Assert.AreEqual(expected, actual);
+
+            nums = new int[] { 2, 5, 2, -4, -3 };
+            expected = 5;
+            actual = Solution.GetMaxLen(nums);
+            Assert.AreEqual(expected, actual);
+
         }
 
     }

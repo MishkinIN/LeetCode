@@ -153,5 +153,13 @@ namespace LeecCode.Test
             Console.WriteLine($"Time Solution.FindAnagrams in {sw.Elapsed}");
             Assert.IsTrue(actual.Contains(10_000)); 
         }
+        [Test]
+        public void CheckInclusion() {
+            string s1, s2;
+            s1 = "ab"; s2 = "eidbaooo";
+            Assert.IsTrue(Solution.CheckInclusion(s1 , s2));
+            s1 = "ab"; s2 = "eidboaoo";
+            Assert.IsFalse(Solution.CheckInclusion(s1, s2));
+        }
     }
 }

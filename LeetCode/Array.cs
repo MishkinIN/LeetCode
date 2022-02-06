@@ -100,6 +100,60 @@ namespace LeetCode {
             return i < 0 ? -1 : i;
         }
         /*
+ * 74. Search a 2D Matrix
+ * Medium
+ * Write an efficient algorithm that searches for a value in an m x n matrix.
+ * This matrix has the following properties:
+ * Integers in each row are sorted from left to right.
+ * The first integer of each row is greater than the last integer of the previous row.
+Constraints:
+
+m == matrix.length
+n == matrix[i].length
+1 <= m, n <= 100
+-10^4 <= matrix[i][j], target <= 10^4
+
+
+ */
+        public static bool SearchMatrix(int[][] matrix, int target) {
+            if (target < matrix[0][0] || target > matrix[^1][^1]) {
+                return false;
+            }
+            int[] targetRow = GetTargetRow(matrix, target);
+
+            return Array.BinarySearch(targetRow, target) >= 0;
+        }
+        private static int[] GetTargetRow(int[][] matrix, int target) {
+            int minInd = 0;
+            int maxInd = matrix.Length - 1;
+            int[] row = matrix[0];
+            while (minInd < maxInd) {
+                int center = (maxInd + minInd) / 2;
+                row = matrix[center];
+                if (target < row[0]) {
+                    maxInd = center;
+                }
+                else {
+                    if (target <= row[^1]) {
+                        return row;
+                    }
+                    else {
+                        minInd = center + 1;
+                        row = matrix[minInd];
+                    };
+                }
+            }
+            return row;
+        }
+        public static bool SearchMatrix_I(int[][] matrix, int target) {
+            SortedSet<int> set = new();
+            foreach (var item in matrix) {
+                set.UnionWith(item);
+            }
+            return set.Contains(target);
+        }
+
+        /*
          * You are given two integer arrays nums1 and nums2, sorted in non-decreasing order,
          * and two integers m and n, representing the number of elements in nums1 and nums2 respectively.
          * Merge nums1 and nums2 into a single array sorted in non-decreasing order.
@@ -234,6 +288,42 @@ namespace LeetCode {
             int lSum = 0, lMax = int.MinValue;
             foreach (int val in nums) {
                 lSum = lSum < 0 ? val : lSum + val;
+                lMax = lMax > lSum ? lMax : lSum;
+            }
+            return lMax;
+        }
+        /*
+         * 918. Maximum Sum Circular Subarray
+         * Medium
+         * Given a circular integer array nums of length n, return the maximum possible sum of a non-empty subarray of nums.
+         * A circular array means the end of the array connects to the beginning of the array. 
+         * Formally, the next element of nums[i] is nums[(i + 1) % n] and the previous element of nums[i] is nums[(i - 1 + n) % n].
+         * A subarray may only include each element of the fixed buffer nums at most once.
+         * Formally, for a subarray nums[i], nums[i + 1], ..., nums[j], there does not exist i <= k1, k2 <= j with k1 % n == k2 % n.
+         * 
+         * Constraints:
+
+    n == nums.length
+    1 <= n <= 3 * 10^4
+    -3 * 10^4 <= nums[i] <= 3 * 10^4
+
+         */
+        public static int MaxSubarraySumCircular(int[] nums) {
+            int n = nums.Length;
+            if (n == 1)
+                return nums[0];
+            int lSum = nums[0], minSum = 0, lMin = 0, lMax = nums[0], k = 0;
+            for (int i = 1; i < 2 * n & i % n != k; i++) {
+                int val = nums[i % n];
+                lMin = lMin > 0 ? val : lMin + val;
+                if (minSum > lMin) {
+                    minSum = lMin;
+                    k = i;
+                    lSum = val;
+                }
+                else {
+                    lSum = lSum < 0 ? val : lSum + val;
+                }
                 lMax = lMax > lSum ? lMax : lSum;
             }
             return lMax;
@@ -602,16 +692,16 @@ Output = 4
         public static int FindMaxLength(int[] nums) { // идея нерабочая
             int maxLength = 0;
             Nexus last = new(0, 0);
-            int n = nums[0], sign=1, zl=0;
+            int n = nums[0], sign = 1, zl = 0;
             foreach (var item in nums) {
-                if (item==n) {
+                if (item == n) {
                     zl += sign;
                 }
                 else {
                     last = last + zl;
                     sign *= -1;
                     zl = sign;
-                    n=item;
+                    n = item;
                 }
             }
             last = last + zl;
@@ -627,7 +717,7 @@ Output = 4
                 if (left == null)
                     return new Nexus(zr, 0);
                 var (zl, pl, nextl) = left;
-                if (zr==0) {
+                if (zr == 0) {
                     return left;
                 }
                 if (zl > 0 ^ zr >= 0) {
@@ -654,17 +744,17 @@ Output = 4
                 }
                 var (zl, pl, nextl) = left;
                 var (zr, pr, nextr) = right;
-                if (zr == 0) { 
-                    return new Nexus(zl,pl+pr, nextl);
+                if (zr == 0) {
+                    return new Nexus(zl, pl + pr, nextl);
                 }
                 if (zl > 0 ^ zr > 0) {
                     int mzl = zl > 0 ? zl : -zl;
                     int mzr = zr > 0 ? zr : -zr;
                     if (mzl > mzr) {
-                        return new Nexus(zl + zr, pl +pr + (2 * mzr), nextl);
+                        return new Nexus(zl + zr, pl + pr + (2 * mzr), nextl);
                     }
                     else {
-                        return (nextl+new Nexus(0, pl + 2 * mzl))+new Nexus(zl+zr,pr);
+                        return (nextl + new Nexus(0, pl + 2 * mzl)) + new Nexus(zl + zr, pr);
                     }
                 }
                 else if (pl == 0) {
@@ -756,6 +846,138 @@ Output = 4
         }
         private static int Inc(int i) {
             return i == int.MaxValue ? int.MaxValue : i + 1;
+        }
+        /*
+         * 80. Remove Duplicates from Sorted Array II
+         * Medium
+         * Given an integer array nums sorted in non-decreasing order, 
+         * remove some duplicates in-place such that each unique element appears at most twice. каждый элемент не более двух раз
+         * The relative order of the elements should be kept the same.
+         * Since it is impossible to change the length of the array in some languages, 
+         * you must instead have the result be placed in the first part of the array nums. 
+         * More formally, if there are k elements after removing the duplicates, 
+         * then the first k elements of nums should hold the final result. 
+         * It does not matter what you leave beyond the first k elements.
+         * Return k after placing the final result in the first k slots of nums.
+         * Do not allocate extra space for another array. 
+         * You must do this by modifying the input array in-place with O(1) extra memory.
+         * Custom Judge:
+         * The judge will test your solution with the following code:
+
+int[] nums = [...]; // Input array
+int[] expectedNums = [...]; // The expected answer with correct length
+
+int k = removeDuplicates(nums); // Calls your implementation
+
+assert k == expectedNums.length;
+for (int i = 0; i < k; i++) {
+    assert nums[i] == expectedNums[i];
+}
+         *If all assertions pass, then your solution will be accepted.
+         *
+         *Constraints:
+
+    1 <= nums.length <= 3 * 10^4
+    -10^4 <= nums[i] <= 10^4
+    nums is sorted in non-decreasing order.
+
+         */
+        public static int RemoveDuplicates(int[] nums) {
+            int m = nums.Length;
+            if (m < 3) {
+                return m;
+            }
+            int n2 = nums[0], n1 = nums[1], n0, n = 2;
+            for (int i = 2; i < m; i++) {
+                n0 = nums[i];
+                if (n0 != n2) {
+                    nums[n++] = n0;
+                    n2 = n1;
+                    n1 = n0;
+                }
+            }
+            return n;
+        }
+        /*
+         * 152. Maximum Product Subarray
+         * Medium
+         * Given an integer array nums, find a contiguous non-empty subarray 
+         * within the array that has the largest product, and return the product.
+         * The test cases are generated so that the answer will fit in a 32-bit integer.
+         * A subarray is a contiguous subsequence of the array.
+         * 
+         * Constraints:
+
+    1 <= nums.length <= 2 * 10^4
+    -10 <= nums[i] <= 10
+    The product of any prefix or suffix of nums is guaranteed to fit in a 32-bit integer.
+                 */
+        public static int MaxProduct(int[] nums) {
+            int n = nums.Length;
+            if (n == 1)
+                return nums[0];
+            int lpr = 0, lpr1 = 0, lprMax = int.MinValue;
+            foreach (int val in nums) {
+                if (val == 0) {
+                    lpr = lpr1 = 0;
+                }
+                else {
+                    lpr1 = (lpr < 0 & lpr1 == 0) ? val : lpr1 * val;
+                    lpr = lpr == 0 ? val : lpr * val;
+                }
+                lprMax = lprMax > lpr ? lprMax : lpr;
+                lprMax = lprMax > lpr1 ? lprMax : lpr1;
+            }
+            return lprMax;
+        }
+        /*
+         * 1567. Maximum Length of Subarray With Positive Product
+         * Medium
+         * Given an array of integers nums, find the maximum length of a subarray where the product of all its elements is positive.
+         * A subarray of an array is a consecutive sequence of zero or more values taken out of that array.
+         * Return the maximum length of a subarray with positive product.
+         * 
+         * Constraints:
+
+    1 <= nums.length <= 10^5
+    -10^9 <= nums[i] <= 10^9
+
+         */
+        public static int GetMaxLen(int[] nums) {
+            int n = nums.Length;
+            if (n == 1)
+                return nums[0] > 0 ? 1 : 0;
+            int zstart = -1, pstart = -1, lMax = 0;
+            bool eddge1 = false, eddge2 = false;
+            for (int i = 0; i < n; i++) {
+                int val = nums[i];
+                if (val == 0) {
+                    pstart = zstart = i;
+                    eddge1 = eddge2 = false;
+                    continue;
+                }
+                if (val < 0) {
+                    if (eddge1) {
+                        eddge2 = !eddge2;
+                    }
+                    else {
+                        eddge1 = true;
+                        pstart = i;
+                    }
+                }
+                if (eddge1) {
+                    if (eddge2) {
+                        lMax = lMax > i - zstart ? lMax : i - zstart;
+                    }
+                    else {
+                        lMax = lMax > i - pstart ? lMax : i - pstart;
+                    }
+                }
+                else {
+                    lMax = lMax > i - zstart ? lMax : i - zstart;
+                }
+            }
+            return lMax;
         }
     }
 }

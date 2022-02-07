@@ -161,5 +161,25 @@ namespace LeecCode.Test
             s1 = "ab"; s2 = "eidboaoo";
             Assert.IsFalse(Solution.CheckInclusion(s1, s2));
         }
+        [Test]
+        public void FindTheDifference() {
+            string s = bigPattern;
+            string t = s + "z";
+            sw.Restart();
+            var ch = Solution.FindTheDifference(s, t);
+            sw.Stop();
+            Console.WriteLine($"FindTheDifference complete, {sw.Elapsed}");
+            Assert.AreEqual('z', ch);
+        }
+        [Test]
+        public void FindTheDifference_LC() {
+            string s = bigPattern;
+            string t = s + "z";
+            sw.Restart();
+            var ch = Solution.FindTheDifference_LC(s, t);
+            sw.Stop();
+            Console.WriteLine($"FindTheDifference complete, {sw.Elapsed}");
+            Assert.AreEqual('z', ch);
+        }
     }
 }

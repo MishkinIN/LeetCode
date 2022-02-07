@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 
 namespace LeetCode {
@@ -363,6 +364,112 @@ n == matrix[i].length
             return maxProfit;
         }
         /*
+         * 122. Best Time to Buy and Sell Stock II
+         * Medium
+         * You are given an integer array prices where prices[i] is the price of a given stock on the ith day.
+         * On each day, you may decide to buy and/or sell the stock. 
+         * You can only hold at most one share of the stock at any time. 
+         * However, you can buy it then immediately sell it on the same day.
+         * Find and return the maximum profit you can achieve.
+         * 
+         * Constraints:
+
+    1 <= prices.length <= 3 * 10^4
+    0 <= prices[i] <= 10^4
+
+         */
+        public static int MaxProfit_II(int[] prices) {
+            var profit = prices
+                .Aggregate((last: int.MaxValue, profit: 0)
+                    , (acc, val) => (val, val > acc.last ? acc.profit + val - acc.last : acc.profit)
+                    , acc => acc.profit);
+            return profit;
+        }
+        /*
+         * 309. Best Time to Buy and Sell Stock with Cooldown
+         * Medium
+         * You are given an array prices where prices[i] is the price of a given stock on the ith day.
+         * Find the maximum profit you can achieve. 
+         * You may complete as many transactions as you like 
+         * (i.e., buy one and sell one share of the stock multiple times) with the following restrictions:
+         * After you sell your stock, you cannot buy stock on the next day (i.e., cooldown one day).
+         * Note: You may not engage in multiple transactions simultaneously 
+         * (i.e., you must sell the stock before you buy again).
+         * 
+         * Constraints:
+
+    1 <= prices.length <= 5000
+    0 <= prices[i] <= 1000
+
+         */
+        public static int MaxProfit_III(int[] prices) {
+            int p3 = 0, cpr2, cpr1, p0 = 0, pr2 = prices[0], pr1 = pr2;
+            (int profit, int price) day1, day2; // profit -> max profit in previous periods, if buy stock for this price
+            day1 = day2 = (0, pr1);
+            foreach (var price in prices) {
+                cpr1 = (pr1 - day1.price) > 0 ? day1.profit + pr1 - day1.price : day1.profit; // can profit if cell yesterday
+                cpr2 = (pr2 - day2.price) > 0 ? day2.profit + pr2 - day2.price : day2.profit;
+                if (day1.price > price) {
+                    day1.profit = cpr1;
+                    if (day1.price == int.MaxValue) {
+                        day1.price = pr1; 
+                    }
+                    else {
+                        day1.price = int.MaxValue;
+                    }
+                }
+                if (day2.price > price) {
+                    day2.price = price;
+                    day2.profit = cpr2;
+                }
+                pr2 = pr1;
+                pr1 = price;
+            }
+            cpr1 = (pr1 - day1.price) > 0 ? day1.profit + pr1 - day1.price : day1.profit; // can profit if cell yesterday
+            cpr2 = (pr1 - day2.price) > 0 ? day2.profit + pr1 - day2.price : day2.profit;
+
+            return System.Math.Max(cpr1, cpr2);
+        }
+        private static (int p2, int p1, int p) GetMaxProfit_III(int[] prices, int day) {
+            switch (day) {
+                case 0:
+                    return (0, 0, 0);
+                case 1:
+                    return (0, 0, System.Math.Max(0, prices[1] - prices[0]));
+                case 2:
+                    return (0, System.Math.Max(0, prices[1] - prices[0]), System.Math.Max(0, prices[2] - prices[0]));
+                default:
+                    break;
+            }
+            (int p2, int p1, int p) lp = GetMaxProfit_III(prices, day - 1);
+            return (lp.p1, lp.p, System.Math.Max(lp.p, lp.p1 + prices[day] - prices[day - 1]));
+        }
+        /*
+         * 1014. Best Sightseeing Pair
+         * Medium
+         * You are given an integer array values where values[i] represents 
+         * the value of the ith sightseeing spot. 
+         * Two sightseeing spots i and j have a distance j - i between them.
+         * The score of a pair (i < j) of sightseeing spots 
+         * is values[i] + values[j] + i - j: the sum of the values of the sightseeing spots,
+         * minus the distance between them.
+         * Return the maximum score of a pair of sightseeing spots.
+         * 
+         * Constraints:
+
+    2 <= values.length <= 5 * 10^4
+    1 <= values[i] <= 1000
+
+         */
+        public static int MaxScoreSightseeingPair(int[] values) {
+            int bestScopeInLeft = 0, maxScope = 0;
+            foreach (var val in values) {
+                maxScope = System.Math.Max(maxScope, bestScopeInLeft + val - 1);
+                bestScopeInLeft = System.Math.Max(bestScopeInLeft - 1, val);
+            }
+            return maxScope;
+        }
+        /*
          * 746. Min Cost Climbing Stairs
          * Easy
          * You are given an integer array cost where cost[i] is the cost of ith step on a staircase.
@@ -391,6 +498,7 @@ n == matrix[i].length
                     return (mc.n0, System.Math.Min(mc.n0 + costs[n - 1], mc.n1 + costs[n - 2]));
             }
         }
+
         /*
          * 198. House Robber
          * Medium
@@ -677,11 +785,11 @@ n == matrix[i].length
          * 
          * Example 2:
 
-Input: nums = [0,1,0]
-Output: 2
-Explanation: [0, 1] (or [1, 0]) is a longest contiguous subarray with equal number of 0 and 1.
-Input: nums =         [0,1,0,1]
-Output = 4
+    Input: nums = [0,1,0]
+    Output: 2
+    Explanation: [0, 1] (or [1, 0]) is a longest contiguous subarray with equal number of 0 and 1.
+    Input: nums =         [0,1,0,1]
+    Output = 4
 
          * Constraints:
 
@@ -864,15 +972,15 @@ Output = 4
          * Custom Judge:
          * The judge will test your solution with the following code:
 
-int[] nums = [...]; // Input array
-int[] expectedNums = [...]; // The expected answer with correct length
+    int[] nums = [...]; // Input array
+    int[] expectedNums = [...]; // The expected answer with correct length
 
-int k = removeDuplicates(nums); // Calls your implementation
+    int k = removeDuplicates(nums); // Calls your implementation
 
-assert k == expectedNums.length;
-for (int i = 0; i < k; i++) {
+    assert k == expectedNums.length;
+    for (int i = 0; i < k; i++) {
     assert nums[i] == expectedNums[i];
-}
+    }
          *If all assertions pass, then your solution will be accepted.
          *
          *Constraints:

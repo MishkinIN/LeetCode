@@ -315,6 +315,54 @@ namespace LeecCode.Test {
             Assert.AreEqual(expected, Solution.MaxProfit(prices));
         }
         [Test]
+        public void MaxProfit_II() {
+            int[] prices;
+            int expected;
+            prices = new int[] { 7, 1, 5, 3, 6, 4 };
+            expected = 7;
+            Assert.AreEqual(expected, Solution.MaxProfit_II(prices));
+            prices = new int[] { 1,2,3,4,5 };
+            expected = 4;
+            Assert.AreEqual(expected, Solution.MaxProfit_II(prices));
+            prices = new int[] { 7,6,4,3,1};
+            expected = 0;
+            Assert.AreEqual(expected, Solution.MaxProfit_II(prices));
+            
+        }
+        [Test]
+        public void MaxProfit_III() {
+            int[] prices;
+            int expected;
+            prices = new int[] { 1,2,3,0,2 };
+            expected = 3;
+            Assert.AreEqual(expected, Solution.MaxProfit_III(prices));
+            prices = new int[] { 1 };
+            expected = 0;
+            Assert.AreEqual(expected, Solution.MaxProfit_III(prices));
+            prices = new int[] { 1, 2, 10, 0, 2 };
+            expected = 9;
+            Assert.AreEqual(expected, Solution.MaxProfit_III(prices));
+            prices = new int[] { 1, 2, 10, 0, 20 };
+            expected = 21;
+            Assert.AreEqual(expected, Solution.MaxProfit_III(prices));
+            prices = new int[] { 1, 2 };
+            expected = 1;
+            Assert.AreEqual(expected, Solution.MaxProfit_III(prices));
+            prices = new int[] { 2, 1 };
+            expected = 0;
+            Assert.AreEqual(expected, Solution.MaxProfit_III(prices));
+            prices = new int[] {3, 2, 1 };
+            expected = 0;
+            Assert.AreEqual(expected, Solution.MaxProfit_III(prices));
+            prices = new int[] { 4, 2, 1 };
+            expected = 0;
+            Assert.AreEqual(expected, Solution.MaxProfit_III(prices));
+            prices = new int[] { 4, 2, 1, 5 };
+            expected = 4;
+            Assert.AreEqual(expected, Solution.MaxProfit_III(prices));
+
+        }
+        [Test]
         public void CanCompleteCircuit() {
             int[] gas, cost;
             gas = new int[] { 1, 2, 3, 4, 5 };
@@ -807,7 +855,7 @@ namespace LeecCode.Test {
             Assert.AreEqual(expected, actual);
 
         }
-        [Test]
+       [Test]
         public void GetMaxProductLen() {
             int[] nums;
             int expected, actual;
@@ -854,6 +902,32 @@ namespace LeecCode.Test {
             Assert.AreEqual(expected, actual);
 
         }
+      [Test]
+        public void MaxScoreSightseeingPair() {
+            int[] nums;
+            int expected, actual;
+            nums = new int[] { 1, 1 };
+            expected = 1;
+            actual = Solution.MaxScoreSightseeingPair(nums);
+            Assert.AreEqual(expected, actual);
+            nums = new int[] { 2, 1, 1 };
+            expected = 2;
+            actual = Solution.MaxScoreSightseeingPair(nums);
+            Assert.AreEqual(expected, actual);
+            nums = new int[] { 2, 1, 3, 1 };
+            expected = 3;
+            actual = Solution.MaxScoreSightseeingPair(nums);
+            Assert.AreEqual(expected, actual);
+            nums = new int[] { 8, 1, 5, 2, 6 };
+            expected = 11;
+            actual = Solution.MaxScoreSightseeingPair(nums);
+            Assert.AreEqual(expected, actual);
+            nums = new int[] { 1, 2 };
+            expected = 2;
+            actual = Solution.MaxScoreSightseeingPair(nums);
+            Assert.AreEqual(expected, actual);
+            
 
+        }
     }
 }

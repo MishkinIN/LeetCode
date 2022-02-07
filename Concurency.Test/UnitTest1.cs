@@ -42,14 +42,27 @@ namespace Concurency.Test {
 
     }
     public class ThreadTest {
+        static object locker = new();
         static bool done;
         // Обратите внимание, что Go теперь метод экземпляра:
-        internal void Go() {
+        internal void Go() { // да-да, так делать нельзя.
             if (!done) {
                Console.WriteLine("Done");
                  done = true;
             }
         }
+        internal void GoSafe() { // А вот так можно
+            bool thisdone;
+            lock (locker) {
+                thisdone = done;
+                if (!done)
+                    done = true;
+            }
+            if(!thisdone)
+                Console.WriteLine("Done");
+        }
+        internal void Go_MemoryBarrier() {
 
+        }
     }
 }

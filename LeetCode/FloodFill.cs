@@ -76,14 +76,18 @@ namespace LeetCode {
          */
         public static int MaxAreaOfIsland(int[][] grid) {
             //var m = grid.Length;
-            //var n = grid[0].Length;
+            var n = grid[0].Length;
             int maxArea = 0;
-            for (int sr = 0; sr < grid.Length; sr++) {
-                for (int sc = 0; sc < grid[0].Length; sc++) {
-                    if (grid[sr][sc]==island) {
+            int sr = 0;
+            foreach (var row in grid) {
+                int sc = 0;
+                foreach (var val in row) {
+                    if (val==island) {
                         maxArea = System.Math.Max(maxArea, Fill(grid, sr, sc, island, filled)); 
                     }
+                    sc++;
                 }
+                sr++;
             }
             return maxArea;
         }

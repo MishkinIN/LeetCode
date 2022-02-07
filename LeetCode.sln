@@ -11,6 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Concurrency", "Concurrency\
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{045AECAB-710F-43E9-8BDD-EAD0ED133939}"
 	ProjectSection(SolutionItems) = preProject
+		Docs\Lock-free структуры данных. Основы откуда пошли быть барьеры памяти.htm = Docs\Lock-free структуры данных. Основы откуда пошли быть барьеры памяти.htm
 		Docs\TAP.docx = Docs\TAP.docx
 		Docs\Потоки на C#. Часть 1.html = Docs\Потоки на C#. Часть 1.html
 		Docs\Потоки на C#. Часть 2.html = Docs\Потоки на C#. Часть 2.html
@@ -19,7 +20,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{045AECAB-7
 		Docs\Потоки на C#. Часть 5.html = Docs\Потоки на C#. Часть 5.html
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Concurency.Test", "Concurency.Test\Concurency.Test.csproj", "{D1A30A18-28BE-466C-8BF0-EF282CC3A216}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Concurency.Test", "Concurency.Test\Concurency.Test.csproj", "{D1A30A18-28BE-466C-8BF0-EF282CC3A216}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

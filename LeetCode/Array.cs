@@ -402,7 +402,7 @@ n == matrix[i].length
     0 <= prices[i] <= 1000
 
          */
-        public static int MaxProfit_III_v0(int[] prices) {
+        public static int MaxProfit_III_v0(int[] prices) { // 1, 2, 4, 2, 5, 7, 2, 4, 9, 0
             if (prices.Length < 2) {
                 return 0;
             }
@@ -410,50 +410,42 @@ n == matrix[i].length
                 return prices[1] - prices[0] > 0 ? prices[1] - prices[0] : 0;
             }
             int pr2 = prices[0], pr1 = pr2, dp2, dp1 = 0;
-            int profit = 0, lastPriceToBuy = pr2, lastPriceToCell = pr2;
+            int profit2 = 0, profit3, lastPriceToBuy = pr2, lastPriceToCell = pr2;
+            (int profit, int priceToBuy) cell2 = (0, prices[0]), cell3 = cell2;
             bool haveStock = false;
-            foreach (var price in prices) {
-                dp2 = dp1;
-                dp1 = price - pr1;
-                if (haveStock) {
-                    if (dp1 < 0) {
-                        if (dp2 > 0) {
-                            if (pr1 - pr2 > pr2 - price) {
-                                lastPriceToCell = pr1;
-                                continue;
-                            }
-                            else {
-                                profit += pr2 - lastPriceToBuy;
-                                lastPriceToBuy = lastPriceToCell = price;
-                                haveStock = false;
-                            }
-                        }
-                        else {
-                            profit += lastPriceToCell - lastPriceToBuy;
-                            lastPriceToBuy = price;
-                            haveStock = false;
-                        }
-                    }
-                    else {
-                        lastPriceToCell = System.Math.Max(lastPriceToCell, price);
-                        
-                    }
+            for (int i = 2; i < prices.Length; i++) {
+                int price = prices[i];
+                if (price < pr2 & cell2.priceToBuy < pr2) {
+                    var (profit, priceToBuy) = cell2;
+                    cell2 = cell3;
+                    cell3 = (profit + pr2 - priceToBuy, price);
+                }
+                if (cell2.priceToBuy > price) {
+                    cell2 = (cell2.profit, priceToBuy: price);
+                }
 
-                }
-                else {
-                    if (dp1 > 0) {
-                        lastPriceToCell = System.Math.Max(lastPriceToCell, price);
-                        haveStock = true;
-                    }
-                    else 
-                        lastPriceToBuy = System.Math.Min(lastPriceToBuy, price);
-                }
                 pr2 = pr1;
                 pr1 = price;
             }
-            if (haveStock & lastPriceToBuy < lastPriceToCell)
-                profit += lastPriceToCell - lastPriceToBuy;
-            return profit;
+
+            return System.Math.Max(cell2.profit, cell3.profit);
+        }
+        public static int MaxProfit_III_Recurent(int[] prices) {
+            return MaxProfit_III_Reccurent(prices, prices.Length - 1);
+        }
+        private static int MaxProfit_III_Reccurent(int[] prices, int day) {
+            switch (day) {
+                case -1:
+                case 0:
+                    return 0;
+                case 1:
+                    return prices[1] > prices[0] ? prices[1] - prices[0] : 0;
+                default:
+                    break;
+            }
+            int profit0 = MaxProfit_III_Reccurent(prices, day - 3) -prices[day-1]+prices[day];
+            int profit1 = MaxProfit_III_Reccurent(prices, day - 1);
+            return System.Math.Max(profit0, profit1);
         }
         private static void TradingSession(Broker br1, Broker br2, ref int pr2, ref int pr1, int pr) {
             if (!br1.canBuy) {

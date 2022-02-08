@@ -365,7 +365,43 @@ namespace LeecCode.Test {
             Assert.AreEqual(expected, Solution.MaxProfit_III_v0(prices));
 
         }
-        [Test]
+         [Test]
+        public void MaxProfit_III_Recurent() {
+            int[] prices;
+            int expected;
+            prices = new int[] { 1, 2, 4, 2, 5, 7, 2, 4, 9, 0 };
+            expected = 11;
+            Assert.AreEqual(expected, Solution.MaxProfit_III_Recurent(prices));
+            prices = new int[] { 1, 2, 3, 0, 2 };
+            expected = 3;
+            Assert.AreEqual(expected, Solution.MaxProfit_III_Recurent(prices));
+            prices = new int[] { 1 };
+            expected = 0;
+            Assert.AreEqual(expected, Solution.MaxProfit_III_Recurent(prices));
+            prices = new int[] { 1, 2, 10, 0, 2 };
+            expected = 9;
+            Assert.AreEqual(expected, Solution.MaxProfit_III_Recurent(prices));
+            prices = new int[] { 1, 2, 10, 0, 20 };
+            expected = 21;
+            Assert.AreEqual(expected, Solution.MaxProfit_III_Recurent(prices));
+            prices = new int[] { 1, 2 };
+            expected = 1;
+            Assert.AreEqual(expected, Solution.MaxProfit_III_Recurent(prices));
+            prices = new int[] { 2, 1 };
+            expected = 0;
+            Assert.AreEqual(expected, Solution.MaxProfit_III_Recurent(prices));
+            prices = new int[] { 3, 2, 1 };
+            expected = 0;
+            Assert.AreEqual(expected, Solution.MaxProfit_III_Recurent(prices));
+            prices = new int[] { 4, 2, 1 };
+            expected = 0;
+            Assert.AreEqual(expected, Solution.MaxProfit_III_Recurent(prices));
+            prices = new int[] { 4, 2, 1, 5 };
+            expected = 4;
+            Assert.AreEqual(expected, Solution.MaxProfit_III_Recurent(prices));
+
+        }
+       [Test]
         public void MaxProfit_IV() {
             int[] prices;
             int expected, fee;

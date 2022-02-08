@@ -402,48 +402,205 @@ n == matrix[i].length
     0 <= prices[i] <= 1000
 
          */
-        public static int MaxProfit_III(int[] prices) {
-            int p3 = 0, cpr2, cpr1, p0 = 0, pr2 = prices[0], pr1 = pr2;
-            (int profit, int price) day1, day2; // profit -> max profit in previous periods, if buy stock for this price
-            day1 = day2 = (0, pr1);
+        public static int MaxProfit_III_v0(int[] prices) {
+            if (prices.Length < 2) {
+                return 0;
+            }
+            else if (prices.Length == 2) {
+                return prices[1] - prices[0] > 0 ? prices[1] - prices[0] : 0;
+            }
+            int pr2 = prices[0], pr1 = pr2, dp2, dp1 = 0;
+            int profit = 0, lastPriceToBuy = pr2, lastPriceToCell = pr2;
+            bool haveStock = false;
             foreach (var price in prices) {
-                cpr1 = (pr1 - day1.price) > 0 ? day1.profit + pr1 - day1.price : day1.profit; // can profit if cell yesterday
-                cpr2 = (pr2 - day2.price) > 0 ? day2.profit + pr2 - day2.price : day2.profit;
-                if (day1.price > price) {
-                    day1.profit = cpr1;
-                    if (day1.price == int.MaxValue) {
-                        day1.price = pr1; 
+                dp2 = dp1;
+                dp1 = price - pr1;
+                if (haveStock) {
+                    if (dp1 < 0) {
+                        if (dp2 > 0) {
+                            if (pr1 - pr2 > pr2 - price) {
+                                lastPriceToCell = pr1;
+                                continue;
+                            }
+                            else {
+                                profit += pr2 - lastPriceToBuy;
+                                lastPriceToBuy = lastPriceToCell = price;
+                                haveStock = false;
+                            }
+                        }
+                        else {
+                            profit += lastPriceToCell - lastPriceToBuy;
+                            lastPriceToBuy = price;
+                            haveStock = false;
+                        }
                     }
                     else {
-                        day1.price = int.MaxValue;
+                        lastPriceToCell = System.Math.Max(lastPriceToCell, price);
+                        
                     }
+
                 }
-                if (day2.price > price) {
-                    day2.price = price;
-                    day2.profit = cpr2;
+                else {
+                    if (dp1 > 0) {
+                        lastPriceToCell = System.Math.Max(lastPriceToCell, price);
+                        haveStock = true;
+                    }
+                    else 
+                        lastPriceToBuy = System.Math.Min(lastPriceToBuy, price);
                 }
                 pr2 = pr1;
                 pr1 = price;
             }
-            cpr1 = (pr1 - day1.price) > 0 ? day1.profit + pr1 - day1.price : day1.profit; // can profit if cell yesterday
-            cpr2 = (pr1 - day2.price) > 0 ? day2.profit + pr1 - day2.price : day2.profit;
-
-            return System.Math.Max(cpr1, cpr2);
+            if (haveStock & lastPriceToBuy < lastPriceToCell)
+                profit += lastPriceToCell - lastPriceToBuy;
+            return profit;
         }
-        private static (int p2, int p1, int p) GetMaxProfit_III(int[] prices, int day) {
-            switch (day) {
-                case 0:
-                    return (0, 0, 0);
-                case 1:
-                    return (0, 0, System.Math.Max(0, prices[1] - prices[0]));
-                case 2:
-                    return (0, System.Math.Max(0, prices[1] - prices[0]), System.Math.Max(0, prices[2] - prices[0]));
-                default:
-                    break;
+        private static void TradingSession(Broker br1, Broker br2, ref int pr2, ref int pr1, int pr) {
+            if (!br1.canBuy) {
+                br1.canBuy = true;
+                br1.buyPrice = pr;
             }
-            (int p2, int p1, int p) lp = GetMaxProfit_III(prices, day - 1);
-            return (lp.p1, lp.p, System.Math.Max(lp.p, lp.p1 + prices[day] - prices[day - 1]));
+            else if (pr1 > pr) {
+                if (br1.buyPrice < pr1) {
+                    br1.profit = br1.profit + pr1 - br1.buyPrice;
+                    br1.buyPrice = int.MaxValue;
+                    br1.canBuy = false;
+                }
+                else if (br1.buyPrice > pr)
+                    br1.buyPrice = pr;
+                br1.canBuy = false;
+            }
+
+            if (!br2.canBuy) {
+                br2.canBuy = true;
+            }
+            else if (br2.buyPrice > pr2)
+                br2.buyPrice = pr2;
+            else if (pr2 > pr) {
+                if (br2.buyPrice < pr2) {
+                    br2.profit = br2.profit + pr2 - br2.buyPrice;
+                    br2.buyPrice = int.MaxValue;
+                    br2.canBuy = false;
+                }
+
+            }
+            pr2 = pr1;
+            pr1 = pr;
         }
+        private record Broker() {
+            public int profit { get; set; }
+            public int buyPrice { get; set; }
+            public bool canBuy { get; set; }
+        }
+
+        public static int MaxProfit_III_v1(int[] prices) {
+            Broker_v1 br1 = new(0, int.MaxValue, true), br2 = new(0, int.MaxValue, true);
+            int pr2 = int.MaxValue, pr1 = int.MaxValue;
+            TradingSession_v1(ref br1, ref br2, ref pr2, ref pr1, prices[0]);
+            foreach (var pr in prices) {
+                TradingSession_v1(ref br1, ref br2, ref pr2, ref pr1, pr);
+            }
+            TradingSession_v1(ref br1, ref br2, ref pr2, ref pr1, pr1);
+            TradingSession_v1(ref br1, ref br2, ref pr2, ref pr1, 0);
+
+            return System.Math.Max(br1.profit, br2.profit);
+        }
+
+        private static void TradingSession_v1(ref Broker_v1 br1, ref Broker_v1 br2, ref int pr2, ref int pr1, int pr) {
+            if (!br1.canBuy) {
+                br1 = br1 with { canBuy = true, buyPrice = pr };
+            }
+            else if (pr1 > pr) {
+                if (br1.buyPrice < pr1) {
+                    br1 = new(br1.profit + pr1 - br1.buyPrice, int.MaxValue, false);
+                }
+                else if (br1.buyPrice > pr)
+                    br1 = br1 with { buyPrice = pr, canBuy = false };
+            }
+
+            if (!br2.canBuy) {
+                br2 = br2 with { canBuy = true };
+            }
+            else if (br2.buyPrice > pr2)
+                br2 = br2 with { buyPrice = pr2 };
+            else if (pr2 > pr) {
+                if (br2.buyPrice < pr2) {
+                    br2 = new(br2.profit + pr2 - br2.buyPrice, int.MaxValue, false);
+                }
+
+            }
+            pr2 = pr1;
+            pr1 = pr;
+        }
+
+        private record Broker_v1(int profit, int buyPrice, bool canBuy) {
+
+        }
+        /*
+         * 714. Best Time to Buy and Sell Stock with Transaction Fee
+         * Medium
+         * You are given an array prices where prices[i] is the price of a given stock on the ith day,
+         * and an integer fee representing a transaction fee.
+         * Find the maximum profit you can achieve. 
+         * You may complete as many transactions as you like, 
+         * but you need to pay the transaction fee for each transaction.
+         * Note: You may not engage in multiple transactions simultaneously 
+         * (i.e., you must sell the stock before you buy again).
+         * 
+         * Constraints:
+
+    1 <= prices.length <= 5 * 10^4
+    1 <= prices[i] < 5 * 10^4
+    0 <= fee < 5 * 10^4
+
+        */
+        public static int MaxProfit_IV(int[] prices, int fee) {
+            if (prices.Length < 2) {
+                return 0;
+            }
+            else if (prices.Length == 2) {
+                return prices[1] - prices[0] - fee > 0 ? prices[1] - prices[0] : 0;
+            }
+            int maxProfit = 0, pr1 = prices[0], pr2 = pr1,
+                dp1 = 0, dp2,
+                lastpriceToBuy = pr1 + fee, lastPriceToCell = 0;
+            bool haveStock = false;
+            foreach (var price in prices) {
+                dp2 = dp1;
+                dp1 = price - pr1;
+                if (haveStock) {
+                    if ((dp1 > 0) & (dp2 <= 0) & (lastPriceToCell > pr1 + fee)) {
+                        maxProfit += lastPriceToCell - lastpriceToBuy;
+                        lastpriceToBuy = pr1 + fee;
+                        if (lastpriceToBuy < price) {
+                            lastPriceToCell = price;
+                            haveStock = true;
+                        }
+                        else {
+                            haveStock = false;
+                        }
+                    }
+                    else {
+                        lastPriceToCell = lastPriceToCell < price ? price : lastPriceToCell;
+                    }
+                }
+                else {
+                    if (lastpriceToBuy > price + fee) {
+                        lastpriceToBuy = price + fee;
+                    }
+                    else if (lastpriceToBuy < price) {
+                        lastPriceToCell = price;
+                        haveStock = true;
+                    }
+                }
+                pr2 = pr1;
+                pr1 = price;
+            }
+            if (haveStock & lastpriceToBuy < lastPriceToCell)
+                maxProfit += lastPriceToCell - lastpriceToBuy;
+            return maxProfit;
+        }
+
         /*
          * 1014. Best Sightseeing Pair
          * Medium

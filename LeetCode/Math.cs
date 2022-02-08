@@ -91,5 +91,21 @@ namespace LeetCode {
                     return (cl.n0, cl.n0 + cl.n1);
             }
         }
+        /*
+         * 258. Add Digits
+         * Easy
+         * Given an integer num, repeatedly add all its digits
+         * until the result has only one digit, and return it.
+         * 
+         * Constraints:
+
+    0 <= num <= 2^31 - 1
+
+        */
+        public static int AddDigits(int n) {
+            if (n == 0)
+                return 0;
+            return 1 + (n - 1) % 9;
+        }
     }
 }

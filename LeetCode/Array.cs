@@ -1334,26 +1334,30 @@ n == matrix[i].length
             int trapLevel = System.Math.Min(leftBorder, rightBorder);
             while (left <= right) {
                 if (rightBorder < leftBorder) {
-                    if (rightValue > rightBorder) {
-                        rightBorder = rightValue;
-                        trapLevel = System.Math.Min(leftBorder, rightBorder);
-                    }
-                    else {
+                    while (rightValue <= rightBorder && left <= right) {
                         trap += trapLevel - rightValue;
+                        right--;
+                        rightValue = height[right];
                     }
+                    rightBorder = rightValue;
+                    trapLevel = System.Math.Min(leftBorder, rightBorder);
                     right--;
+                    if (left > right)
+                        break;
                     rightValue = height[right];
 
                 }
                 else {
-                    if (leftValue > leftBorder) {
-                        leftBorder = leftValue;
-                        trapLevel = System.Math.Min(leftBorder, rightBorder);
-                    }
-                    else {
+                    while (leftValue <= leftBorder && left <= right) {
                         trap += trapLevel - leftValue;
+                        left++;
+                        leftValue = height[left];
                     }
+                    leftBorder = leftValue;
+                    trapLevel = System.Math.Min(leftBorder, rightBorder);
                     left++;
+                    if (left > right)
+                        break;
                     leftValue = height[left];
                 }
             }

@@ -1311,5 +1311,53 @@ n == matrix[i].length
             }
             return count;
         }
+        /*
+         * 42. Trapping Rain Water
+         * Hard
+         * Given n non-negative integers representing an elevation map 
+         * where the width of each bar is 1, compute how much water it can trap after raining.
+         * 
+         * Constraints:
+
+    n == height.length
+    1 <= n <= 2 * 10^4
+    0 <= height[i] <= 10^5
+
+         */
+        public static int Trap(int[] height) {
+            if (height.Length < 3)
+                return 0;
+            int left = 0, right = height.Length - 1;
+            int trap = 0;
+            int leftBorder = height[left++], leftValue = height[left];
+            int rightBorder = height[right--], rightValue = height[right];
+            int trapLevel = System.Math.Min(leftBorder, rightBorder);
+            while (left <= right) {
+                if (rightBorder < leftBorder) {
+                    if (rightValue > rightBorder) {
+                        rightBorder = rightValue;
+                        trapLevel = System.Math.Min(leftBorder, rightBorder);
+                    }
+                    else {
+                        trap += trapLevel - rightValue;
+                    }
+                    right--;
+                    rightValue = height[right];
+
+                }
+                else {
+                    if (leftValue > leftBorder) {
+                        leftBorder = leftValue;
+                        trapLevel = System.Math.Min(leftBorder, rightBorder);
+                    }
+                    else {
+                        trap += trapLevel - leftValue;
+                    }
+                    left++;
+                    leftValue = height[left];
+                }
+            }
+            return trap;
+        }
     }
 }

@@ -20,101 +20,66 @@ namespace LeetCode {
     There is at least one 0 in mat.
 
          */
-        public static int[][] UpdateMatrix1(int[][] mat) {
-            var m = mat.Length;
-            var n = mat[0].Length;
-            mask = mat;
-            matrix = new int[m][];
-            for (int i = 0; i < m; i++) {
-                matrix[i] = new int[n];
-            }
-            u_matrix = new bool[m, n];
-            for (int row = 0; row < m; row++) {
-                for (int col = 0; col < n; col++) {
-                    if (mat[row][col] == 0 && !u_matrix[row, col]) {
-                        Wave(row, col, 0);
-                    }
-                }
-            }
-            return matrix;
-        }
         public static int[][] UpdateMatrix(int[][] mat) {
-            int dist = 0;
-            matrix = mat;
-            for (int row = 0; row < matrix.Length; row++) {
-                for (int col = 0; col < matrix[0].Length; col++) {
-                    if (matrix[row][col] == 1) {
-                        matrix[row][col] = int.MaxValue;
+            int m = mat.Length;
+            int n = mat[0].Length;
+            if (m < 3 & n < 3)
+                return mat;
+            List<(int, int)> current = new(), next = new();
+            int i = 0, j, dist = 1;
+            u_matrix = new bool[m, n];
+            foreach (var row in mat) {
+                j = 0;
+                foreach (var val in row) {
+                    if (val == 0) {
+                        u_matrix[i, j] = true;
+                        UpdateNeigbours(mat, current, (i, j), val: dist);
                     }
+                    j++;
                 }
+                i++;
             }
-            for (int row = 0; row < matrix.Length; row++) {
-                for (int col = 0; col < matrix[0].Length; col++) {
-                    if (matrix[row][col] == 0) {
-                        if (row - 1 >= 0) {
-                            Wave1(row - 1, col, dist + 1);
-                        }
-                        if (col - 1 >= 0) {
-                            Wave1(row, col - 1, dist + 1);
-                        }
-                        if (row + 1 < matrix.Length) {
-                            Wave1(row + 1, col, dist + 1);
-                        }
-                        if (col + 1 < matrix[0].Length) {
-                            Wave1(row, col + 1, dist + 1);
-                        }
-                    }
+            while (current.Count>0) {
+                dist++;
+                next.Clear();
+                foreach (var cell in current) {
+
+                    UpdateNeigbours(mat, next, cell, val: dist);
                 }
+                var tmp = current;
+                current = next;
+                next = tmp;
             }
-            return matrix;
+            return mat;
         }
-        private static void Wave1(int row, int col, int dist) {
-            if (matrix[row][col] > dist) {
-                matrix[row][col] = dist;
-                if (row - 1 >= 0) {
-                    Wave1(row - 1, col, dist + 1);
-                }
-                if (col - 1 >= 0) {
-                    Wave1(row, col - 1, dist + 1);
-                }
-                if (row + 1 < matrix.Length) {
-                    Wave1(row + 1, col, dist + 1);
-                }
-                if (col + 1 < matrix[0].Length) {
-                    Wave1(row, col + 1, dist + 1);
-                }
+
+        private static void UpdateNeigbours(int[][] mat, List<(int, int)> current, (int i, int j) cell, int val) {
+            var (i, j) = cell;
+            int row = i - 1, col = j;
+            if (row >= 0 && !u_matrix[row,col] && mat[row][col]==1) {
+                mat[row][col] = val;
+                current.Add((row,col));
+                u_matrix[row, col] = true;
+            }
+            row = i + 1;
+            if (row < mat.Length && !u_matrix[row, col] && mat[row][col] == 1) {
+                mat[row][col] = val;
+                current.Add((row, col));
+                u_matrix[row, col] = true;
+            }
+            row = i; col = j - 1;
+            if (col >= 0 && !u_matrix[row, col] && mat[row][col] == 1) {
+                mat[row][col] = val;
+                current.Add((row, col));
+                u_matrix[row, col] = true;
+            }
+            col = j + 1;
+            if (col < mat[0].Length && !u_matrix[row, col] && mat[row][col] == 1) {
+                mat[row][col] = val;
+                current.Add((row, col));
+                u_matrix[row, col] = true;
             }
         }
-        private static int[][] mask;
-        private static int[][] matrix;
         private static bool[,] u_matrix;
-        private static void Wave(int sr, int sc, int dist) {
-            if (u_matrix[sr, sc]) {
-                if (matrix[sr][sc] <= dist) {
-                    return;
-                }
-                matrix[sr][sc] = dist;
-            }
-            else {
-                if (mask[sr][sc] == 0) {
-                    dist = 0;
-                }
-                else
-                    matrix[sr][sc] = dist;
-                u_matrix[sr, sc] = true;
-            }
-            if (sr - 1 >= 0) {
-                Wave(sr - 1, sc, dist + 1);
-            }
-            if (sc - 1 >= 0) {
-                Wave(sr, sc - 1, dist + 1);
-            }
-            if (sr + 1 < matrix.Length) {
-                Wave(sr + 1, sc, dist + 1);
-            }
-            if (sc + 1 < matrix[0].Length) {
-                Wave(sr, sc + 1, dist + 1);
-            }
-        }
-    }
+     }
 }

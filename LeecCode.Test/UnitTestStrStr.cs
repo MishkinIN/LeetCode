@@ -181,5 +181,38 @@ namespace LeecCode.Test
             Console.WriteLine($"FindTheDifference complete, {sw.Elapsed}");
             Assert.AreEqual('z', ch);
         }
+         [Test]
+        public void WordBreak() {
+            string s = "leetcode";
+            List<string> dict = new List<string>(new string[] { "leet", "code" });
+            var canSegmented = Solution.WordBreak(s, dict);
+            Assert.IsTrue(canSegmented);
+
+            s = "applepenapple";
+            dict = new List<string>(new string[] { "apple", "pen" });
+            canSegmented = Solution.WordBreak(s, dict);
+            Assert.IsTrue(canSegmented);
+
+            s = "goalspecial";
+            dict = new List<string>(new string[] { "go", "goal", "goals", "special" });
+            canSegmented = Solution.WordBreak(s, dict);
+            Assert.IsTrue(canSegmented);
+
+           s = "catsandog";
+            //dict = new List<string>(new string[] { "cats", "dog", "sand", "and", "cat" });
+            dict = new List<string>(new string[] { "cats", "dog", "sand", "and", "cat" });
+            canSegmented = Solution.WordBreak(s, dict);
+            Assert.IsFalse(canSegmented);
+
+            s = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaab";
+
+            dict = new List<string>(new string[] { "a", "aa", "aaa", "aaaa", "aaaaa", "aaaaaa", "aaaaaaa", "aaaaaaaa", "aaaaaaaaa", "aaaaaaaaaa" });
+            sw.Restart();
+            canSegmented = Solution.WordBreak(s, dict);
+            sw.Stop();
+            Console.WriteLine(sw.Elapsed);
+            Assert.IsFalse(canSegmented);
+
+        }
     }
 }

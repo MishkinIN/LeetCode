@@ -586,40 +586,39 @@ namespace LeecCode.Test {
         }
         [Test]
         public void UpdateMatrix() {
-            int[][] mat = new int[][]{
-                new int[] {'5', '3', '.', '.', '7', '.', '.', '.', '.'}
-                ,new int[] {'6', '.', '.', '1', '9', '5', '.', '.', '.'}
-                ,new int[] {'.', '9', '8', '.', '.', '.', '.', '6', '.'}
-                ,new int[] {'8', '.', '.', '.', '6', '.', '.', '.', '3'}
-                ,new int[] {'4', '.', '.', '8', '.', '3', '.', '.', '1'}
-                ,new int[] {'7', '.', '.', '.', '2', '.', '.', '.', '6'}
-                ,new int[] {'.', '6', '.', '.', '.', '.', '2', '8', '.'}
-                ,new int[] {'.', '.', '.', '4', '1', '9', '.', '.', '5'}
-                ,new int[] {'.', '.', '.', '.', '8', '.', '.', '7', '9'} };
+            int[][] mat, expected ;
 
             mat = new int[][]{
                 new int[] {0,0,0}
                 ,new int[] {0,1,0}
                 ,new int[] {0,0,0}
             };
-
+            expected = new int[][]{
+                new int[] {0,0,0}
+                ,new int[] {0,1,0}
+                ,new int[] {0,0,0}
+            };
+            
             var matrix = Solution.UpdateMatrix(mat);
-            Assert.AreEqual(0, matrix[0][2]);
-            Assert.AreEqual(1, matrix[1][1]);
-            Assert.AreEqual(0, matrix[2][2]);
+            for (int i = 0; i < mat.Length; i++) {
+                Assert.IsTrue(Equal(matrix[i], expected[i]));
+            }
 
             mat = new int[][]{
-                new int[] {0}
-                ,new int[] {0}
-                ,new int[] {0}
-                ,new int[] {0}
+                new int[] {0,0,0}
+                ,new int[] {0,1,0}
+                ,new int[] {1,1,1}
+            };
+            expected = new int[][]{
+                new int[] {0,0,0}
+                ,new int[] {0,1,0}
+                ,new int[] {1,2,1}
             };
 
             matrix = Solution.UpdateMatrix(mat);
-            Assert.AreEqual(0, matrix[0][0]);
-            Assert.AreEqual(0, matrix[1][0]);
-            Assert.AreEqual(0, matrix[2][0]);
-            Assert.AreEqual(0, matrix[3][0]);
+            for (int i = 0; i < mat.Length; i++) {
+                Assert.IsTrue(Equal(matrix[i], expected[i]));
+            }
         }
         [Test]
         public void FindMaximumXOR() {
@@ -1049,6 +1048,31 @@ namespace LeecCode.Test {
             Assert.AreEqual(expected, actual);
 
 
+        }
+        [Test]
+        public void FindPairs() {
+            int[] nums;
+            int expected, actual;
+            nums = new int[] { 1, 1 };
+            expected = 1;
+            actual = Solution.FindPairs(nums, 0);
+            Assert.AreEqual(expected, actual);
+            nums = new int[] { 2, 1, 3 };
+            expected = 2;
+            actual = Solution.FindPairs(nums,1);
+            Assert.AreEqual(expected, actual);
+            nums = new int[] { 3, 1, 4, 1, 5 };
+            expected = 2;
+            actual = Solution.FindPairs(nums,2);
+            Assert.AreEqual(expected, actual);
+            nums = new int[] { 1, 2, 3, 4, 5 };
+            expected = 4;
+            actual = Solution.FindPairs(nums,1);
+            Assert.AreEqual(expected, actual);
+            nums = new int[] { 1, 3, 1, 5, 4 };
+            expected = 1;
+            actual = Solution.FindPairs(nums,0);
+            Assert.AreEqual(expected, actual);
         }
     }
 }

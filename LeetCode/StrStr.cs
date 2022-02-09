@@ -12,96 +12,226 @@ namespace LeetCode {
                 , nums20 = 0, nums21 = 0, nums22 = 0, nums23 = 0, nums24 = 0, nums25 = 0;
             internal void Add(char ch) {
                 switch (ch) {
-                    case 'a':   nums0++;    break;
-                    case 'b': nums1++; break;
-                    case 'c': nums2++; break;
-                    case 'd': nums3++; break;
-                    case 'e': nums4++; break;
-                    case 'f': nums5++; break;
-                    case 'g': nums6++; break;
-                    case 'h': nums7++; break;
-                    case 'i': nums8++; break;
-                    case 'j': nums9++; break;
-                    case 'k': nums10++; break;
-                    case 'l': nums11++; break;
-                    case 'm': nums12++; break;
-                    case 'n': nums13++; break;
-                    case 'o': nums14++; break;
-                    case 'p': nums15++; break;
-                    case 'q': nums16++; break;
-                    case 'r': nums17++; break;
-                    case 's': nums18++; break;
-                    case 't': nums19++; break;
-                    case 'u': nums20++; break;
-                    case 'v': nums21++; break;
-                    case 'w': nums22++; break;
-                    case 'x': nums23++; break;
-                    case 'y': nums24++; break;
-                    case 'z': nums25++; break;
+                    case 'a':
+                        nums0++;
+                        break;
+                    case 'b':
+                        nums1++;
+                        break;
+                    case 'c':
+                        nums2++;
+                        break;
+                    case 'd':
+                        nums3++;
+                        break;
+                    case 'e':
+                        nums4++;
+                        break;
+                    case 'f':
+                        nums5++;
+                        break;
+                    case 'g':
+                        nums6++;
+                        break;
+                    case 'h':
+                        nums7++;
+                        break;
+                    case 'i':
+                        nums8++;
+                        break;
+                    case 'j':
+                        nums9++;
+                        break;
+                    case 'k':
+                        nums10++;
+                        break;
+                    case 'l':
+                        nums11++;
+                        break;
+                    case 'm':
+                        nums12++;
+                        break;
+                    case 'n':
+                        nums13++;
+                        break;
+                    case 'o':
+                        nums14++;
+                        break;
+                    case 'p':
+                        nums15++;
+                        break;
+                    case 'q':
+                        nums16++;
+                        break;
+                    case 'r':
+                        nums17++;
+                        break;
+                    case 's':
+                        nums18++;
+                        break;
+                    case 't':
+                        nums19++;
+                        break;
+                    case 'u':
+                        nums20++;
+                        break;
+                    case 'v':
+                        nums21++;
+                        break;
+                    case 'w':
+                        nums22++;
+                        break;
+                    case 'x':
+                        nums23++;
+                        break;
+                    case 'y':
+                        nums24++;
+                        break;
+                    case 'z':
+                        nums25++;
+                        break;
                     default:
                         break;
                 }
             }
             internal void Remove(char ch) {
                 switch (ch) {
-                    case 'a': nums0--; break;
-                    case 'b': nums1--; break;
-                    case 'c': nums2--; break;
-                    case 'd': nums3--; break;
-                    case 'e': nums4--; break;
-                    case 'f': nums5--; break;
-                    case 'g': nums6--; break;
-                    case 'h': nums7--; break;
-                    case 'i': nums8--; break;
-                    case 'j': nums9--; break;
-                    case 'k': nums10--; break;
-                    case 'l': nums11--; break;
-                    case 'm': nums12--; break;
-                    case 'n': nums13--; break;
-                    case 'o': nums14--; break;
-                    case 'p': nums15--; break;
-                    case 'q': nums16--; break;
-                    case 'r': nums17--; break;
-                    case 's': nums18--; break;
-                    case 't': nums19--; break;
-                    case 'u': nums20--; break;
-                    case 'v': nums21--; break;
-                    case 'w': nums22--; break;
-                    case 'x': nums23--; break;
-                    case 'y': nums24--; break;
-                    case 'z': nums25--; break;
+                    case 'a':
+                        nums0--;
+                        break;
+                    case 'b':
+                        nums1--;
+                        break;
+                    case 'c':
+                        nums2--;
+                        break;
+                    case 'd':
+                        nums3--;
+                        break;
+                    case 'e':
+                        nums4--;
+                        break;
+                    case 'f':
+                        nums5--;
+                        break;
+                    case 'g':
+                        nums6--;
+                        break;
+                    case 'h':
+                        nums7--;
+                        break;
+                    case 'i':
+                        nums8--;
+                        break;
+                    case 'j':
+                        nums9--;
+                        break;
+                    case 'k':
+                        nums10--;
+                        break;
+                    case 'l':
+                        nums11--;
+                        break;
+                    case 'm':
+                        nums12--;
+                        break;
+                    case 'n':
+                        nums13--;
+                        break;
+                    case 'o':
+                        nums14--;
+                        break;
+                    case 'p':
+                        nums15--;
+                        break;
+                    case 'q':
+                        nums16--;
+                        break;
+                    case 'r':
+                        nums17--;
+                        break;
+                    case 's':
+                        nums18--;
+                        break;
+                    case 't':
+                        nums19--;
+                        break;
+                    case 'u':
+                        nums20--;
+                        break;
+                    case 'v':
+                        nums21--;
+                        break;
+                    case 'w':
+                        nums22--;
+                        break;
+                    case 'x':
+                        nums23--;
+                        break;
+                    case 'y':
+                        nums24--;
+                        break;
+                    case 'z':
+                        nums25--;
+                        break;
                     default:
                         break;
                 }
             }
             internal bool Contain(char ch) {
                 switch (ch) {
-                    case 'a': return nums0>0;
-                    case 'b': return nums1>0;
-                    case 'c': return nums2>0;
-                    case 'd': return nums3>0;
-                    case 'e': return nums4>0;
-                    case 'f': return nums5>0;
-                    case 'g': return nums6>0;
-                    case 'h': return nums7>0;
-                    case 'i': return nums8>0;
-                    case 'j': return nums9>0;
-                    case 'k': return nums10>0;
-                    case 'l': return nums11>0;
-                    case 'm': return nums12>0;
-                    case 'n': return nums13>0;
-                    case 'o': return nums14>0;
-                    case 'p': return nums15>0;
-                    case 'q': return nums16>0;
-                    case 'r': return nums17>0;
-                    case 's': return nums18>0;
-                    case 't': return nums19>0;
-                    case 'u': return nums20>0;
-                    case 'v': return nums21>0;
-                    case 'w': return nums22>0;
-                    case 'x': return nums23>0;
-                    case 'y': return nums24>0;
-                    case 'z': return nums25>0;
+                    case 'a':
+                        return nums0 > 0;
+                    case 'b':
+                        return nums1 > 0;
+                    case 'c':
+                        return nums2 > 0;
+                    case 'd':
+                        return nums3 > 0;
+                    case 'e':
+                        return nums4 > 0;
+                    case 'f':
+                        return nums5 > 0;
+                    case 'g':
+                        return nums6 > 0;
+                    case 'h':
+                        return nums7 > 0;
+                    case 'i':
+                        return nums8 > 0;
+                    case 'j':
+                        return nums9 > 0;
+                    case 'k':
+                        return nums10 > 0;
+                    case 'l':
+                        return nums11 > 0;
+                    case 'm':
+                        return nums12 > 0;
+                    case 'n':
+                        return nums13 > 0;
+                    case 'o':
+                        return nums14 > 0;
+                    case 'p':
+                        return nums15 > 0;
+                    case 'q':
+                        return nums16 > 0;
+                    case 'r':
+                        return nums17 > 0;
+                    case 's':
+                        return nums18 > 0;
+                    case 't':
+                        return nums19 > 0;
+                    case 'u':
+                        return nums20 > 0;
+                    case 'v':
+                        return nums21 > 0;
+                    case 'w':
+                        return nums22 > 0;
+                    case 'x':
+                        return nums23 > 0;
+                    case 'y':
+                        return nums24 > 0;
+                    case 'z':
+                        return nums25 > 0;
                     default:
                         return false;
                         ;
@@ -109,65 +239,91 @@ namespace LeetCode {
             }
             internal int this[char ch] {
                 get {
-                   switch (ch) {
-                        case 'a': return nums0;
-                        case 'b': return nums1;
-                        case 'c': return nums2;
-                        case 'd': return nums3;
-                        case 'e': return nums4;
-                        case 'f': return nums5;
-                        case 'g': return nums6;
-                        case 'h': return nums7;
-                        case 'i': return nums8;
-                        case 'j': return nums9;
-                        case 'k': return nums10;
-                        case 'l': return nums11;
-                        case 'm': return nums12;
-                        case 'n': return nums13;
-                        case 'o': return nums14;
-                        case 'p': return nums15;
-                        case 'q': return nums16;
-                        case 'r': return nums17;
-                        case 's': return nums18;
-                        case 't': return nums19;
-                        case 'u': return nums20;
-                        case 'v': return nums21;
-                        case 'w': return nums22;
-                        case 'x': return nums23;
-                        case 'y': return nums24;
-                        case 'z': return nums25;
+                    switch (ch) {
+                        case 'a':
+                            return nums0;
+                        case 'b':
+                            return nums1;
+                        case 'c':
+                            return nums2;
+                        case 'd':
+                            return nums3;
+                        case 'e':
+                            return nums4;
+                        case 'f':
+                            return nums5;
+                        case 'g':
+                            return nums6;
+                        case 'h':
+                            return nums7;
+                        case 'i':
+                            return nums8;
+                        case 'j':
+                            return nums9;
+                        case 'k':
+                            return nums10;
+                        case 'l':
+                            return nums11;
+                        case 'm':
+                            return nums12;
+                        case 'n':
+                            return nums13;
+                        case 'o':
+                            return nums14;
+                        case 'p':
+                            return nums15;
+                        case 'q':
+                            return nums16;
+                        case 'r':
+                            return nums17;
+                        case 's':
+                            return nums18;
+                        case 't':
+                            return nums19;
+                        case 'u':
+                            return nums20;
+                        case 'v':
+                            return nums21;
+                        case 'w':
+                            return nums22;
+                        case 'x':
+                            return nums23;
+                        case 'y':
+                            return nums24;
+                        case 'z':
+                            return nums25;
                         default:
                             return 0;
-                   }
+                    }
                 }
             }
             internal IEnumerable<KeyValuePair<char, int>> All() {
-                yield return KeyValuePair.Create('a',nums0);
-                yield return KeyValuePair.Create('b',nums1);
-                yield return KeyValuePair.Create('c',nums2);
-                yield return KeyValuePair.Create('d',nums3);
-                yield return KeyValuePair.Create('e',nums4);
-                yield return KeyValuePair.Create('f',nums5);
-                yield return KeyValuePair.Create('g',nums6);
-                yield return KeyValuePair.Create('h',nums7);
-                yield return KeyValuePair.Create('i',nums8);
-                yield return KeyValuePair.Create('j',nums9);
-                yield return KeyValuePair.Create('k',nums10);
-                yield return KeyValuePair.Create('l',nums11);
-                yield return KeyValuePair.Create('m',nums12);
-                yield return KeyValuePair.Create('n',nums13);
-                yield return KeyValuePair.Create('o',nums14);
-                yield return KeyValuePair.Create('p',nums15);
-                yield return KeyValuePair.Create('q',nums16);
-                yield return KeyValuePair.Create('r',nums17);
-                yield return KeyValuePair.Create('s',nums18);
-                yield return KeyValuePair.Create('t',nums19);
-                yield return KeyValuePair.Create('u',nums20);
-                yield return KeyValuePair.Create('v',nums21);
-                yield return KeyValuePair.Create('w',nums22);
-                yield return KeyValuePair.Create('x',nums23);
-                yield return KeyValuePair.Create('y',nums24);
-                yield return KeyValuePair.Create('z',nums25);
+                yield return KeyValuePair.Create('a', nums0);
+                yield return KeyValuePair.Create('b', nums1);
+                yield return KeyValuePair.Create('c', nums2);
+                yield return KeyValuePair.Create('d', nums3);
+                yield return KeyValuePair.Create('e', nums4);
+                yield return KeyValuePair.Create('f', nums5);
+                yield return KeyValuePair.Create('g', nums6);
+                yield return KeyValuePair.Create('h', nums7);
+                yield return KeyValuePair.Create('i', nums8);
+                yield return KeyValuePair.Create('j', nums9);
+                yield return KeyValuePair.Create('k', nums10);
+                yield return KeyValuePair.Create('l', nums11);
+                yield return KeyValuePair.Create('m', nums12);
+                yield return KeyValuePair.Create('n', nums13);
+                yield return KeyValuePair.Create('o', nums14);
+                yield return KeyValuePair.Create('p', nums15);
+                yield return KeyValuePair.Create('q', nums16);
+                yield return KeyValuePair.Create('r', nums17);
+                yield return KeyValuePair.Create('s', nums18);
+                yield return KeyValuePair.Create('t', nums19);
+                yield return KeyValuePair.Create('u', nums20);
+                yield return KeyValuePair.Create('v', nums21);
+                yield return KeyValuePair.Create('w', nums22);
+                yield return KeyValuePair.Create('x', nums23);
+                yield return KeyValuePair.Create('y', nums24);
+                yield return KeyValuePair.Create('z', nums25);
             }
             internal bool AllDefault() {
                 return (nums0 | nums1 | nums2 | nums3 | nums4 | nums5 | nums6 | nums7 | nums8 | nums9
@@ -365,7 +521,7 @@ namespace LeetCode {
                 chars.Remove(ch);
             }
             return chars.AllDefault();
-            
+
         }
         /*
          * 3. Longest Substring Without Repeating Characters
@@ -590,9 +746,109 @@ namespace LeetCode {
                 .First(kv => kv.Value < 0);
             return kvp.Key;
         }
-         public static char FindTheDifference_LC(string s, string t) {
+        public static char FindTheDifference_LC(string s, string t) {
             var chCode = $"{s}{t}".Aggregate(0, (acc, ch) => acc ^ ch);
             return (char)chCode;
         }
-   }
+        /*
+         * 139. Word Break
+         * Medium
+         * Given a string s and a dictionary of strings wordDict,
+         * return true if s can be segmented into a space-separated sequence
+         * of one or more dictionary words.
+         * Note that the same word in the dictionary may be reused multiple times in the segmentation.
+         * 
+         * Constraints:
+
+    1 <= s.length <= 300
+    1 <= wordDict.length <= 1000
+    1 <= wordDict[i].length <= 20
+    s and wordDict[i] consist of only lowercase English letters.
+    All the strings of wordDict are unique.
+
+         */
+        public static bool WordBreak(string s, IList<string> wordDict) {
+            var dict = new HashSet<string>(wordDict);
+            SortedSet<int> dictWordLenghts = new();
+            cache.Clear();
+            foreach (var item in wordDict) {
+                dictWordLenghts.Add(item.Length);
+            }
+            int maxWodrLenght = dictWordLenghts.Max();
+            int minWordLength = dictWordLenghts.Min();
+            return WordBreak(s, dict, dictWordLenghts.Reverse(), maxWodrLenght, minWordLength);
+        }
+        public const int MaxWordLength = 20;
+        private static Dictionary<string, bool> cache = new();
+        private static bool WordBreak(string s, HashSet<string> dict, IEnumerable<int> wordLenghts, int maxWordrLength, int minWordLength) {
+            if (s == String.Empty || s.Length < minWordLength)
+                return false;
+            else if (cache.ContainsKey(s)) {
+                return cache[s];
+            }
+            else if (s.Length == 1) {
+                var wb = dict.Contains(s);
+                cache[s] = wb;
+                return wb;
+            }
+            else if (s.Length <= maxWordrLength) {
+                foreach (var len in wordLenghts) {
+                    if (len > s.Length)
+                        continue;
+                    if (len == s.Length) {
+                        if (dict.Contains(s)) {
+                            var wb = dict.Contains(s);
+                            cache[s] = wb;
+                            return wb;
+                        }
+
+                        else
+                            continue;
+                    }
+                    if (dict.Contains(s.Substring(0, len))) {
+                        var isWordBreak = WordBreak(s.Substring(len, s.Length - len), dict, wordLenghts, maxWordrLength, minWordLength);
+                        if (isWordBreak) {
+                            cache[s] = true;
+                            return true;
+                        }
+                    }
+                }
+                cache[s] = false;
+                return false;
+            }
+            int l1 = System.Math.Max((s.Length - maxWordrLength) / 2, minWordLength);
+            int l2 = System.Math.Min(s.Length - l1, l1 + maxWordrLength) + 1;
+            for (int i = l1; i < l2; i++) {
+                var iwb1 = WordBreak(s.Substring(0, i), dict, wordLenghts, maxWordrLength, minWordLength);
+                if (!iwb1)
+                    continue;
+                var iwb2 = WordBreak(s.Substring(i, s.Length - i), dict, wordLenghts, maxWordrLength, minWordLength);
+                if (iwb2) {
+                    cache[s] = true;
+                    return true;
+                }
+            }
+            cache[s] = false;
+            return false;
+        }
+        public static bool WordBreak_LC(string s, IList<string> wordDict) {
+            bool[] dp = new bool[s.Length + 1];
+
+            dp[0] = true;
+
+            for (int i = 0; i < s.Length; i++) {
+                if (dp[i] == true) {
+                    foreach (string word in wordDict) {
+                        if ((word.Length + i) <= s.Length && word == s.Substring(i, word.Length)) {
+                            dp[word.Length + i] = true;
+                        }
+
+
+                    }
+                }
+            }
+            return dp[dp.Length - 1];
+        }
+    }
+}
 }

@@ -409,26 +409,23 @@ n == matrix[i].length
             else if (prices.Length == 2) {
                 return prices[1] - prices[0] > 0 ? prices[1] - prices[0] : 0;
             }
-            int pr2 = prices[0], pr1 = pr2, dp2, dp1 = 0;
-            int profit2 = 0, profit3, lastPriceToBuy = pr2, lastPriceToCell = pr2;
-            (int profit, int priceToBuy) cell2 = (0, prices[0]), cell3 = cell2;
-            bool haveStock = false;
-            for (int i = 2; i < prices.Length; i++) {
-                int price = prices[i];
-                if (price < pr2 & cell2.priceToBuy < pr2) {
-                    var (profit, priceToBuy) = cell2;
-                    cell2 = cell3;
-                    cell3 = (profit + pr2 - priceToBuy, price);
+            int priceToBuy = prices[0], profit = 0;
+            for (int i = 1; i < prices.Length - 2; i++) {
+                var price = prices[i];
+                if (priceToBuy < prices[i - 1]
+                    & prices[i - 1] < price
+                    & prices[i - 1] - prices[i + 1] > price - prices[i + 2]) {
+                    profit += prices[i - 1] - priceToBuy;
+                    priceToBuy = prices[i + 1];
+                    i++;
                 }
-                if (cell2.priceToBuy > price) {
-                    cell2 = (cell2.profit, priceToBuy: price);
+                if (priceToBuy > price) {
+                    priceToBuy = price;
+                    continue;
                 }
-
-                pr2 = pr1;
-                pr1 = price;
             }
 
-            return System.Math.Max(cell2.profit, cell3.profit);
+            return profit;
         }
         public static int MaxProfit_III_Recurent(int[] prices) {
             return MaxProfit_III_Reccurent(prices, prices.Length - 1);
@@ -443,7 +440,7 @@ n == matrix[i].length
                 default:
                     break;
             }
-            int profit0 = MaxProfit_III_Reccurent(prices, day - 3) -prices[day-1]+prices[day];
+            int profit0 = MaxProfit_III_Reccurent(prices, day - 3) - prices[day - 1] + prices[day];
             int profit1 = MaxProfit_III_Reccurent(prices, day - 1);
             return System.Math.Max(profit0, profit1);
         }
@@ -1235,6 +1232,84 @@ n == matrix[i].length
                 }
             }
             return lMax;
+        }
+        /*
+         * 532. K-diff Pairs in an Array
+         * Medium
+         * Given an array of integers nums and an integer k, 
+         * return the number of unique k-diff pairs in the array.
+         * A k-diff pair is an integer pair (nums[i], nums[j]), where the following are true:
+         * 0 <= i < j < nums.length
+         * |nums[i] - nums[j]| == k
+         * Notice that |val| denotes the absolute value of val.
+         * 
+         * Constraints:
+
+    1 <= nums.length <= 10^4
+    -10^7 <= nums[i] <= 10^7
+    0 <= k <= 10^7
+
+         */
+        public static int FindPairs(int[] nums, int k) {
+            if (nums.Length == 1)
+                return 0;
+            Array.Sort(nums);
+            int count = 0;
+            var cursor = nums.AsEnumerable().GetEnumerator();
+            bool cursorMoved = cursor.MoveNext();
+            int m = cursor.Current;
+            cursorMoved = cursor.MoveNext();
+            if (k == 0) {
+                bool mAlreadyCounted = false;
+                while (cursorMoved) {
+                    if (cursor.Current == m) {
+                        if (!mAlreadyCounted) {
+                            count++;
+                            mAlreadyCounted = true;
+                        }
+                    }
+                    else {
+                        m = cursor.Current;
+                        mAlreadyCounted = false;
+                    }
+                    cursorMoved = cursor.MoveNext();
+                }
+            }
+            else {
+                int startSearchPos = 0;
+                int n = nums.Length;
+                while (cursorMoved) {
+                    if (cursor.Current != m) {
+                        startSearchPos = Array.BinarySearch<int>(nums, startSearchPos, n - startSearchPos, m + k);
+                        if (startSearchPos > 0) {
+                            count++;
+                        }
+                        else {
+                            startSearchPos = ~startSearchPos;
+                            if (startSearchPos >= n)
+                                break;
+                        }
+                        m = cursor.Current;
+                    }
+                    cursorMoved = cursor.MoveNext();
+                }
+            }
+            return count;
+        }
+        public static int FindPairs_brutforce(int[] nums, int k) {//[3,1,4,1,5], k = 2
+            int count = 0;
+            SortedSet<int> set = new();
+            for (int i = 0; i < nums.Length - 1; i++) {
+                for (int j = i + 1; j < nums.Length; j++) {
+                    int min = nums[i] > nums[j] ? nums[j] : nums[i];
+                    int max = nums[i] > nums[j] ? nums[i] : nums[j];
+                    var sum = max - min;
+                    if (sum == k)
+                        if (set.Add(max * 20_000_000 + min))
+                            count++;
+                }
+            }
+            return count;
         }
     }
 }

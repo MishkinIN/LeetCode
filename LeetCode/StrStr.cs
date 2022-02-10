@@ -849,6 +849,75 @@ namespace LeetCode {
             }
             return dp[dp.Length - 1];
         }
+        /*
+         * 91. Decode Ways
+         * Medium
+         * A message containing letters from A-Z can be encoded into numbers using the following mapping:
+         * 'A' -> "1"
+         * 'B' -> "2"
+         * ...
+         * 'Z' -> "26"
+         * To decode an encoded message, all the digits must be grouped 
+         * then mapped back into letters using the reverse of the mapping above
+         * (there may be multiple ways). 
+         * For example, "11106" can be mapped into:
+         * "AAJF" with the grouping (1 1 10 6)
+         * "KJF" with the grouping (11 10 6)
+         * Note that the grouping (1 11 06) is invalid 
+         * because "06" cannot be mapped into 'F' since "6" is different from "06".
+         * Given a string s containing only digits, return the number of ways to decode it.
+         * The test cases are generated so that the answer fits in a 32-bit integer.
+         * 
+         * Example 2:
+Input: s = "226"
+Output: 3
+Explanation: "226" could be decoded as "BZ" (2 26), "VF" (22 6), or "BBF" (2 2 6).
+         *
+         *Constraints:
+    1 <= s.length <= 100
+    s contains only digits and may contain leading zero(s).
+         */
+        public static int NumDecodings(string s) {
+            int c0 = 1; // the number of ways to decode substring [0,i)
+            int c1 = 1, c2 = 1; // the number of ways to decode substring [0,i-1)
+            char ch1 = '0';
+            foreach (var ch in s) {
+                c0 = c1 * (ch == '0' ? 0 : 1) 
+                    + c2 * ((ch1=='1'|| (ch1=='2' && ch-'0'<7))?1:0);
+                if (c0 == 0)
+                    return 0;
+                ch1 = ch;
+                c2 = c1;
+                c1 = c0;
+            }
+            return c0;
+        }
+        private static int Decode(char ch) {
+            return ch == '0' ? 0 : 1;
+           
+       
+        }
+        private static int Decode(char ch1, char ch) {
+            switch (ch1) {
+                case '1':
+                    return 1;
+                case '2':
+                    switch (ch) {
+                        case '0':
+                        case '1':
+                        case '2':
+                        case '3':
+                        case '4':
+                        case '5':
+                        case '6':
+                            return 1;
+                        default:
+                            return 0;
+                    }
+                default:
+                    return 0;
+            }
+        }
     }
 }
 

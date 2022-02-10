@@ -40,7 +40,8 @@ namespace LeecCode.Test {
             ListNode l1 = ListNode.Create(new int[] { 1, 2, 4 });
             ListNode l2 = ListNode.Create(new int[] { 1, 3, 4 });
             ListNode l3 = ListNode.Create(new int[] { 1, 1, 2, 3, 4, 4 });
-            Assert.IsTrue(ListNode.MergeTwoLists(l1, l2).AreEquals(l3));
+            ListNode actual = ListNode.MergeTwoLists(l1, l2);
+            Assert.IsTrue(l3.AreEquals(actual));
             Assert.IsTrue(ListNode.MergeTwoLists(null, null) == null);
             l2 = ListNode.Create(new int[] { 0 });
             Assert.IsTrue(ListNode.MergeTwoLists(null, l2) == l2);
@@ -48,7 +49,8 @@ namespace LeecCode.Test {
             l1 = ListNode.Create(new int[] { 1, 2, 4, 6 });
             l2 = ListNode.Create(new int[] { 3, 4 });
             l3 = ListNode.Create(new int[] { 1, 2, 3, 4, 4, 6 });
-            Assert.IsTrue(ListNode.MergeTwoLists(l1, l2).AreEquals(l3));
+            actual = ListNode.MergeTwoLists(l1, l2);
+            Assert.IsTrue(l3.AreEquals(actual));
         }
         [Test]
         public void MergeKLists() {

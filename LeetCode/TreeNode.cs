@@ -385,11 +385,6 @@ Sum of every tilt : 0 + 0 + 0 + 2 + 7 + 6 = 15
             }
             return list;
         }
-        public enum EnumerateStrategy {
-            Left,
-            Center,
-            Right,
-        }
         public static int MaxDepth(TreeNode root) {
             if (root == null)
                 return 0;
@@ -695,115 +690,272 @@ Sum of every tilt : 0 + 0 + 0 + 2 + 7 + 6 = 15
             throw new NotImplementedException();
 
         }
+        /*
+         * 144. Binary Tree Preorder Traversal
+         * Easy
+         * Given the root of a binary tree, return the preorder traversal of its nodes' values.
+         * 
+         * Constraints:
 
-        public class TreeNodeCursor {
-            private readonly Stack<TreeNode> stack = new();
-            private readonly TreeNode root;
-            public TreeNodeCursor(TreeNode root) {
-                this.root = root;
-            }
-            public bool LeftDown() {
-                throw new NotImplementedException();
-            }
-            public bool RightDown() {
-                throw new NotImplementedException();
+    The number of nodes in the tree is in the range [0, 100].
+    -100 <= Node.val <= 100
 
-            }
-            public TreeNode Current {
-                get; private set;
-            }
-            public bool StepNext() {
-                throw new NotImplementedException();
-            }
-            public bool StepPrevious() {
-                throw new NotImplementedException();
-            }
-            public bool Find(int val) {
-                do {
-                    if (Current.val < val) {
+         *Example 1:
+Input: root = [1,null,2,3]
+Output: [1,2,3]
 
+         */
+        public static IList<int> PreorderTraversal(TreeNode root) {
+            List<int> list = new();
+            Stack<TreeNode> stack = new();
+            stack.Push(root);
+            while (stack.Count > 0) {
+                var node = stack.Pop();
+                list.Add(node.val);
+                if (node.right != null)
+                    stack.Push(node.right);
+                if (node.left != null)
+                    stack.Push(node.left);
+            }
+            return list;
+        }
+        /*
+         * 94. Binary Tree Inorder Traversal
+         * Easy
+         * Given the root of a binary tree, return the inorder traversal of its nodes' values.
+         *
+         *Example 1:
+
+Input: root = [1,null,2,3]
+Output: [1,3,2]
+
+         */
+         public static IList<int> InorderTraversal(TreeNode root) {
+            List<int> list = new();
+            if (root == null)
+                return list;
+            Stack<TreeNode> stack = new();
+            var node = root;
+            
+            bool goLeft = true;
+            while (true) {
+                if (goLeft) {
+                    if (node.left != null) {
+                        stack.Push(node);
+                        node = node.left;
+                        continue;
                     }
-                    else {
-
-                    } 
-                } while (true);
+                    list.Add(node.val);
+                    if (node.right != null) {
+                        node = node.right;
+                        continue;
+                    }
+                    if (!stack.TryPop(out node))
+                        break;
+                    goLeft = false;
+                }
+                else {
+                    list.Add(node.val);
+                    if (node.right != null) {
+                        node = node.right;
+                        goLeft = true;
+                        continue;
+                    }
+                    if (!stack.TryPop(out node))
+                        break;
+                    goLeft = false;
+                }
             }
+            return list;
+        }
+         public static IList<int> InorderTraversal_LC(TreeNode root) {
+
+            List<int> result = new List<int>();
+
+            Inorder_lc(root, result);
+            return result;
+        }
+
+         public static IList<int> InorderTraversal_LC1(TreeNode root) {
+            var result = new List<int>();
+
+            if (root == null) {
+                return result;
+            }
+
+            var stack = new Stack<TreeNode>();
+            var currentNode = root;
+
+            while (currentNode != null) {
+                if (currentNode.left != null) {
+                    stack.Push(currentNode);
+                    currentNode = currentNode.left;
+                    continue;
+                }
+
+                result.Add(currentNode.val);
+
+                if (currentNode.right != null) {
+                    currentNode = currentNode.right;
+                    continue;
+                }
+
+                if (stack.Count > 0) {
+                    currentNode = stack.Pop();
+                    currentNode.left = null;
+                }
+                else {
+                    currentNode = null;
+                }
+
+            }
+
+            return result;
+        }
+        private static IList<int> Inorder_lc(TreeNode root, List<int> result) {
+            if (root == null)
+                return result;
+            if (root.left == null && root.right == null) {
+                result.Add(root.val);
+                return result;
+            }
+
+            Inorder_lc(root.left, result);
+            result.Add(root.val);
+            Inorder_lc(root.right, result);
+            return result;
+        }
+        /*
+         * 145. Binary Tree Postorder Traversal
+         * Easy
+         * Given the root of a binary tree, return the postorder traversal of its nodes' values.
+         * 
+         * Example 1:
+Input: root = [1,null,2,3]
+Output: [3,2,1]
+         */
+        public static IList<int> PostorderTraversal(TreeNode root) {
+            List<int> values = new();
+            if (root == null)
+                return values;
+            PostorderTraversal(values, root);
+            return values;
+        }
+        public static void PostorderTraversal(List<int> values, TreeNode node) {
+            if (node.left != null)
+                PostorderTraversal(values, node.left);
+            if (node.right != null)
+                PostorderTraversal(values, node.right);
+            values.Add(node.val);
+        }
+        public class TreeNodeCursor {
+        private readonly Stack<TreeNode> stack = new();
+        private readonly TreeNode root;
+        public TreeNodeCursor(TreeNode root) {
+            this.root = root;
+        }
+        public bool LeftDown() {
+            throw new NotImplementedException();
+        }
+        public bool RightDown() {
+            throw new NotImplementedException();
 
         }
-        private class EnumeratorIterativeInorder : IEnumerator<int>, IDisposable {
-            const int maxStackCount = 50_000;
-            private Stack<TreeNode> stack;
-            private TreeNode node;
-            private readonly TreeNode root;
-            private bool isInitialized = false;
-            public EnumeratorIterativeInorder(TreeNode tree) {
-                stack = new();
-                root = tree ?? throw new ArgumentNullException(nameof(tree));
-                Reset();
+        public TreeNode Current {
+            get; private set;
+        }
+        public bool StepNext() {
+            throw new NotImplementedException();
+        }
+        public bool StepPrevious() {
+            throw new NotImplementedException();
+        }
+        public bool Find(int val) {
+            do {
+                if (Current.val < val) {
+
+                }
+                else {
+
+                }
+            } while (true);
+        }
+
+    }
+    private class EnumeratorIterativeInorder : IEnumerator<int>, IDisposable {
+        const int maxStackCount = 50_000;
+        private Stack<TreeNode> stack;
+        private TreeNode node;
+        private readonly TreeNode root;
+        private bool isInitialized = false;
+        public EnumeratorIterativeInorder(TreeNode tree) {
+            stack = new();
+            root = tree ?? throw new ArgumentNullException(nameof(tree));
+            Reset();
+        }
+        public int Current {
+            get {
+                if (node != null) {
+                    return node.val;
+                }
+                else
+                    throw new InvalidOperationException();
             }
-            public int Current {
-                get {
+        }
+
+        object IEnumerator.Current => Current;
+
+        public void Dispose() {
+            node = null;
+            stack.Clear();
+            stack = null;
+        }
+
+        private void DownLeft() {
+            if (stack.Count > maxStackCount) {
+                throw new StackOverflowException($"Size of TreeNode elements more than {maxStackCount}");
+            }
+            while (node.left != null) {
+                stack.Push(node);
+                node = node.left;
+            }
+        }
+        public bool MoveNext() {
+            if (stack == null) {
+                throw new ObjectDisposedException(nameof(EnumeratorIterativeInorder));
+            }
+
+            if (isInitialized) {
+                node = node.right;
+                while (stack.Count > 0 || node != null) {
                     if (node != null) {
-                        return node.val;
+                        stack.Push(node);
+                        node = node.left;
                     }
-                    else
-                        throw new InvalidOperationException();
+                    else {
+                        node = stack.Pop();
+                        return true;
+                    }
                 }
+                return false;
             }
-
-            object IEnumerator.Current => Current;
-
-            public void Dispose() {
-                node = null;
-                stack.Clear();
-                stack = null;
-            }
-
-            private void DownLeft() {
-                if (stack.Count > maxStackCount) {
-                    throw new StackOverflowException($"Size of TreeNode elements more than {maxStackCount}");
-                }
+            else {
+                node = root;
                 while (node.left != null) {
                     stack.Push(node);
                     node = node.left;
                 }
-            }
-            public bool MoveNext() {
-                if (stack == null) {
-                    throw new ObjectDisposedException(nameof(EnumeratorIterativeInorder));
-                }
-
-                if (isInitialized) {
-                    node = node.right;
-                    while (stack.Count > 0 || node != null) {
-                        if (node != null) {
-                            stack.Push(node);
-                            node = node.left;
-                        }
-                        else {
-                            node = stack.Pop();
-                            return true;
-                        }
-                    }
-                    return false;
-                }
-                else {
-                    node = root;
-                    while (node.left != null) {
-                        stack.Push(node);
-                        node = node.left;
-                    }
-                    isInitialized = true;
-                    return true;
-                }
-            }
-
-            public void Reset() {
-                stack.Clear();
-                node = null;
-                isInitialized = false;
+                isInitialized = true;
+                return true;
             }
         }
 
+        public void Reset() {
+            stack.Clear();
+            node = null;
+            isInitialized = false;
+        }
     }
+
+}
 }

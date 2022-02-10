@@ -214,5 +214,31 @@ namespace LeecCode.Test
             Assert.IsFalse(canSegmented);
 
         }
+         [Test]
+        public void NumDecodings() {
+            string s;
+            int expected, actual;
+            s = "12";
+            expected = 2;
+            actual = Solution.NumDecodings(s);
+            Assert.AreEqual(expected, actual);
+
+            s = "226";
+            expected = 3;
+            actual = Solution.NumDecodings(s);
+            Assert.AreEqual(expected, actual);
+
+            s = "06";
+            expected = 0;
+            actual = Solution.NumDecodings(s);
+            Assert.AreEqual(expected, actual);
+
+            s = "120012";
+            expected = 0;
+            actual = Solution.NumDecodings(s);
+            Assert.AreEqual(expected, actual);
+
+
+        }
     }
 }

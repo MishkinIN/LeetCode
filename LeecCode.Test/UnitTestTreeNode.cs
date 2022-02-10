@@ -417,6 +417,92 @@ namespace LeecCode.Test
             AssertAreEquals(expecteds, actuals);
         }
         [Test]
+        public void InorderTraversal() {
+            int?[] nums = { 0,1,2,3,4,5,6, null, null, null, null, null, null,7,8 };
+            int[]expecteds = {3,1,4,0,5,2,7,6,8 };
+            var root = TreeNode.Create(nums);
+            var actuals = TreeNode.InorderTraversal(root).ToArray();
+            var isEquals = UnitTestArray.Equal(expecteds, actuals);
+            Assert.IsTrue(isEquals);
+
+            nums = new int?[] { 1, null, 2, 3 };
+            expecteds = new int[] { 1,3,2 };
+            root = TreeNode.Create(nums);
+            actuals = TreeNode.InorderTraversal(root).ToArray();
+            isEquals = UnitTestArray.Equal(expecteds, actuals);
+            Assert.IsTrue(isEquals);
+
+            nums = new int?[] {1};
+            expecteds = new int[] {1 };
+            root = TreeNode.Create(nums);
+            actuals = TreeNode.InorderTraversal(root).ToArray();
+            isEquals = UnitTestArray.Equal(expecteds, actuals);
+            Assert.IsTrue(isEquals);
+
+
+        }
+        [Test]
+        public void PostorderTraversal() {
+            int?[] nums = { 0,1,2,3,4,5,6, null, null, null, null, null, null,7,8 };
+            int[]expecteds = {3,4,1,5,7,8,6,2,0 };
+            var root = TreeNode.Create(nums);
+            var actuals = TreeNode.PostorderTraversal(root).ToArray();
+            var isEquals = UnitTestArray.Equal(expecteds, actuals);
+            Assert.IsTrue(isEquals);
+
+            nums = new int?[] { 1, null, 2, 3 };
+            expecteds = new int[] { 3,2,1 };
+            root = TreeNode.Create(nums);
+            actuals = TreeNode.PostorderTraversal(root).ToArray();
+            isEquals = UnitTestArray.Equal(expecteds, actuals);
+            Assert.IsTrue(isEquals);
+
+            nums = new int?[] {1};
+            expecteds = new int[] {1 };
+            root = TreeNode.Create(nums);
+            actuals = TreeNode.PostorderTraversal(root).ToArray();
+            isEquals = UnitTestArray.Equal(expecteds, actuals);
+            Assert.IsTrue(isEquals);
+
+
+        }
+        [Test]
+        public void InorderTraversal_tree_10_000_000() {
+            sw.Restart();
+            var actuals = TreeNode.InorderTraversal(tree_10_000_000);
+            sw.Stop();
+            Console.WriteLine(sw.Elapsed);
+            Assert.AreEqual(10_000_000, actuals.Count);
+
+        }
+        [Test]
+        public void PostorderTraversal_tree_10_000_000() {
+            sw.Restart();
+            var actuals = TreeNode.PostorderTraversal(tree_10_000_000);
+            sw.Stop();
+            Console.WriteLine(sw.Elapsed);
+            Assert.AreEqual(10_000_000, actuals.Count);
+
+        }
+        [Test]
+        public void InorderTraversal_lc_tree_10_000_000() {
+            sw.Restart();
+            var actuals = TreeNode.InorderTraversal_LC(tree_10_000_000);
+            sw.Stop();
+            Console.WriteLine(sw.Elapsed);
+            Assert.AreEqual(10_000_000, actuals.Count);
+
+        }
+         [Test]
+        public void InorderTraversal_lc1_tree_10_000_000() {
+            sw.Restart();
+            var actuals = TreeNode.InorderTraversal_LC1(tree_10_000_000);
+            sw.Stop();
+            Console.WriteLine(sw.Elapsed);
+            Assert.AreEqual(10_000_000, actuals.Count);
+
+        }
+       [Test]
         public void LevelOrder_recursion() {
             int?[] nums = { 3, 9, 20, null, null, 15, 7 };
             int[][] expecteds = {

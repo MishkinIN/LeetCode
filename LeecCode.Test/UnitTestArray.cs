@@ -330,39 +330,39 @@ namespace LeecCode.Test {
 
         }
         [Test]
-        public void MaxProfit_III() {
+        public void MaxProfit_III_LC() {
             int[] prices;
             int expected;
             prices = new int[] { 1, 2, 4, 2, 5, 7, 2, 4, 9, 0 };
             expected = 11;
-            Assert.AreEqual(expected, Solution.MaxProfit_III_v0(prices));
+            Assert.AreEqual(expected, Solution.MaxProfit_III_LC(prices));
             prices = new int[] { 1, 2, 3, 0, 2 };
             expected = 3;
-            Assert.AreEqual(expected, Solution.MaxProfit_III_v0(prices));
+            Assert.AreEqual(expected, Solution.MaxProfit_III_LC(prices));
             prices = new int[] { 1 };
             expected = 0;
-            Assert.AreEqual(expected, Solution.MaxProfit_III_v0(prices));
+            Assert.AreEqual(expected, Solution.MaxProfit_III_LC(prices));
             prices = new int[] { 1, 2, 10, 0, 2 };
             expected = 9;
-            Assert.AreEqual(expected, Solution.MaxProfit_III_v0(prices));
+            Assert.AreEqual(expected, Solution.MaxProfit_III_LC(prices));
             prices = new int[] { 1, 2, 10, 0, 20 };
             expected = 21;
-            Assert.AreEqual(expected, Solution.MaxProfit_III_v0(prices));
+            Assert.AreEqual(expected, Solution.MaxProfit_III_LC(prices));
             prices = new int[] { 1, 2 };
             expected = 1;
-            Assert.AreEqual(expected, Solution.MaxProfit_III_v0(prices));
+            Assert.AreEqual(expected, Solution.MaxProfit_III_LC(prices));
             prices = new int[] { 2, 1 };
             expected = 0;
-            Assert.AreEqual(expected, Solution.MaxProfit_III_v0(prices));
+            Assert.AreEqual(expected, Solution.MaxProfit_III_LC(prices));
             prices = new int[] { 3, 2, 1 };
             expected = 0;
-            Assert.AreEqual(expected, Solution.MaxProfit_III_v0(prices));
+            Assert.AreEqual(expected, Solution.MaxProfit_III_LC(prices));
             prices = new int[] { 4, 2, 1 };
             expected = 0;
-            Assert.AreEqual(expected, Solution.MaxProfit_III_v0(prices));
+            Assert.AreEqual(expected, Solution.MaxProfit_III_LC(prices));
             prices = new int[] { 4, 2, 1, 5 };
             expected = 4;
-            Assert.AreEqual(expected, Solution.MaxProfit_III_v0(prices));
+            Assert.AreEqual(expected, Solution.MaxProfit_III_LC(prices));
 
         }
          [Test]
@@ -451,12 +451,12 @@ namespace LeecCode.Test {
             Assert.AreEqual(expected, Solution.MaxProfit_IV(prices, fee));
         }
         [Test]
-        public void MaxProfit_III_v0_large() {
+        public void MaxProfit_III_LC_large() {
             int[] prices;
             int expected, actual;
             prices = bigNumsContainsDuplicate;
             sw.Restart();
-            actual = Solution.MaxProfit_III_v0(prices);
+            actual = Solution.MaxProfit_III_LC(prices);
             sw.Stop();
             Console.WriteLine($"sw: {sw.Elapsed}");
 
@@ -1108,6 +1108,92 @@ namespace LeecCode.Test {
             actual = Solution.Trap(nums);
             Assert.AreEqual(expected, actual);
         
+        }
+         [Test]
+        public void SubarraySum() {
+            int[] nums;
+            int expected, actual, k;
+            nums = new int[] { 1,1,1 };
+            k = 2;
+            expected = 2;
+            actual = Solution.SubarraySum(nums,k);
+            Assert.AreEqual(expected, actual);
+
+            nums = new int[] { 1, 2, 3 };
+            k = 3;
+            expected = 2;
+            actual = Solution.SubarraySum(nums, k);
+            Assert.AreEqual(expected, actual);
+         
+            nums = new int[] { 1, 1, 0, 1, 1 };
+            k = 2;
+            expected = 5;
+            actual = Solution.SubarraySum(nums, k);
+            Assert.AreEqual(expected, actual);
+
+
+            nums = new int[] { 1, 1, 1 };
+            k = 0;
+            expected = 0;
+            actual = Solution.SubarraySum(nums, k);
+            Assert.AreEqual(expected, actual);
+
+            nums = new int[] { 1, -1, 0 };
+            k = 0;
+            expected = 3;
+            actual = Solution.SubarraySum(nums, k);
+            Assert.AreEqual(expected, actual);
+
+            nums = new int[] { 1, 1, 1 };
+            k = 1;
+            expected = 3;
+            actual = Solution.SubarraySum(nums, k);
+            Assert.AreEqual(expected, actual);
+
+
+        }
+         [Test]
+        public void NumberOfArithmeticSlices() {
+            int[] nums;
+            int expected, actual;
+            nums = new int[] { 1,1,1 };
+            expected = 1;
+            actual = Solution.NumberOfArithmeticSlices(nums);
+            Assert.AreEqual(expected, actual);
+
+            nums = new int[] { 1, 1,1,1 };
+            expected = 3;
+            actual = Solution.NumberOfArithmeticSlices(nums);
+            Assert.AreEqual(expected, actual);
+         
+            nums = new int[] { 3, 2, 1, 0, -1, -1, -1 };
+            expected = 7;
+            actual = Solution.NumberOfArithmeticSlices(nums);
+            Assert.AreEqual(expected, actual);
+
+
+            nums = new int[] { 1, 1, 1 };
+            expected = 1;
+            actual = Solution.NumberOfArithmeticSlices(nums);
+            Assert.AreEqual(expected, actual);
+
+            nums = new int[] { 1, -1, 0 };
+            expected = 0;
+            actual = Solution.NumberOfArithmeticSlices(nums);
+            Assert.AreEqual(expected, actual);
+
+            nums = new int[] { 0, 0, 0 };
+            expected = 1;
+            actual = Solution.NumberOfArithmeticSlices(nums);
+            Assert.AreEqual(expected, actual);
+
+
+        }
+        [Test]
+        public void Slices() {
+            for (int i = 0; i < 10; i++) {
+                Console.WriteLine($"i={i}: Sleces = {Solution.Slices(i)}");
+            }
         }
     }
 }

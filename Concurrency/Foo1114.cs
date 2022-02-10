@@ -15,11 +15,11 @@ namespace LeetCode.Concurrency {
      * The input format you see is mainly to ensure our tests' comprehensiveness.
      * 
      */
-    public class Foo {
+    public class Foo1114 {
         private Task Job1;
         private Task Job2;
         private Task Job3;
-        public Foo() {
+        public Foo1114() {
 
         }
 

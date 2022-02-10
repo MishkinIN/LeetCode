@@ -4,19 +4,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LeetCode
-{
+namespace LeetCode {
     /**
     * Definition for singly-linked list.
     */
-    public partial class ListNode
-    {
+    public partial class ListNode {
         public int val;
         private int initValue;
         public ListNode next;
         private (ListNode[] nodes, int pos) linkedNodes = default;
-        public ListNode(int val = 0, ListNode next = null)
-        {
+        public ListNode(int val = 0, ListNode next = null) {
             this.val = val;
             this.next = next;
         }
@@ -27,43 +24,35 @@ namespace LeetCode
         /// <param name="pos">Position of the loop. If pos<0 or pos >= vals.Lenght, linked list haven't loop</param>
         /// <param name="isFreeze">Freeze all nodes of linked list, so your can call IsChanged() for check modifications</param>
         /// <returns></returns>
-        public static ListNode Create(int[] vals, int pos = -1, bool isFreeze = false)
-        {
+        public static ListNode Create(int[] vals, int pos = -1, bool isFreeze = false) {
             if (vals == null || vals.Length == 0)
                 return null;
             (ListNode[] nodes, int pos) linkedNodes = default;
             var nodes = new ListNode[vals.Length];
-            if (isFreeze)
-            {
+            if (isFreeze) {
                 linkedNodes = new();
                 linkedNodes.nodes = nodes;
                 linkedNodes.pos = pos;
             }
-            ListNode next=null, node=null;
-            for (int i = vals.Length - 1; i >= 0; i--)
-            {
+            ListNode next = null, node = null;
+            for (int i = vals.Length - 1; i >= 0; i--) {
                 node = new ListNode(vals[i], next);
-                if (isFreeze)
-                {
+                if (isFreeze) {
                     node.initValue = vals[i];
                     node.linkedNodes = linkedNodes;
                 }
                 nodes[i] = node;
                 next = node;
-           }
-            if (pos>=0 & pos<vals.Length)
-            {
+            }
+            if (pos >= 0 & pos < vals.Length) {
                 nodes[vals.Length - 1].next = nodes[pos];
             }
             return node;
         }
-        public bool AreEquals(ListNode other)
-        {
+        public bool AreEquals(ListNode other) {
             ListNode shuttle = this;
-            do
-            {
-                if (other == null || shuttle.val != other.val)
-                {
+            do {
+                if (other == null || shuttle.val != other.val) {
                     return false;
                 }
                 other = other.next;
@@ -71,32 +60,27 @@ namespace LeetCode
             } while (shuttle != null);
             return other == null;
         }
- 
+
         /// <summary>
         /// Check for changes in linked list
         /// </summary>
         /// <returns></returns>
-        public bool IsLinkedListChanged()
-        {
-            if (linkedNodes==default)
-            {
+        public bool IsLinkedListChanged() {
+            if (linkedNodes == default) {
                 throw new InvalidOperationException("Linked list not freezed. To test the modification, you need to create linked list width ListNode.Create(vals, isFreeze = frue)");
             }
             var nodes = linkedNodes.nodes;
             ListNode node;
             int i;
-            for ( i= 0; i < nodes.Length-1; i++)
-            {
+            for (i = 0; i < nodes.Length - 1; i++) {
                 node = nodes[i];
-                if (!(node.next == nodes[i+1] & node.val == node.initValue))
-                {
+                if (!(node.next == nodes[i + 1] & node.val == node.initValue)) {
                     return true;
                 }
             }
             int pos = linkedNodes.pos;
             node = nodes[i];
-            if (pos < 0 | pos >= nodes.Length)
-            {
+            if (pos < 0 | pos >= nodes.Length) {
                 return !(node.val == node.initValue);
             }
             else
@@ -140,12 +124,12 @@ namespace LeetCode
             for (int i = 0; i < n; i++) {
                 last = last.next;
             }
-            if (last==null) {
+            if (last == null) {
                 return head.next;
             }
             last = last.next;
             var node = head;
-            while (last!=null) {
+            while (last != null) {
                 node = node.next;
                 last = last.next;
             }
@@ -166,32 +150,19 @@ The number of nodes in both lists is in the range [0, 50].
 Both list1 and list2 are sorted in non-decreasing order.
  */
         public static ListNode MergeTwoLists(ListNode list1, ListNode list2) {
-            if (list1 == null | list2 == null) {
-                return list1 ?? list2;
-            }
-            ListNode shuttle, root;
-            if (list1.val < list2.val) {
-                root = list1;
-                list1 = list2;
-            }
-            else {
-                root = list2;
-            }
-            shuttle = root;
-            while (list1 != null ) {
-                if (shuttle.next == null) {
-                    shuttle.next = list1;
-                    break;
+            ListNode shuttle = new(), root = shuttle;
+            while (list1 != null & list2 != null) {
+                if (list1.val < list2.val) {
+                    shuttle = shuttle.next = list1;
+                    list1 = list1.next;
                 }
-
-                if (list1.val < shuttle.next.val) {
-                    var node = shuttle.next;
-                    shuttle.next = list1;
-                    list1 = node;
+                else {
+                    shuttle = shuttle.next = list2;
+                    list2 = list2.next;
                 }
-                shuttle = shuttle.next;
             }
-            return root;
+            shuttle.next = list1 ?? list2;
+            return root.next;
         }
         public static ListNode MergeTwoLists_I(ListNode list1, ListNode list2) {
             if (list1 == null) {
@@ -269,7 +240,133 @@ Both list1 and list2 are sorted in non-decreasing order.
                 return MergeKSortedLists(lists3);
             }
         }
+        /* 
+ Given the head of a linked list, return the node where the cycle begins. 
+ If there is no cycle, return null.
+ There is a cycle in a linked list if there is some node in the list
+ that can be reached again by continuously following the next pointer. 
+ Internally, pos is used to denote the index of the node 
+ that tail's next pointer is connected to (0-indexed).
+ It is -1 if there is no cycle. Note that pos is not passed as a parameter.
+ Do not modify the linked list.  
 
+ Constraints:
+
+The number of the nodes in the list is in the range [0, 10^4].
+-10^5 <= Node.val <= 10^5
+pos is -1 or a valid index in the linked-list.
+
+  */
+
+        public static ListNode DetectCycle(ListNode head) {
+
+            if (head == null || head.next == null)
+                return null;
+            int lastDistance = 0, distance;
+            ListNode node = head.next;
+            while (node != null) {
+                distance = GetDistance(head, node);
+                if (distance <= lastDistance) {
+                    break;
+                }
+                else {
+                    lastDistance = distance;
+                    node = node.next;
+                }
+            }
+            return node;
+        }
+        private static int GetDistance(ListNode head, ListNode node) {
+            int distance = 0;
+            while (head != node) {
+                distance++;
+                head = head.next;
+            }
+            return distance;
+        }
+
+        /*
+         * 141. Linked List Cycle
+         * Easy
+         * Given head, the head of a linked list, determine if the linked list has a cycle in it.
+         * There is a cycle in a linked list if there is some node in the list 
+         * that can be reached again by continuously following the next pointer. 
+         * Internally, pos is used to denote the index of the node that tail's next pointer is connected to. 
+         * Note that pos is not passed as a parameter.
+         * Return true if there is a cycle in the linked list. Otherwise, return false.
+         * Constraints:
+
+    The number of the nodes in the list is in the range [0, 10^4].
+    -10^5 <= Node.val <= 10^5
+    pos is -1 or a valid index in the linked-list.
+
+         */
+        public static bool HasCycle(ListNode head) {
+            var ln2 = head?.next?.next;
+            var ln3 = head?.next?.next?.next;
+            while (head != ln2 && head != ln3) {
+                head = head.next;
+                ln2 = ln2?.next?.next;
+                ln3 = ln3?.next?.next?.next;
+            }
+            return head != null;
+        }
+        /*
+         * 203. Remove Linked List Elements
+         * Easy
+         * Given the head of a linked list and an integer val, 
+         * remove all the nodes of the linked list that has Node.val == val, 
+         * and return the new head.
+         * Constraints:
+
+    The number of nodes in the list is in the range [0, 10^4].
+    1 <= Node.val <= 50
+    0 <= val <= 50
+
+         */
+        public static ListNode RemoveElements(ListNode head, int val) {
+            while (head != null && head.val == val) {
+                head = head.next;
+            }
+            if (head == null) {
+                return null;
+            }
+            var shuttle = head;
+            while (shuttle.next != null) {
+                if (shuttle.next.val == val) {
+                    shuttle.next = shuttle.next.next;
+                }
+                else
+                    shuttle = shuttle.next;
+            }
+            return head;
+        }
+        /*
+         * 206. Reverse Linked List
+         * Easy
+         * Given the head of a singly linked list, reverse the list, and return the reversed list.
+         * Constraints:
+
+    The number of nodes in the list is the range [0, 5000].
+    -5000 <= Node.val <= 5000
+        Follow up: A linked list can be reversed either iteratively or recursively. 
+        Could you implement both?
+         */
+        public static ListNode ReverseList(ListNode head) {
+            if (head == null) {
+                return null;
+            }
+
+            ListNode tail = new(head.val), shuttle;
+            head = head.next;
+            while (head != null) {
+                shuttle = head.next;
+                head.next = tail;
+                tail = head;
+                head = shuttle;
+            }
+            return tail;
+        }
     }
 
 }

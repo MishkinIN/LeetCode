@@ -402,30 +402,25 @@ n == matrix[i].length
     0 <= prices[i] <= 1000
 
          */
-        public static int MaxProfit_III_v0(int[] prices) { // 1, 2, 4, 2, 5, 7, 2, 4, 9, 0
-            if (prices.Length < 2) {
+        public static int MaxProfit_III_LC(int[] prices) {
+            int n = prices.Length;
+            if (n < 2) {
                 return 0;
             }
-            else if (prices.Length == 2) {
-                return prices[1] - prices[0] > 0 ? prices[1] - prices[0] : 0;
+            int[] dp = new int[n];
+            dp[1] = System.Math.Max(0, prices[1] - prices[0]);
+            //previous cost, it maybe negative, the more smaller the more profit it obtained.
+            // first, the previous cost is the lower price.
+            int prevCost = System.Math.Min(prices[0], prices[1]);
+            for (int i = 2; i < n; ++i) {
+                // if we sell it yestoday, the profit is dp[i - 1], if we sell it today, then we need to remove the previous cost.
+                // so we select the larger profit between yestoday and today's sale.
+                dp[i] = System.Math.Max(dp[i - 1], prices[i] - prevCost);
+                // update previous cost, if today's cost is the today's price remove the day before yestoday's profit,
+                // we use the lower cost between today's cost and previous cost.
+                prevCost = System.Math.Min(prevCost, prices[i] - dp[i - 2]);
             }
-            int priceToBuy = prices[0], profit = 0;
-            for (int i = 1; i < prices.Length - 2; i++) {
-                var price = prices[i];
-                if (priceToBuy < prices[i - 1]
-                    & prices[i - 1] < price
-                    & prices[i - 1] - prices[i + 1] > price - prices[i + 2]) {
-                    profit += prices[i - 1] - priceToBuy;
-                    priceToBuy = prices[i + 1];
-                    i++;
-                }
-                if (priceToBuy > price) {
-                    priceToBuy = price;
-                    continue;
-                }
-            }
-
-            return profit;
+            return dp[n - 1];
         }
         public static int MaxProfit_III_Recurent(int[] prices) {
             return MaxProfit_III_Reccurent(prices, prices.Length - 1);
@@ -1362,6 +1357,98 @@ n == matrix[i].length
                 }
             }
             return trap;
+        }
+        /*
+         * 560. Subarray Sum Equals K
+         * Medium
+         * Given an array of integers nums and an integer k, 
+         * return the total number of continuous subarrays whose sum equals to k.
+         * 
+         * Constraints:
+
+    1 <= nums.length <= 2 * 10^4
+    -1000 <= nums[i] <= 1000
+    -10^7 <= k <= 10^7
+
+         */
+        public static int SubarraySum(int[] nums, int k) {
+            Dictionary<int, int> sums = new();
+            int sum = 0, count = 0;
+            if (k == 0) { // must exlude empty subarrays
+                foreach (var val in nums) {
+                    sum += val;
+                    if (sum == 0) {
+                        count++;
+                    }
+                    if (!sums.TryAdd(sum, 1)) {
+                        count += sums[sum];
+                        sums[sum] += 1;
+                    }
+                }
+            }
+            else {
+                foreach (var val in nums) {
+                    sum += val;
+                    if (sum==k) {
+                        count++;
+                    }
+                    if (!sums.TryAdd(sum, 1)) {
+                        sums[sum] += 1;
+                    }
+                    if (sums.ContainsKey(sum-k)) {
+                        count += sums[sum - k];
+                    }
+                }
+            }
+            return count;
+        }
+        /*
+         * 413. Arithmetic Slices
+         * Medium
+         * An integer array is called arithmetic if it consists of at least three elements 
+         * and if the difference between any two consecutive elements is the same.
+         * 
+         * For example, [1,3,5,7,9], [7,7,7,7], and [3,-1,-5,-9] are arithmetic sequences.
+         * Given an integer array nums, return the number of arithmetic subarrays of nums.
+         * A subarray is a contiguous subsequence of the array.
+Example 1:
+
+Input: nums = [1,2,3,4]
+Output: 3
+Explanation: We have 3 arithmetic slices in nums: [1, 2, 3], [2, 3, 4] and [1,2,3,4] itself.
+
+         */
+        public static int NumberOfArithmeticSlices(int[] nums) {
+            int startSlice=0;
+            if (nums.Length < 3)
+                return 0;
+            int count = 0;
+            for (int i = 2; i < nums.Length; i++) {
+                if (nums[i]-nums[i-1] != nums[i - 1]-nums[i-2]) {
+                    count += Slices(i - startSlice);
+                    startSlice = i - 1;
+                }
+            }
+            if(nums.Length-startSlice>2)
+                count += Slices(nums.Length - startSlice);
+            return count;
+        }
+        internal static int Slices(int n) {
+            //if (n < 3) return 0;
+            return (n - 2) * (n - 1) / 2;
+        }
+        public static int NumberOfArithmeticSlices_LC(int[] nums) {
+            int count = 0, d=0;
+            for (int i = 2; i < nums.Length; i++) {
+                if (nums[i] - nums[i - 1] == nums[i - 1] - nums[i - 2]) {
+                    d+=1;
+                    count+=d;
+                }
+                else {
+                    d = 0;
+                }
+            }
+            return count;
         }
     }
 }

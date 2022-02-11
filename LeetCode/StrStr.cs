@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -917,6 +918,45 @@ Explanation: "226" could be decoded as "BZ" (2 26), "VF" (22 6), or "BBF" (2 2 6
                 default:
                     return 0;
             }
+        }
+
+        /*
+         * 784. Letter Case Permutation
+         * Medium
+         * Given a string s, you can transform every letter individually to be lowercase or uppercase
+         * to create another string.
+         * Return a list of all possible strings we could create. Return the output in any order.
+         * 
+         * Constraints:
+
+    1 <= s.length <= 12
+    s consists of lowercase English letters, uppercase English letters, and digits.
+
+         */
+        public static IList<string> LetterCasePermutation(string s) {
+            List<string> list = new List<string>(LetterCasePermutation(s, s.Length - 1));
+            return list;
+        }
+        private static IEnumerable<string> LetterCasePermutation(string s, int pos) {
+            if (pos == 0) {
+                foreach (var ch in GetCaseVariants(s[0])) {
+                    yield return $"{ch}";
+                }
+            }
+            else {
+                foreach (var substr in LetterCasePermutation(s, pos-1)) {
+                    foreach (var ch in GetCaseVariants(s[pos])) {
+                        yield return $"{substr}{ch}";
+                    }
+                }
+            }
+        }
+        private static IEnumerable<char> GetCaseVariants(char ch) {
+            yield return ch;
+            if (Char.IsLower(ch))
+                yield return Char.ToUpper(ch);
+            else if (Char.IsUpper(ch))
+                yield return Char.ToLower(ch);
         }
     }
 }

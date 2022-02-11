@@ -240,5 +240,19 @@ namespace LeecCode.Test
 
 
         }
+         [Test]
+        public void LetterCasePermutation() {
+            string s;    
+            IList<string> expected, actual;
+            s = "a1b2";
+            actual = Solution.LetterCasePermutation(s);
+            Assert.AreEqual(4, actual.Count);
+
+            s = "3z4";
+            actual = Solution.LetterCasePermutation(s);
+            Assert.AreEqual(2, actual.Count);
+
+
+        }
     }
 }

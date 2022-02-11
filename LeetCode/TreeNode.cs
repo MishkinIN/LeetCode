@@ -620,14 +620,11 @@ Sum of every tilt : 0 + 0 + 0 + 2 + 7 + 6 = 15
 
          */
         public static IList<IList<int>> LevelOrder(TreeNode root) {
-            List<IList<int>> lists = new();
+            List<IList<int>> lists = new(50000);
             if (root == null)
                 return lists;
-            //int lvl = 0;
-            //TreeToLevelOrder_Recursion(lists, lvl, root);
-            List<TreeNode> lvlQueue = new();
-            lvlQueue.Add(root);
-            TreeToLevelOrder_List(lists, lvlQueue);
+            int lvl = 0;
+            TreeToLevelOrder_Recursion(lists, lvl, root);
             return lists;
         }
         public static IList<IList<int>> LevelOrder_recursion(TreeNode root) {

@@ -29,6 +29,21 @@ namespace LeecCode.Test {
             comb = Solution.Combine(20, 16);
             Assert.AreEqual(4845, comb.Count);
         }
+        [Test]
+        public void Permute() {
+            int[] nums;
+            int[][] expected;
+            nums = new int[] { 1 };
+            var permute = Solution.Permute(nums);
+            Assert.AreEqual(1, permute.Count);
+            nums = new int[] { 1, 2};
+            permute = Solution.Permute(nums);
+            Assert.AreEqual(2, permute.Count);
+            nums = new int[] { 1, 2, 3 };
+            permute = Solution.Permute(nums);
+            Assert.AreEqual(6, permute.Count);
+            
+        }
 
     }
 }

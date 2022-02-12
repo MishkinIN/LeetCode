@@ -254,5 +254,34 @@ namespace LeecCode.Test
 
 
         }
+        [Test]
+        public void LadderLength() {
+            string beginWord, endWord;
+            IList<string> wordList;
+            beginWord = "a";
+            endWord = "c";
+            wordList = new List<string>(new string[] { "a", "b", "c" });
+            Assert.AreEqual(2, Solution.LadderLength(beginWord, endWord, wordList));
+            beginWord = "hit";
+            endWord = "cog";
+            wordList = new List<string>(new string[] { "hot", "dot", "dog", "lot", "log", "cog" });
+            Assert.AreEqual(5, Solution.LadderLength(beginWord, endWord, wordList));
+
+            beginWord = "hit";
+            endWord = "cit";
+            wordList = new List<string>(new string[] { "cit", "dot", "dog", "lot", "log", "cog" });
+            Assert.AreEqual(2, Solution.LadderLength(beginWord, endWord, wordList));
+
+            beginWord = "hit";
+            endWord = "mmm";
+            wordList = new List<string>(new string[] { "hot", "dot", "dog", "lot", "log", "mmm" });
+            Assert.AreEqual(0, Solution.LadderLength(beginWord, endWord, wordList));
+
+            beginWord = "hit";
+            endWord = "cog";
+            wordList = new List<string>(new string[] { "hot", "cog", "dot", "dog", "hit", "lot", "log" });
+            Assert.AreEqual(5, Solution.LadderLength(beginWord, endWord, wordList));
+
+        }
     }
 }

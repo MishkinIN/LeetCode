@@ -27,7 +27,7 @@ namespace LeetCode {
     public partial class WordDictionary {
         private class DicNode {
             public static readonly DicNode EndOfWord = new ();
-            public Dictionary<char, DicNode> Nexts = new();
+            public readonly Dictionary<char, DicNode> Nexts = new();
         }
         public const char CR = '\r';
         public const char Dot = '.';

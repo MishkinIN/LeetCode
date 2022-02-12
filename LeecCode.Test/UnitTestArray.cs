@@ -523,6 +523,42 @@ namespace LeecCode.Test {
             Console.WriteLine($"Time to PascalTiangle({n}): {sw.Elapsed}");
         }
         [Test]
+        public void GeneratePascalRow() {
+            sw.Restart();
+            int n = 7;
+            var res = Solution.GetRow(n);
+            sw.Stop();
+            Console.WriteLine($"Time to PascalTiangle({n}): {sw.Elapsed}");
+            n = 30;
+            sw.Restart();
+            res = Solution.GetRow(n);
+            sw.Stop();
+            Console.WriteLine($"Time to PascalTiangle({n}): {sw.Elapsed}");
+            n = 32;
+            sw.Restart();
+            res = Solution.GetRow(n);
+            sw.Stop();
+            Console.WriteLine($"Time to PascalTiangle({n}): {sw.Elapsed}");
+        }
+        [Test]
+        public void GeneratePascalRow_I() {
+            sw.Restart();
+            int n = 7;
+            var res = Solution.GetRow_I(n);
+            sw.Stop();
+            Console.WriteLine($"Time to PascalTiangle({n}): {sw.Elapsed}");
+            n = 30;
+            sw.Restart();
+            res = Solution.GetRow_I(n);
+            sw.Stop();
+            Console.WriteLine($"Time to PascalTiangle({n}): {sw.Elapsed}");
+            n = 32;
+            sw.Restart();
+            res = Solution.GetRow_I(n);
+            sw.Stop();
+            Console.WriteLine($"Time to PascalTiangle({n}): {sw.Elapsed}");
+        }
+        [Test]
         public void TestConvert() {
             for (char i = '0'; i <= '9'; i++) {
                 var expected = Solution.Convert_I(i);

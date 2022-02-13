@@ -845,6 +845,32 @@ Output: [3,2,1]
                 PostorderTraversal(values, node.right);
             values.Add(node.val);
         }
+        /*
+         * 96. Unique Binary Search Trees
+         * Medium
+         * Given an integer n, return the number of structurally unique BST's (binary search trees)
+         * which has exactly n nodes of unique values from 1 to n.
+         * 
+         * Constraints:
+    1 <= n <= 19
+         */
+        public static int NumTrees(int n) {
+            int[] vs = new int[n+1];
+            if (n==1) {
+                return 1;
+            }
+            vs[0] = 1;
+            vs[1] = 1;
+            vs[2] = 2;
+            for (int i = 3; i <= n ; i++) {
+                int k = i-1;
+                for (int j = 0; j < i; j++) {
+                    vs[i]+=vs[k]*vs[j];
+                    k--;
+                }
+            }
+            return vs[^1];
+        }
         public class TreeNodeCursor {
         private readonly Stack<TreeNode> stack = new();
         private readonly TreeNode root;

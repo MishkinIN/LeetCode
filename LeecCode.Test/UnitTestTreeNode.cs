@@ -5,18 +5,15 @@ using LeetCode;
 using System;
 using System.Diagnostics;
 
-namespace LeecCode.Test
-{
-    public class UnitTestTreeNode
-    {
+namespace LeecCode.Test {
+    public class UnitTestTreeNode {
         private TreeNode tree_1000;
         private TreeNode[] roots;
         private TreeNode largeTree;
         private TreeNode tree_10_000_000;
         private Stopwatch sw = new Stopwatch();
         [SetUp]
-        public void Setup()
-        {
+        public void Setup() {
             int[] nums = new int[1000];
             nums[999] = 1;
             nums[998] = 1;
@@ -50,8 +47,7 @@ namespace LeecCode.Test
         }
 
         [Test]
-        public void SumRootToLeaf()
-        {
+        public void SumRootToLeaf() {
             {
                 int[] nums = new int[] { 1 };
                 var root = TreeNode.Create(nums);
@@ -77,15 +73,13 @@ namespace LeecCode.Test
                 target = 2;
                 Assert.AreEqual(target, Solution.SumRootToLeaf(root));
 
-                for (int i = 0; i < 1000; i++)
-                {
+                for (int i = 0; i < 1000; i++) {
                     Assert.AreEqual(target, Solution.SumRootToLeaf(tree_1000));
                 }
             }
         }
         [Test]
-        public void TestMySumRootToLeaf()
-        {
+        public void TestMySumRootToLeaf() {
             {
                 int[] nums = new int[] { 1 };
                 var root = TreeNode.Create(nums);
@@ -111,15 +105,13 @@ namespace LeecCode.Test
                 target = 2;
                 Assert.AreEqual(target, Solution.MySumRootToLeaf(root));
 
-                for (int i = 0; i < 1000; i++)
-                {
+                for (int i = 0; i < 1000; i++) {
                     Assert.AreEqual(target, Solution.MySumRootToLeaf(tree_1000));
                 }
             }
         }
         [Test]
-        public void IsSymmetric()
-        {
+        public void IsSymmetric() {
             TreeNode root = roots[0];
             Assert.IsTrue(TreeNode.IsSymmetric(root));
             root = roots[1];
@@ -133,14 +125,12 @@ namespace LeecCode.Test
             root = roots[5];
             Assert.IsFalse(TreeNode.IsSymmetric(root));
             root = roots[6];
-            for (int i = 0; i < 1000; i++)
-            {
+            for (int i = 0; i < 1000; i++) {
                 Assert.IsFalse(TreeNode.IsSymmetric(root));
             }
         }
         [Test]
-        public void FindTilt()
-        {
+        public void FindTilt() {
             TreeNode root = roots[0];
             Assert.AreEqual(0, TreeNode.FindTilt(root));
             root = roots[1];
@@ -163,8 +153,7 @@ namespace LeecCode.Test
 
         }
         [Test]
-        public void GenerateTrees()
-        {
+        public void GenerateTrees() {
             List<TreeNode> expected = new();
             int?[] nums = new int?[] { 1, null, 2, null, 3 };
             expected.Add(TreeNode.Create(nums));
@@ -178,23 +167,20 @@ namespace LeecCode.Test
             expected.Add(TreeNode.Create(nums));
             IList<TreeNode> actual = TreeNode.GenerateTrees(3);
             Assert.AreEqual(5, actual.Count);
-            foreach (var item in expected)
-            {
+            foreach (var item in expected) {
                 TreeNode node = actual.FirstOrDefault(n => TreeNode.Equals(item, n));
                 Assert.IsNotNull(node);
                 actual.Remove(node);
             }
             Assert.AreEqual(0, actual.Count);
-            
+
         }
         [Test]
-        public void GenerateTrees_12()
-        {
-           var actual = TreeNode.GenerateTrees(12);
+        public void GenerateTrees_12() {
+            var actual = TreeNode.GenerateTrees(12);
         }
         [Test]
-        public void GenerateTrees_12_LeetCode()
-        {
+        public void GenerateTrees_12_LeetCode() {
             var leetCode = new LeetCode.LeetCode();
             IList<TreeNode> actual = leetCode.GenerateTrees(12);
         }
@@ -203,7 +189,7 @@ namespace LeecCode.Test
             int?[] lNums = new int?[] { };
             int?[] rNums = new int?[] { };
 
-            lNums = new int?[] { 8, 3,null,2, null, 1};
+            lNums = new int?[] { 8, 3, null, 2, null, 1 };
             rNums = new int?[] { };
             TreeNode left = TreeNode.Create(lNums);
             TreeNode rigth = TreeNode.Create(rNums);
@@ -302,14 +288,14 @@ namespace LeecCode.Test
             left = TreeNode.Create(lNums);
             rigth = TreeNode.Create(rNums);
             actual = TreeNode.GetAscendingAllElements(left, rigth);
-            Assert.AreEqual(lNums.Length + rNums.Length-1, actual.Count);
+            Assert.AreEqual(lNums.Length + rNums.Length - 1, actual.Count);
             lastVal = int.MinValue;
             foreach (var item in actual) {
                 Assert.IsTrue(lastVal <= item);
                 lastVal = item;
             }
-            lNums = new int?[] {99, 90, null, 8, null, 7, 85, null, null, null, 87 };
-            rNums = new int?[] {};
+            lNums = new int?[] { 99, 90, null, 8, null, 7, 85, null, null, null, 87 };
+            rNums = new int?[] { };
             left = TreeNode.Create(lNums);
             rigth = TreeNode.Create(rNums);
             actual = TreeNode.GetAscendingAllElements(left, rigth);
@@ -353,8 +339,8 @@ namespace LeecCode.Test
                 lastVal = item;
             }
 
-            lNums = new int?[] {99, 90, null, 8, null, 7, 85, null, null, null, 87 };
-            rNums = new int?[] {50, 2, 73, null, 34, 58, 80, 21, null, null, 64, 74, 92, 10, null, null, 68, null, null, 89, 100, null, null, 66, null, 84 };
+            lNums = new int?[] { 99, 90, null, 8, null, 7, 85, null, null, null, 87 };
+            rNums = new int?[] { 50, 2, 73, null, 34, 58, 80, 21, null, null, 64, 74, 92, 10, null, null, 68, null, null, 89, 100, null, null, 66, null, 84 };
             left = TreeNode.Create(lNums);
             rigth = TreeNode.Create(rNums);
             actual = TreeNode.GetAscendingAllElements(left, rigth);
@@ -377,8 +363,7 @@ namespace LeecCode.Test
             }
         }
         [Test]
-        public void InsertIntoBST()
-        {
+        public void InsertIntoBST() {
             int?[] nums = { 4, 2, 7, 1, 3 };
             var root = TreeNode.Create(nums);
             var bst = TreeNode.InsertIntoBST(root, 5);
@@ -418,22 +403,22 @@ namespace LeecCode.Test
         }
         [Test]
         public void InorderTraversal() {
-            int?[] nums = { 0,1,2,3,4,5,6, null, null, null, null, null, null,7,8 };
-            int[]expecteds = {3,1,4,0,5,2,7,6,8 };
+            int?[] nums = { 0, 1, 2, 3, 4, 5, 6, null, null, null, null, null, null, 7, 8 };
+            int[] expecteds = { 3, 1, 4, 0, 5, 2, 7, 6, 8 };
             var root = TreeNode.Create(nums);
             var actuals = TreeNode.InorderTraversal(root).ToArray();
             var isEquals = UnitTestArray.Equal(expecteds, actuals);
             Assert.IsTrue(isEquals);
 
             nums = new int?[] { 1, null, 2, 3 };
-            expecteds = new int[] { 1,3,2 };
+            expecteds = new int[] { 1, 3, 2 };
             root = TreeNode.Create(nums);
             actuals = TreeNode.InorderTraversal(root).ToArray();
             isEquals = UnitTestArray.Equal(expecteds, actuals);
             Assert.IsTrue(isEquals);
 
-            nums = new int?[] {1};
-            expecteds = new int[] {1 };
+            nums = new int?[] { 1 };
+            expecteds = new int[] { 1 };
             root = TreeNode.Create(nums);
             actuals = TreeNode.InorderTraversal(root).ToArray();
             isEquals = UnitTestArray.Equal(expecteds, actuals);
@@ -443,22 +428,22 @@ namespace LeecCode.Test
         }
         [Test]
         public void PostorderTraversal() {
-            int?[] nums = { 0,1,2,3,4,5,6, null, null, null, null, null, null,7,8 };
-            int[]expecteds = {3,4,1,5,7,8,6,2,0 };
+            int?[] nums = { 0, 1, 2, 3, 4, 5, 6, null, null, null, null, null, null, 7, 8 };
+            int[] expecteds = { 3, 4, 1, 5, 7, 8, 6, 2, 0 };
             var root = TreeNode.Create(nums);
             var actuals = TreeNode.PostorderTraversal(root).ToArray();
             var isEquals = UnitTestArray.Equal(expecteds, actuals);
             Assert.IsTrue(isEquals);
 
             nums = new int?[] { 1, null, 2, 3 };
-            expecteds = new int[] { 3,2,1 };
+            expecteds = new int[] { 3, 2, 1 };
             root = TreeNode.Create(nums);
             actuals = TreeNode.PostorderTraversal(root).ToArray();
             isEquals = UnitTestArray.Equal(expecteds, actuals);
             Assert.IsTrue(isEquals);
 
-            nums = new int?[] {1};
-            expecteds = new int[] {1 };
+            nums = new int?[] { 1 };
+            expecteds = new int[] { 1 };
             root = TreeNode.Create(nums);
             actuals = TreeNode.PostorderTraversal(root).ToArray();
             isEquals = UnitTestArray.Equal(expecteds, actuals);
@@ -493,7 +478,7 @@ namespace LeecCode.Test
             Assert.AreEqual(10_000_000, actuals.Count);
 
         }
-         [Test]
+        [Test]
         public void InorderTraversal_lc1_tree_10_000_000() {
             sw.Restart();
             var actuals = TreeNode.InorderTraversal_LC1(tree_10_000_000);
@@ -502,7 +487,7 @@ namespace LeecCode.Test
             Assert.AreEqual(10_000_000, actuals.Count);
 
         }
-       [Test]
+        [Test]
         public void LevelOrder_recursion() {
             int?[] nums = { 3, 9, 20, null, null, 15, 7 };
             int[][] expecteds = {
@@ -520,7 +505,7 @@ namespace LeecCode.Test
             root = TreeNode.Create(nums);
             actuals = TreeNode.LevelOrder_recursion(root).ToArray();
             AssertAreEquals(expecteds, actuals);
-       }
+        }
         [Test]
         public void LeveOrder_I_Large() {
             sw.Restart();
@@ -543,6 +528,11 @@ namespace LeecCode.Test
                 Assert.IsTrue(UnitTestArray.Equal(expecteds[i], actuals[i].ToArray()));
             }
         }
-
+        [Test]
+        public void NumTrees() {
+            Assert.AreEqual(1, TreeNode.NumTrees(1));
+            Assert.AreEqual(2, TreeNode.NumTrees(2));
+            Assert.AreEqual(5, TreeNode.NumTrees(3));
         }
+    }
 }

@@ -476,7 +476,6 @@ n == matrix[i].length
             public int buyPrice { get; set; }
             public bool canBuy { get; set; }
         }
-
         public static int MaxProfit_III_v1(int[] prices) {
             Broker_v1 br1 = new(0, int.MaxValue, true), br2 = new(0, int.MaxValue, true);
             int pr2 = int.MaxValue, pr1 = int.MaxValue;
@@ -489,7 +488,6 @@ n == matrix[i].length
 
             return System.Math.Max(br1.profit, br2.profit);
         }
-
         private static void TradingSession_v1(ref Broker_v1 br1, ref Broker_v1 br2, ref int pr2, ref int pr1, int pr) {
             if (!br1.canBuy) {
                 br1 = br1 with { canBuy = true, buyPrice = pr };
@@ -516,7 +514,6 @@ n == matrix[i].length
             pr2 = pr1;
             pr1 = pr;
         }
-
         private record Broker_v1(int profit, int buyPrice, bool canBuy) {
 
         }
@@ -584,7 +581,6 @@ n == matrix[i].length
                 maxProfit += lastPriceToCell - lastpriceToBuy;
             return maxProfit;
         }
-
         /*
          * 1014. Best Sightseeing Pair
          * Medium
@@ -639,7 +635,6 @@ n == matrix[i].length
                     return (mc.n0, System.Math.Min(mc.n0 + costs[n - 1], mc.n1 + costs[n - 2]));
             }
         }
-
         /*
          * 198. House Robber
          * Medium
@@ -673,7 +668,6 @@ n == matrix[i].length
             var getRob = GetRob(nums, i - 1);
             return (getRob.r0, System.Math.Max(getRob.r0, getRob.r1 + nums[i]));
         }
-
         /*
          * 213. House Robber II
          * Medium
@@ -711,7 +705,6 @@ n == matrix[i].length
             var getRob = GetRob_II(nums, i - 1, start);
             return (getRob.r0, System.Math.Max(getRob.r0, getRob.r1 + nums[i]));
         }
-
         /*
          * 454. 4Sum II
          * Medium
@@ -1014,9 +1007,6 @@ n == matrix[i].length
                 }
             }
         }
-
-
-
         /*
          * 55. Jump Game
          * Medium
@@ -1389,13 +1379,13 @@ n == matrix[i].length
             else {
                 foreach (var val in nums) {
                     sum += val;
-                    if (sum==k) {
+                    if (sum == k) {
                         count++;
                     }
                     if (!sums.TryAdd(sum, 1)) {
                         sums[sum] += 1;
                     }
-                    if (sums.ContainsKey(sum-k)) {
+                    if (sums.ContainsKey(sum - k)) {
                         count += sums[sum - k];
                     }
                 }
@@ -1419,17 +1409,17 @@ Explanation: We have 3 arithmetic slices in nums: [1, 2, 3], [2, 3, 4] and [1,2,
 
          */
         public static int NumberOfArithmeticSlices(int[] nums) {
-            int startSlice=0;
+            int startSlice = 0;
             if (nums.Length < 3)
                 return 0;
             int count = 0;
             for (int i = 2; i < nums.Length; i++) {
-                if (nums[i]-nums[i-1] != nums[i - 1]-nums[i-2]) {
+                if (nums[i] - nums[i - 1] != nums[i - 1] - nums[i - 2]) {
                     count += Slices(i - startSlice);
                     startSlice = i - 1;
                 }
             }
-            if(nums.Length-startSlice>2)
+            if (nums.Length - startSlice > 2)
                 count += Slices(nums.Length - startSlice);
             return count;
         }
@@ -1438,17 +1428,55 @@ Explanation: We have 3 arithmetic slices in nums: [1, 2, 3], [2, 3, 4] and [1,2,
             return (n - 2) * (n - 1) / 2;
         }
         public static int NumberOfArithmeticSlices_LC(int[] nums) {
-            int count = 0, d=0;
+            int count = 0, d = 0;
             for (int i = 2; i < nums.Length; i++) {
                 if (nums[i] - nums[i - 1] == nums[i - 1] - nums[i - 2]) {
-                    d+=1;
-                    count+=d;
+                    d += 1;
+                    count += d;
                 }
                 else {
                     d = 0;
                 }
             }
             return count;
+        }
+        /*
+         * 931. Minimum Falling Path Sum
+         * Medium
+         * Given an n x n array of integers matrix, return the minimum sum of any falling path through matrix.
+         * A falling path starts at any element in the first row and chooses the element in the next row 
+         * that is either directly below or diagonally left/right. 
+         * Specifically, the next element from position (row, col) will be (row + 1, col - 1), (row + 1, col), or (row + 1, col + 1).
+         * 
+         * Constraints:
+    n == matrix.length == matrix[i].length
+    1 <= n <= 100
+    -100 <= matrix[i][j] <= 100
+         */
+        public static int MinFallingPathSum(int[][] matrix) {
+            int n = matrix.Length;
+            if (n == 1)
+                return matrix[0][0];
+            for (int i = n - 2; i >= 0; i--) {
+                var nextrow = matrix[i + 1];
+                for (int j = 0; j < n; j++) {
+                    //matrix[i][j] += GetMin(nextrow, n, j);
+                    int nextmin = j > 0 ? System.Math.Min(nextrow[j], nextrow[j - 1]) : nextrow[j];
+                    nextmin = j < n - 1 ? System.Math.Min(nextrow[j + 1], nextmin) : nextmin;
+                    matrix[i][j] += nextmin;
+                }
+            }
+            int min = matrix[0][0];
+            var firstRow = matrix[0];
+            for (int i = 0; i < n; i++) {
+                min = System.Math.Min(min, firstRow[i]);
+            }
+            return min;
+        }
+        private static int GetMin(int[] nums, int n, int col) {
+            int min = col > 0 ? System.Math.Min(nums[col], nums[col - 1]) : nums[col];
+            min = col < n - 1 ? System.Math.Min(nums[col + 1], min) : min;
+            return min;
         }
     }
 }

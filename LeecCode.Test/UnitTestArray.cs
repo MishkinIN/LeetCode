@@ -365,7 +365,7 @@ namespace LeecCode.Test {
             Assert.AreEqual(expected, Solution.MaxProfit_III_LC(prices));
 
         }
-         [Test]
+        [Test]
         public void MaxProfit_III_Recurent() {
             int[] prices;
             int expected;
@@ -401,7 +401,7 @@ namespace LeecCode.Test {
             Assert.AreEqual(expected, Solution.MaxProfit_III_Recurent(prices));
 
         }
-       [Test]
+        [Test]
         public void MaxProfit_IV() {
             int[] prices;
             int expected, fee;
@@ -622,7 +622,7 @@ namespace LeecCode.Test {
         }
         [Test]
         public void UpdateMatrix() {
-            int[][] mat, expected ;
+            int[][] mat, expected;
 
             mat = new int[][]{
                 new int[] {0,0,0}
@@ -634,7 +634,7 @@ namespace LeecCode.Test {
                 ,new int[] {0,1,0}
                 ,new int[] {0,0,0}
             };
-            
+
             var matrix = Solution.UpdateMatrix(mat);
             for (int i = 0; i < mat.Length; i++) {
                 Assert.IsTrue(Equal(matrix[i], expected[i]));
@@ -1095,22 +1095,22 @@ namespace LeecCode.Test {
             Assert.AreEqual(expected, actual);
             nums = new int[] { 2, 1, 3 };
             expected = 2;
-            actual = Solution.FindPairs(nums,1);
+            actual = Solution.FindPairs(nums, 1);
             Assert.AreEqual(expected, actual);
             nums = new int[] { 3, 1, 4, 1, 5 };
             expected = 2;
-            actual = Solution.FindPairs(nums,2);
+            actual = Solution.FindPairs(nums, 2);
             Assert.AreEqual(expected, actual);
             nums = new int[] { 1, 2, 3, 4, 5 };
             expected = 4;
-            actual = Solution.FindPairs(nums,1);
+            actual = Solution.FindPairs(nums, 1);
             Assert.AreEqual(expected, actual);
             nums = new int[] { 1, 3, 1, 5, 4 };
             expected = 1;
-            actual = Solution.FindPairs(nums,0);
+            actual = Solution.FindPairs(nums, 0);
             Assert.AreEqual(expected, actual);
         }
-         [Test]
+        [Test]
         public void Trap() {
             int[] nums;
             int expected, actual;
@@ -1119,7 +1119,7 @@ namespace LeecCode.Test {
             actual = Solution.Trap(nums);
             Assert.AreEqual(expected, actual);
 
-            nums = new int[] { 4,3,2,1};
+            nums = new int[] { 4, 3, 2, 1 };
             expected = 0;
             actual = Solution.Trap(nums);
             Assert.AreEqual(expected, actual);
@@ -1137,22 +1137,22 @@ namespace LeecCode.Test {
             expected = 9;
             actual = Solution.Trap(nums);
             Assert.AreEqual(expected, actual);
-        
-            nums = new int[] {0, 1, 2, 0, 3, 0, 1, 2, 0, 0, 4, 2, 1, 2, 5, 0, 1, 2, 0, 2 };
+
+            nums = new int[] { 0, 1, 2, 0, 3, 0, 1, 2, 0, 0, 4, 2, 1, 2, 5, 0, 1, 2, 0, 2 };
             //                         2     3  2  1  3  3     2  3  2     2  1     2
             expected = 26;
             actual = Solution.Trap(nums);
             Assert.AreEqual(expected, actual);
-        
+
         }
-         [Test]
+        [Test]
         public void SubarraySum() {
             int[] nums;
             int expected, actual, k;
-            nums = new int[] { 1,1,1 };
+            nums = new int[] { 1, 1, 1 };
             k = 2;
             expected = 2;
-            actual = Solution.SubarraySum(nums,k);
+            actual = Solution.SubarraySum(nums, k);
             Assert.AreEqual(expected, actual);
 
             nums = new int[] { 1, 2, 3 };
@@ -1160,7 +1160,7 @@ namespace LeecCode.Test {
             expected = 2;
             actual = Solution.SubarraySum(nums, k);
             Assert.AreEqual(expected, actual);
-         
+
             nums = new int[] { 1, 1, 0, 1, 1 };
             k = 2;
             expected = 5;
@@ -1188,20 +1188,20 @@ namespace LeecCode.Test {
 
 
         }
-         [Test]
+        [Test]
         public void NumberOfArithmeticSlices() {
             int[] nums;
             int expected, actual;
-            nums = new int[] { 1,1,1 };
+            nums = new int[] { 1, 1, 1 };
             expected = 1;
             actual = Solution.NumberOfArithmeticSlices(nums);
             Assert.AreEqual(expected, actual);
 
-            nums = new int[] { 1, 1,1,1 };
+            nums = new int[] { 1, 1, 1, 1 };
             expected = 3;
             actual = Solution.NumberOfArithmeticSlices(nums);
             Assert.AreEqual(expected, actual);
-         
+
             nums = new int[] { 3, 2, 1, 0, -1, -1, -1 };
             expected = 7;
             actual = Solution.NumberOfArithmeticSlices(nums);
@@ -1226,10 +1226,91 @@ namespace LeecCode.Test {
 
         }
         [Test]
+        public void Subsets() {
+            int[] nums;
+            IList<IList<int>> expected, actual;
+            nums = new int[] { 1, 2 };
+            //expected = 1;
+            actual = Solution.Subsets(nums);
+            expected = new List<IList<int>>(
+                new List<int>[] {
+                    new List<int>(),
+                    new List<int>(new int[] { 1 }),
+                    new List<int>(new int[] { 2 }),
+                    new List<int>(new int[] { 1, 2 }),
+                });
+
+            nums = new int[] { 1, 2, 3 };
+            //expected = 1;
+            actual = Solution.Subsets(nums);
+
+            nums = new int[] { 1, 2, 3, 4 };
+            //expected = 1;
+            actual = Solution.Subsets(nums);
+        }
+        [Test]
+        public void Subsets_16() {
+            int[] nums = new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22 };
+            sw.Restart();
+            var result = Solution.Subsets(nums);
+            sw.Stop();
+            Console.WriteLine(result.Count);
+            Console.WriteLine(sw.Elapsed);
+        }
+        [Test]
+        public void Subsets_LC_16() {
+            int[] nums = new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22 };
+            sw.Restart();
+            var result = Solution.Subsets_LC(nums);
+            sw.Stop();
+            Console.WriteLine(result.Count);
+            Console.WriteLine(sw.Elapsed);
+        }
+        [Test]
+        public void Subsets_I_16() {
+            int[] nums = new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22 };
+            sw.Restart();
+            var result = Solution.Subsets_I(nums);
+            sw.Stop();
+            Console.WriteLine(result.Count);
+            Console.WriteLine(sw.Elapsed);
+        }
+        [Test]
         public void Slices() {
             for (int i = 0; i < 10; i++) {
                 Console.WriteLine($"i={i}: Sleces = {Solution.Slices(i)}");
             }
+        }
+        [Test]
+        public void MinFallingPathSum() {
+            int[][] matrix;
+            int expected;
+            matrix = new int[][] {
+                new int[]{ 2},
+            };
+            expected = 2;
+            Assert.AreEqual(expected, Solution.MinFallingPathSum(matrix));
+            matrix = new int[][] {
+                new int[]{ 2,1,3},
+                new int[]{ 6,5,4},
+                new int[]{ 7,8,9},
+            };
+            expected = 13;
+            Assert.AreEqual(expected, Solution.MinFallingPathSum(matrix));
+            matrix = new int[][] {
+                new int[]{ -19,57},
+                new int[]{ -40, -5},
+            };
+            expected = -59;
+            Assert.AreEqual(expected, Solution.MinFallingPathSum(matrix));
+
+            matrix = new int[][] { /*[[17,82],[1,-44]]*/
+                new int[]{ 17,82},
+                new int[]{ 1,-44},
+            };
+            expected = 17-44;
+            Assert.AreEqual(expected, Solution.MinFallingPathSum(matrix));
+
         }
     }
 }

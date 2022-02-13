@@ -30,9 +30,9 @@ namespace LeecCode.Test {
         }
         [Test]
         public void GetUglyArg() {
-            int n = 1690;
-            var argUgly = LeetCode.Math.GetUglyArg(1);
-            Assert.AreEqual(1, argUgly);
+            int n = 1690, argUgly;
+            //argUgly = LeetCode.Math.GetUglyArg(1);
+            //Assert.AreEqual(1, argUgly);
             argUgly = LeetCode.Math.GetUglyArg(6);
             Assert.AreEqual(6, argUgly);
             argUgly = LeetCode.Math.GetUglyArg(8);

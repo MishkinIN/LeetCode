@@ -3,6 +3,7 @@ using LeetCode;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using LeetCode.net5;
 
 namespace LeecCode.Test {
     public class UnitTestArray {
@@ -1308,9 +1309,80 @@ namespace LeecCode.Test {
                 new int[]{ 17,82},
                 new int[]{ 1,-44},
             };
-            expected = 17-44;
+            expected = 17 - 44;
             Assert.AreEqual(expected, Solution.MinFallingPathSum(matrix));
 
+        }
+        [Test]
+        public void MatrixBlockSum() {
+            int[][] matrix, expected, actual;
+            matrix = new int[][] {
+                new int[]{ 2},
+            };
+            Assert.AreEqual(2, Solution.MatrixBlockSum(matrix, 1)[0][0]);
+            matrix = new int[][] {
+                new int[]{ 1,2,3},
+                new int[]{ 4,5,6},
+                new int[]{ 7,8,9},
+            };
+            expected = new int[][] {
+                new int[]{ 12,21,16},
+                new int[]{ 27,45,33},
+                new int[]{ 24,39,28},
+            };
+            actual = Solution.MatrixBlockSum(matrix, 1);
+            for (int i = 0; i < matrix.Length; i++) {
+                Assert.IsTrue(Equal(expected[i], actual[i]));
+            }
+
+            matrix = new int[][] {
+                new int[]{ 1,2,3},
+                new int[]{ 4,5,6},
+                new int[]{ 7,8,9},
+            };
+            expected = new int[][] {
+                new int[]{ 45,45,45},
+                new int[]{ 45,45,45},
+                new int[]{ 45,45,45},
+            };
+            actual = Solution.MatrixBlockSum(matrix, 2);
+            for (int i = 0; i < matrix.Length; i++) {
+                Assert.IsTrue(Equal(expected[i], actual[i]));
+            }
+
+            matrix = new int[][] {
+                new int[]{ 67,64,78},
+                new int[]{ 99,98,38},
+                new int[]{ 82,46,46},
+                new int[]{ 6,52,55},
+                new int[]{ 55,99,45},
+            };
+            expected = new int[][] {
+                new int[]{ 67,64,78},
+                new int[]{ 99,98,38},
+                new int[]{ 82,46,46},
+                new int[]{ 6,52,55},
+                new int[]{ 55,99,45},
+            };
+            actual = Solution.MatrixBlockSum(matrix, 2);
+            //for (int i = 0; i < matrix.Length; i++) {
+            //    Assert.IsTrue(Equal(expected[i], actual[i]));
+            //}
+
+        }
+        [Test]
+        public void NumMatrix() {
+            NumMatrix nm = new NumMatrix(
+                new int[][] {
+                    new int[]{ 3, 0, 1, 4, 2 },
+                    new int[]{ 5, 6, 3, 2, 1 },
+                    new int[]{ 1, 2, 0, 1, 5 },
+                    new int[]{ 4, 1, 0, 1, 7 },
+                    new int[]{ 1, 0, 3, 0, 5 },
+                });
+            Assert.AreEqual(8, nm.SumRegion(2, 1, 4, 3));
+            Assert.AreEqual(11, nm.SumRegion(1, 1, 2, 2));
+            Assert.AreEqual(12, nm.SumRegion(1, 2, 2, 4));
         }
     }
 }

@@ -1478,5 +1478,94 @@ Explanation: We have 3 arithmetic slices in nums: [1, 2, 3], [2, 3, 4] and [1,2,
             min = col < n - 1 ? System.Math.Min(nums[col + 1], min) : min;
             return min;
         }
+        /*
+         * 136. Single Number
+         * Easy
+         * Given a non-empty array of integers nums, every element appears twice except for one. 
+         * Find that single one.
+         * You must implement a solution with a linear runtime complexity and use only constant extra space.
+         *
+         *Constraints:
+    1 <= nums.length <= 3 * 10^4
+    -3 * 10^4 <= nums[i] <= 3 * 10^4
+    Each element in the array appears twice except for one element which appears only once.
+         */
+        public static int SingleNumber(int[] nums) {
+            Array.Sort<int>(nums);
+            int n2 = 0, n1 = 0;
+            foreach (var n in nums) {
+                if (n2 != n1 && n1 != n)
+                    return n1;
+                n2 = n1;
+                n1 = n;
+            }
+            if (n2 != n1)
+                return n1;
+            throw new ArgumentOutOfRangeException();
+        }
+        /*
+         * 1314. Matrix Block Sum
+         * Medium
+         * Given a m x n matrix mat and an integer k, 
+         * return a matrix answer where each answer[i][j] is the sum of all elements mat[r][c] for:
+         * i - k <= r <= i + k,
+         * j - k <= c <= j + k, and
+         * (r, c) is a valid position in the matrix.
+         * 
+         * Constraints:
+
+    m == mat.length
+    n == mat[i].length
+    1 <= m, n, k <= 100
+    1 <= mat[i][j] <= 100
+
+         */
+        public static int[][] MatrixBlockSum(int[][] mat, int k) {
+            int m = mat.Length;
+            int n = mat[0].Length;
+            if (m == 1 & n == 1)
+                return mat;
+            int[][] blockSums = new int[m][];
+            int[][] sums = new int[m][];
+            int i;
+            for (i = 0; i < m; i++) {
+                blockSums[i] = new int[n];
+                sums[i] = new int[n];
+            }
+            i = 0;
+            foreach (var row in mat) {
+                int sum = 0;
+                int j = 0;
+                foreach (var val in row) {
+                    sum += val;
+                    sums[i][j++] = sum;
+                }
+                i++;
+            }
+            for (int j = 0; j < n; j++) {
+                int sum = 0;
+                for (i = 0; i < m; i++) {
+                    sum += sums[i][j];
+                    sums[i][j] = sum;
+                }
+            }
+            for (i = 0; i < m; i++) {
+                for (int j = 0; j < n; j++) {
+                    int min_i_Index = i - k - 1;
+                    int max_i_Index = System.Math.Min(m - 1, i + k);
+                    int min_j_index = j - k - 1;
+                    int max_j_Index = System.Math.Min(n - 1, j + k);
+                    int div = min_i_Index >= 0 & min_j_index >= 0 ? sums[min_i_Index][min_j_index]
+                        : 0;
+                    int div1 = min_j_index >= 0 ? sums[max_i_Index][min_j_index]
+                        : 0;
+                    int div2 = min_i_Index >= 0 ? sums[min_i_Index][max_j_Index]
+                        :  0;
+                    blockSums[i][j] = sums[max_i_Index][max_j_Index] - div1 - div2 + div;
+                }
+            }
+            return blockSums;
+        }
     }
+
 }

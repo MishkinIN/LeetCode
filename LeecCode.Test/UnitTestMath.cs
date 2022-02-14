@@ -9,7 +9,11 @@ namespace LeecCode.Test {
         [SetUp]
         public void Setup() {
         }
-
+        [Test]
+        public void HammingWeight() {
+            Assert.AreEqual(1, LeetCode.Math.HammingWeight(0b1));
+            Assert.AreEqual(3, LeetCode.Math.HammingWeight(0b1000001000001));
+        }
         [Test]
         public void NthUglyNumber() {
             Assert.AreEqual(1, LeetCode.Math.NthUglyNumber(1));

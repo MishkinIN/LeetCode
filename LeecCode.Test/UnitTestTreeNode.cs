@@ -153,6 +153,20 @@ namespace LeecCode.Test {
 
         }
         [Test]
+        public void FindTarget() {
+            int?[] nums = new int?[] { 5, 3, 6, 2, 4, null, 7 };
+            var root = TreeNode.Create(nums);
+            Assert.IsTrue(TreeNode.FindTarget(root, 9));
+            Assert.IsFalse(TreeNode.FindTarget(root, 28));
+            nums = new int?[] { 4 };
+            root = TreeNode.Create(nums);
+            Assert.IsFalse(TreeNode.FindTarget(root,4));
+            nums = new int?[] { 2,1 };
+            root = TreeNode.Create(nums);
+            Assert.IsTrue(TreeNode.FindTarget(root,3));
+
+        }
+        [Test]
         public void GenerateTrees() {
             List<TreeNode> expected = new();
             int?[] nums = new int?[] { 1, null, 2, null, 3 };
@@ -521,6 +535,17 @@ namespace LeecCode.Test {
             sw.Stop();
             Console.WriteLine($"Time to calculate LevelOrder is {sw.Elapsed}");
             var count = actuals.Count();
+        }
+        [Test]
+        public void LowestCommonAncestor() {
+            int?[] nums;
+            TreeNode root, p, q;
+            nums = new int?[] {6, 2, 8, 0, 4, 7, 9, null, null, 3, 5 };
+            root = TreeNode.Create(nums);
+            p = new TreeNode(2);
+            q = new TreeNode(4);
+            Assert.AreEqual(2, TreeNode.LowestCommonAncestor(root, p, q).val);
+
         }
         private static void AssertAreEquals(int[][] expecteds, IList<int>[] actuals) {
             Assert.AreEqual(expecteds.Length, actuals.Length);

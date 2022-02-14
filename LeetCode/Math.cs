@@ -107,6 +107,9 @@ namespace LeetCode {
                 return 0;
             return 1 + (n - 1) % 9;
         }
+        public static int HammingWeight(uint n) {
+            return System.Numerics.BitOperations.PopCount(n);
+        }
         /*
          * 264. Ugly Number II
          * Medium

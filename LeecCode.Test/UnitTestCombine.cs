@@ -42,8 +42,10 @@ namespace LeecCode.Test {
             nums = new int[] { 1, 2, 3 };
             permute = Solution.Permute(nums);
             Assert.AreEqual(6, permute.Count);
-            
         }
-
+        [Test]
+        public void UniquePaths() {
+            Assert.AreEqual(548354040, Solution.UniquePaths(13, 23));
+        }
     }
 }

@@ -168,6 +168,87 @@ All the numbers of nums are unique.
             nums[start] = nums[end];
             nums[end] = acc;
         }
+        /*
+         * 62. Unique Paths
+         * Medium
+         * There is a robot on an m x n grid. 
+         * The robot is initially located at the top-left corner (i.e., grid[0][0]). 
+         * The robot tries to move to the bottom-right corner (i.e., grid[m - 1][n - 1]).
+         * The robot can only move either down or right at any point in time.
+         * Given the two integers m and n, return the number of possible unique paths 
+         * that the robot can take to reach the bottom-right corner.
+         * 
+         * The test cases are generated so that the answer will be less than or equal to 2 * 109.
+         * 
+         * Constraints:
+    1 <= m, n <= 100
+         */
+        public static int UniquePaths(int m, int n) {
+            if (m == 1 | n == 1)
+                return 1;
+            if (m == 2)
+                return n;
+            if (n == 2)
+                return m;
+            if (n < m) {
+                var acc = n;
+                n = m;
+                m = acc;
+            }
+            int[,] vs = new int[m - 2, n - 2];
+            int prev = 3, val;
+            for (int j = 0; j < n - 2; j++) {
+                val = prev + j + 3;
+                vs[0, j] = val;
+                prev = val;
+            }
+            for (int i = 1; i < m - 2; i++) {
+                prev = vs[i - 1, i];
+                for (int j = i; j < n - 2; j++) {
+                    val = prev + vs[i - 1, j];
+                    vs[i, j] = val;
+                    prev = val;
+                }
+            }
+            return vs[m - 3, n - 3];
+        }
+        /*
+         * 63. Unique Paths II
+         * Medium
+         * A robot is located at the top-left corner of a m x n grid (marked 'Start' in the diagram below).
+         * The robot can only move either down or right at any point in time. 
+         * The robot is trying to reach the bottom-right corner of the grid 
+         * (marked 'Finish' in the diagram below).
+         * Now consider if some obstacles are added to the grids. How many unique paths would there be?
+         * An obstacle and space is marked as 1 and 0 respectively in the grid.
+         * 
+         * Constraints:
 
+    m == obstacleGrid.length
+    n == obstacleGrid[i].length
+    1 <= m, n <= 100
+    obstacleGrid[i][j] is 0 or 1
+         */
+        public static int UniquePathsWithObstacles(int[][] obstacleGrid) {
+            int n = obstacleGrid.Length;
+            int m = obstacleGrid[0].Length;
+            int[,] vs = new int[n, m];
+            for (int j = 0; j < m; j++) {
+                if (obstacleGrid[0][j] == 0)
+                    vs[0, j] = 1;
+                else
+                    break;
+            }
+            for (int i = 1; i < n; i++) {
+                int prev = obstacleGrid[i][0] == 0?vs[i - 1, 0]:0;
+                vs[i, 0] = prev;
+                for (int j = 1; j < m; j++) {
+                    var val = obstacleGrid[i][j] == 0 ? prev + vs[i - 1, j] : 0;
+                    vs[i, j] = val;
+                    prev = val;
+                }
+            }
+            return vs[n - 1, m - 1];
+        }
     }
 }

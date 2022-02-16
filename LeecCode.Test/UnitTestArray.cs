@@ -1384,5 +1384,20 @@ namespace LeecCode.Test {
             Assert.AreEqual(11, nm.SumRegion(1, 1, 2, 2));
             Assert.AreEqual(12, nm.SumRegion(1, 2, 2, 4));
         }
+        [Test]
+        public void MaximalSquare() {
+            char[][] matrix = new char[][] {
+                new char[]{'1','0','1','0','0' },
+                new char[]{'1','0','1','1','1'},
+                new char[]{'1','1','1','1','1' },
+                new char[]{'1','0','0','1','0' },
+            };
+            Assert.AreEqual(4, Solution.MaximalSquare(matrix));
+             matrix = new char[][] {
+                new char[]{'1','0' },
+                new char[]{'0','0'},
+            };
+            Assert.AreEqual(1, Solution.MaximalSquare(matrix));
+       }
     }
 }

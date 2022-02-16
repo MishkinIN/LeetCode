@@ -1560,11 +1560,123 @@ Explanation: We have 3 arithmetic slices in nums: [1, 2, 3], [2, 3, 4] and [1,2,
                     int div1 = min_j_index >= 0 ? sums[max_i_Index][min_j_index]
                         : 0;
                     int div2 = min_i_Index >= 0 ? sums[min_i_Index][max_j_Index]
-                        :  0;
+                        : 0;
                     blockSums[i][j] = sums[max_i_Index][max_j_Index] - div1 - div2 + div;
                 }
             }
             return blockSums;
+        }
+        /*64. Minimum Path Sum
+         * Medium
+         * Given a m x n grid filled with non-negative numbers, 
+         * find a path from top left to bottom right, which minimizes the sum of all numbers along its path.
+         * Note: You can only move either down or right at any point in time.
+         * 
+         * Constraints:
+    m == grid.length
+    n == grid[i].length
+    1 <= m, n <= 200
+    0 <= grid[i][j] <= 100
+         */
+        public static int MinPathSum(int[][] grid) {
+            int m = grid.Length;
+            var lastRow = grid[0];
+            int n = lastRow.Length;
+            int left = 0;
+            for (int j = 0; j < n; j++) {
+                left += lastRow[j];
+                lastRow[j] = left;
+            }
+            int up = 0;
+            for (int i = 0; i < m; i++) {
+                up += grid[i][0];
+                grid[i][0] = up;
+            }
+            for (int i = 1; i < m; i++) {
+                var row = grid[i];
+                left = row[0];
+                for (int j = 1; j < n; j++) {
+                    up = lastRow[j];
+                    left = System.Math.Min(left, up) + row[j];
+                    row[j] = left;
+                }
+                lastRow = row;
+            }
+            return grid[^1][^1];
+        }
+        /*221. Maximal Square
+         * Medium
+         * Given an m x n binary matrix filled with 0's and 1's, 
+         * find the largest square containing only 1's and return its area.
+         * 
+         * Constraints:
+
+    m == matrix.length
+    n == matrix[i].length
+    1 <= m, n <= 300
+    matrix[i][j] is '0' or '1'.
+
+         */
+        public static int MaximalSquare(char[][] matrix) {
+            int m = matrix.Length;
+            int n = matrix[0].Length;
+            var row = matrix[0];
+            if (m == 1 & n == 1)
+                return (row[0] - '0');
+            int[,] sums = new int[m, n];
+            int sqMax = System.Math.Min(m, n);
+            int left = 0;
+            for (int j = 0; j < n; j++) {
+                left += (row[j] - '0') & 1;
+                sums[0, j] = left;
+            }
+            for (int i = 1; i < m; i++) {
+                left = 0;
+                row = matrix[i];
+                for (int j = 0; j < n; j++) {
+                    left += (row[j] - '0') & 1;
+                    sums[i, j] = left+ sums[i - 1, j];
+                }
+            }
+            left = sums[m - 1, n - 1];
+            if (left == 0)
+                return 0;
+            if (left < 3) {
+                return 1;
+            }
+            var sq = getSquare(left, sqMax);
+            
+            for (; sq.side > 1; sq = (sq.side - 1, (sq.side - 1) * (sq.side - 1))) {
+                for (int i = m - 1; i >= sq.side - 1; i--) {
+                    if (sums[i, n - 1] - (i < sq.side ? 0 : sums[i - sq.side, n - 1]) < sq.sq)
+                        continue;
+                    for (int j = n - 1; j >= sq.side - 1; j--) {
+                        if (sums[i, j] - (j < sq.side ? 0 : sums[i, j - sq.side]) < sq.sq)
+                            continue;
+                        if (FilledSquare(sums, sq, i, j))
+                            return sq.sq;
+                    }
+                }
+            }
+            return 1;
+        }
+        private static bool FilledSquare(int[,] sums, (int side, int sq) sq, int bottomRow, int rightCol) {
+            var (side, square) = sq;
+            if (rightCol < side-1 | bottomRow < side-1)
+                return false;
+            int left = rightCol < side ? 0 : sums[bottomRow, rightCol - side];
+            int top = bottomRow < side ? 0 : sums[bottomRow - side, rightCol];
+            int lefttop = rightCol < side | bottomRow < side ? 0 : sums[bottomRow - side, rightCol - side];
+            return sums[bottomRow, rightCol] + lefttop - left - top == square;
+        }
+        private static (int side, int sq) getSquare(int sum, int maxSide) {
+            if (sum == 0 || sum == 1)
+                return (sum, sum);
+            for (int i = maxSide; i > 0; i--) {
+                if (i * i <= sum)
+                    return (i, i * i);
+            }
+            return (maxSide, maxSide * maxSide);
         }
     }
 

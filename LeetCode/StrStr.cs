@@ -579,6 +579,108 @@ namespace LeetCode {
             ls = ls < right - left ? right - left : ls;
             return ls;
         }
+        /*. Longest Palindromic Substring
+         * Medium
+         * Given a string s, return the longest palindromic substring in s
+         * 
+         * Constraints:
+    1 <= s.length <= 1000
+    s consist of only digits and English letters.
+         */
+        public static string LongestPalindrome(string s) {
+            if (IsPalindrome(s)) {
+                return s;
+            }
+            int sLength = s.Length;
+            int maxPalingdromeLength = sLength - 1;
+            while (maxPalingdromeLength > 1) {
+                for (int i = 0; i < sLength-maxPalingdromeLength+1; i++) {
+                    var s1 = s[i..(i+maxPalingdromeLength)];
+                    if (IsPalindrome(s1))
+                        return s1;
+                }
+                maxPalingdromeLength--;
+            }
+            return s.Substring(0,1);
+        }
+        public static bool IsPalindrome(string s) {
+            for (int i = 0; i < s.Length/2; i++) {
+                if (s[i]!=s[^(i+1)]) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        /*
+         * 516. Longest Palindromic Subsequence
+         * Medium
+         * Given a string s, find the longest palindromic subsequence's length in s.
+         * A subsequence is a sequence that can be derived from another sequence 
+         * by deleting some or no elements without changing the order of the remaining elements.
+         * 
+         * Constraints:
+    1 <= s.length <= 1000
+    s consists only of lowercase English letters.
+         */
+        public static int LongestPalindromeSubseq(string s) {
+            int maxLength = 1;
+            if (s.Length==1) {
+                return 1;
+            }
+            int[] leftChars = new int['z'-'a'+1];
+            Array.Fill(leftChars, -1);
+            int[] distances = new int[s.Length];
+            int i = 0;
+            foreach (var ch in s) {
+                if (leftChars[ch - 'a'] >= 0)
+                    distances[leftChars[ch - 'a']] = i;
+                leftChars[ch - 'a'] = i;
+                i++;
+            }
+            Container root = new Container(0, 1000);
+            for ( i = 0; i < distances.Length; i++) {
+                int right = distances[i];
+                while(right> 0) {
+                    var dept = root.Add(new Container(i, right));
+                    right = distances[right];
+                    maxLength = System.Math.Max(maxLength, dept);
+                }
+            }
+            return maxLength;
+        }
+        private static int AddChields(int[] distances, Container container) {
+            int min = container.Left;
+            int max = container.Right;
+            if (min == max - 1)
+                return 0;
+            int maxDept = 1;
+            for (int i = min+1; i < max; i++) {
+                int right = distances[i];
+                while (right > 0 & distances[right] <max) { right = distances[right]; }
+                if (right > 0)
+                    return container.Add(new Container(i, right))+2;
+            }
+        }
+        private class Container {
+            public int Left { get; init; }
+            public int Right { get; init; }
+            public Container(int left, int right) {
+                Left = left;
+                Right = right;
+            }
+            List<Container> Chields { get; init; } = new();
+            public bool IsCover(Container other) {
+                return Left <= other.Left & Right >= other.Right;
+            }
+            public int Add(Container other) {
+                foreach (var chield in Chields) {
+                    if (chield.IsCover(other))
+                        return chield.Add(other)+2;
+                }
+                Chields.Add(other);
+                return other.Right-other.Left>1? 3:2;
+            }
+        }
         /*
          * 567. Permutation in String
          * Medium

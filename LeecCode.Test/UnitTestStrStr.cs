@@ -107,6 +107,78 @@ namespace LeecCode.Test
             Console.WriteLine(Solution.LengthOfLongestSubstring(bigPatternString));
         }
         [Test]
+        public void LongestPalindrome() {
+            string s, actual;
+            string[] expected;
+            s = "babad";
+            expected = new string[] { "bab", "aba" };
+            Assert.IsTrue(Array.IndexOf(expected, Solution.LongestPalindrome(s)) >= 0);
+            s = "baaad";
+            expected = new string[] { "aaa" };
+            actual = Solution.LongestPalindrome(s);
+            Assert.IsTrue(Array.IndexOf(expected, actual) >= 0);
+            s = "babadeqrgj6t8k890yl0arv";
+            expected = new string[] { "bab", "aba" };
+            actual = Solution.LongestPalindrome(s);
+            Assert.IsTrue(Array.IndexOf(expected, actual) >= 0);
+            s = "zudfweormatjycujjirzjpyrmaxurectxrtqedmmgergwdvjmjtstdhcihacqnothgttgqfywcpgnuvwglvfiuxteopoyizgehkwuvvkqxbnufkcbodlhdmbqyghkojrgokpwdhtdrwmvdegwycecrgjvuexlguayzcammupgeskrvpthrmwqaqsdcgycdupykppiyhwzwcplivjnnvwhqkkxildtyjltklcokcrgqnnwzzeuqioyahqpuskkpbxhvzvqyhlegmoviogzwuiqahiouhnecjwysmtarjjdjqdrkljawzasriouuiqkcwwqsxifbndjmyprdozhwaoibpqrthpcjphgsfbeqrqqoqiqqdicvybzxhklehzzapbvcyleljawowluqgxxwlrymzojshlwkmzwpixgfjljkmwdtjeabgyrpbqyyykmoaqdambpkyyvukalbrzoyoufjqeftniddsfqnilxlplselqatdgjziphvrbokofvuerpsvqmzakbyzxtxvyanvjpfyvyiivqusfrsufjanmfibgrkwtiuoykiavpbqeyfsuteuxxjiyxvlvgmehycdvxdorpepmsinvmyzeqeiikajopqedyopirmhymozernxzaueljjrhcsofwyddkpnvcvzixdjknikyhzmstvbducjcoyoeoaqruuewclzqqqxzpgykrkygxnmlsrjudoaejxkipkgmcoqtxhelvsizgdwdyjwuumazxfstoaxeqqxoqezakdqjwpkrbldpcbbxexquqrznavcrprnydufsidakvrpuzgfisdxreldbqfizngtrilnbqboxwmwienlkmmiuifrvytukcqcpeqdwwucymgvyrektsnfijdcdoawbcwkkjkqwzffnuqituihjaklvthulmcjrhqcyzvekzqlxgddjoir";
+            expected = new string[] { "gykrkyg" };
+            sw.Restart();
+            actual = Solution.LongestPalindrome(s);
+            sw.Stop();
+            Console.WriteLine(sw.Elapsed);
+            var index = Array.IndexOf(expected, actual);
+            if (index < 0)
+                Console.WriteLine(actual);
+            Assert.IsTrue(index >= 0);
+             s = "ujtofmboiyyrjzbonysurqfxylvhuzzrzqwcjxibhawifptuammlxstcjmcmfvjuphyyfflkcbwimmpehqrqcdqxglqciduhhuhbjnwaaywofljhwzuqsnhyhahtkilwggineoosnqhdluahhkkbcwbupjcuvzlbzocgmkkyhhglqsvrxsgcglfisbzbawitbjwycareuhyxnbvounqdqdaixgqtljpxpyrccagrkdxsdtvgdjlifknczaacdwxropuxelvmcffiollbuekcfkxzdzuobkrgjedueyospuiuwyppgiwhemyhdjhadcabhgtkotqyneioqzbxviebbvqavtvwgyyrjhnlceyedhfechrbhugotqxkndwxukwtnfiqmstaadlsebfopixrkbvetaoycicsdndmztyqnaehnozchrakt";
+            expected = new string[] { "uhhu" };
+            sw.Restart();
+            actual = Solution.LongestPalindrome(s);
+            sw.Stop();
+            Console.WriteLine(sw.Elapsed);
+            index = Array.IndexOf(expected, actual);
+            if (index < 0)
+                Console.WriteLine(actual);
+            Assert.IsTrue(index >= 0);
+             s = "esbtzjaaijqkgmtaajpsdfiqtvxsgfvijpxrvxgfumsuprzlyvhclgkhccmcnquukivlpnjlfteljvykbddtrpmxzcrdqinsnlsteonhcegtkoszzonkwjevlasgjlcquzuhdmmkhfniozhuphcfkeobturbuoefhmtgcvhlsezvkpgfebbdbhiuwdcftenihseorykdguoqotqyscwymtjejpdzqepjkadtftzwebxwyuqwyeegwxhroaaymusddwnjkvsvrwwsmolmidoybsotaqufhepinkkxicvzrgbgsarmizugbvtzfxghkhthzpuetufqvigmyhmlsgfaaqmmlblxbqxpluhaawqkdluwfirfngbhdkjjyfsxglsnakskcbsyafqpwmwmoxjwlhjduayqyzmpkmrjhbqyhongfdxmuwaqgjkcpatgbrqdllbzodnrifvhcfvgbixbwywanivsdjnbrgskyifgvksadvgzzzuogzcukskjxbohofdimkmyqypyuexypwnjlrfpbtkqyngvxjcwvngmilgwbpcsseoywetatfjijsbcekaixvqreelnlmdonknmxerjjhvmqiztsgjkijjtcyetuygqgsikxctvpxrqtuhxreidhwcklkkjayvqdzqqapgdqaapefzjfngdvjsiiivnkfimqkkucltgavwlakcfyhnpgmqxgfyjziliyqhugphhjtlllgtlcsibfdktzhcfuallqlonbsgyyvvyarvaxmchtyrtkgekkmhejwvsuumhcfcyncgeqtltfmhtlsfswaqpmwpjwgvksvazhwyrzwhyjjdbphhjcmurdcgtbvpkhbkpirhysrpcrntetacyfvgjivhaxgpqhbjahruuejdmaghoaquhiafjqaionbrjbjksxaezosxqmncejjptcksnoq";
+            expected = new string[] { "yvvy" };
+            sw.Restart();
+            actual = Solution.LongestPalindrome(s);
+            sw.Stop();
+            Console.WriteLine(sw.Elapsed);
+            index = Array.IndexOf(expected, actual);
+            if (index < 0)
+                Console.WriteLine(actual);
+            Assert.IsTrue(index >= 0);
+       }
+        [Test]
+        public void LongestPalindromeSubseq() {
+            string s;
+            int actual, expected;
+            s = "a";
+            expected = 1;
+            actual = Solution.LongestPalindromeSubseq(s);
+            Assert.AreEqual(expected, actual);
+            s = "ab";
+            expected = 1;
+            actual = Solution.LongestPalindromeSubseq(s);
+            Assert.AreEqual(expected, actual);
+             s = "gabbabba";
+            expected = 7;
+            actual = Solution.LongestPalindromeSubseq(s);
+            Assert.AreEqual(expected, actual);
+           s = "abbasent";
+            expected = 4;
+            actual = Solution.LongestPalindromeSubseq(s);
+            Assert.AreEqual(expected, actual);
+            s = "wetrgabbabbasesrg";
+            expected = 9;
+            actual = Solution.LongestPalindromeSubseq(s);
+            Assert.AreEqual(expected, actual);
+
+        }
+        [Test]
         public void FindAnagrams() {
             string s, p;
             s = "cbaebabacd";

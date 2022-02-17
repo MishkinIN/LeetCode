@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using LeetCode.net5;
+using System.Linq;
 
 namespace LeecCode.Test {
     public class UnitTestArray {
@@ -122,6 +123,50 @@ namespace LeecCode.Test {
             nums = new int[] { 170, -368, 148, 672, 397, -629, -788, 192, 170, 309, -615, -237 };
             Assert.IsTrue(Solution.ContainsDuplicate(nums));
 
+        }
+         [Test]
+        public void CombinationSum() {
+            int[] nums;
+            IList<IList<int>> actual;
+            int[][] expected;
+            int target;
+            nums = new int[] { 2,3,6,7 };
+            target = 7;
+            expected = new int[][] {
+                new int[]{ 2,2,3},
+                new int[]{ 7},
+            };
+            actual = Solution.CombinationSum(nums, target);
+            Assert.AreEqual(expected.Length, actual.Count,0);
+            for (int i = 0; i < actual.Count; i++) {
+                Assert.IsTrue(Equal(expected[i], actual[i].ToArray()));
+            }
+
+            nums = new int[] { 2, 3, 5 };
+            target = 8;
+            expected = new int[][] {
+                new int[]{ 2,2,2,2},
+                new int[]{ 2,3,3},
+                new int[]{ 3,5},
+            };
+            actual = Solution.CombinationSum(nums, target);
+            Assert.AreEqual(expected.Length, actual.Count, 0);
+            for (int i = 0; i < actual.Count; i++) {
+                Assert.IsTrue(Equal(expected[i], actual[i].ToArray()));
+            }
+            nums = new int[] { 2};
+            target = 1;
+            expected = new int[][] {
+            };
+            actual = Solution.CombinationSum(nums, target);
+            Assert.AreEqual(expected.Length, actual.Count, 0);
+            /*
+             * [2,7,6,3,5,1]
+             * 9
+             [[2,7],[3,3,3],[3,1,1,1,1,1,1],[1,1,1,1,1,1,1,1,1]]
+            [[1,1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,2],[1,1,1,1,1,1,3],[1,1,1,1,1,2,2],[1,1,1,1,2,3],[1,1,1,1,5],[1,1,1,2,2,2],[1,1,1,3,3],[1,1,1,6],[1,1,2,2,3],[1,1,2,5],[1,1,7],[1,2,2,2,2],[1,2,3,3],[1,2,6],[1,3,5],[2,2,2,3],[2,2,5],[2,7],[3,3,3],[3,6]]
+
+             */
         }
         [Test]
         public void ContainsDuplicate_Big() {

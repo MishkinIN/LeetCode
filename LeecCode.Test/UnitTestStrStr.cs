@@ -355,5 +355,66 @@ namespace LeecCode.Test
             Assert.AreEqual(5, Solution.LadderLength(beginWord, endWord, wordList));
 
         }
+        [Test]
+        public void RemoveKdigits() {
+            string s_num, expected, actual;
+            int k;
+            s_num = "10";
+            k = 1;
+            expected = "0";
+            actual = Solution.RemoveKdigits(s_num, k);
+            Assert.IsTrue(expected== actual);
+            s_num = "12";
+            k = 1;
+            expected = "1";
+            actual = Solution.RemoveKdigits(s_num, k);
+            Assert.IsTrue(expected == actual);
+            s_num = "21";
+            k = 1;
+            expected = "1";
+            actual = Solution.RemoveKdigits(s_num, k);
+            Assert.IsTrue(expected == actual);
+            s_num = "1000";
+            k = 1;
+            expected = "0";
+            actual = Solution.RemoveKdigits(s_num, k);
+            Assert.IsTrue(expected == actual);
+
+            s_num = "3251990";
+            k = s_num.Length - 2;
+            expected = "10";
+            actual = Solution.RemoveKdigits(s_num, k);
+            Assert.IsTrue(expected== actual);
+           s_num = "3251993";
+            k = s_num.Length - 2;
+            expected = "13";
+            actual = Solution.RemoveKdigits(s_num, k);
+            Assert.IsTrue(expected == actual);
+            s_num = "32519293";
+            k = s_num.Length - 2;
+            expected = "12";
+            actual = Solution.RemoveKdigits(s_num, k);
+            Assert.IsTrue(expected == actual);
+            s_num = "32519203";
+            k = s_num.Length - 4;
+            expected = "1203";
+            actual = Solution.RemoveKdigits(s_num, k);
+            Assert.IsTrue(expected == actual);
+            s_num = "1432219";
+            k = s_num.Length - 4;
+            expected = "1219";
+            actual = Solution.RemoveKdigits(s_num, k);
+            Assert.IsTrue(expected == actual);
+            s_num = "1432259";
+            k = s_num.Length - 4;
+            expected = "1225";
+            actual = Solution.RemoveKdigits(s_num, k);
+            Assert.IsTrue(expected == actual);
+            s_num = "1432231";
+            k = s_num.Length - 4;
+            expected = "1221";
+            actual = Solution.RemoveKdigits(s_num, k);
+            Assert.IsTrue(expected == actual);
+        }
     }
 }

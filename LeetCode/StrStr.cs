@@ -594,18 +594,18 @@ namespace LeetCode {
             int sLength = s.Length;
             int maxPalingdromeLength = sLength - 1;
             while (maxPalingdromeLength > 1) {
-                for (int i = 0; i < sLength-maxPalingdromeLength+1; i++) {
-                    var s1 = s[i..(i+maxPalingdromeLength)];
+                for (int i = 0; i < sLength - maxPalingdromeLength + 1; i++) {
+                    var s1 = s[i..(i + maxPalingdromeLength)];
                     if (IsPalindrome(s1))
                         return s1;
                 }
                 maxPalingdromeLength--;
             }
-            return s.Substring(0,1);
+            return s.Substring(0, 1);
         }
         public static bool IsPalindrome(string s) {
-            for (int i = 0; i < s.Length/2; i++) {
-                if (s[i]!=s[^(i+1)]) {
+            for (int i = 0; i < s.Length / 2; i++) {
+                if (s[i] != s[^(i + 1)]) {
                     return false;
                 }
             }
@@ -624,10 +624,10 @@ namespace LeetCode {
          */
         public static int LongestPalindromeSubseq(string s) {
             int maxLength = 1;
-            if (s.Length==1) {
+            if (s.Length == 1) {
                 return 1;
             }
-            int[] leftChars = new int['z'-'a'+1];
+            int[] leftChars = new int['z' - 'a' + 1];
             Array.Fill(leftChars, -1);
             int[] distances = new int[s.Length];
             int i = 0;
@@ -638,9 +638,9 @@ namespace LeetCode {
                 i++;
             }
             Container root = new Container(0, 1000);
-            for ( i = 0; i < distances.Length; i++) {
+            for (i = 0; i < distances.Length; i++) {
                 int right = distances[i];
-                while(right> 0) {
+                while (right > 0) {
                     var dept = root.Add(new Container(i, right));
                     right = distances[right];
                     maxLength = System.Math.Max(maxLength, dept);
@@ -654,12 +654,13 @@ namespace LeetCode {
             if (min == max - 1)
                 return 0;
             int maxDept = 1;
-            for (int i = min+1; i < max; i++) {
+            for (int i = min + 1; i < max; i++) {
                 int right = distances[i];
-                while (right > 0 & distances[right] <max) { right = distances[right]; }
+                while (right > 0 & distances[right] < max) { right = distances[right]; }
                 if (right > 0)
-                    return container.Add(new Container(i, right))+2;
+                    return container.Add(new Container(i, right)) + 2;
             }
+            throw new NotImplementedException();
         }
         private class Container {
             public int Left { get; init; }
@@ -675,10 +676,10 @@ namespace LeetCode {
             public int Add(Container other) {
                 foreach (var chield in Chields) {
                     if (chield.IsCover(other))
-                        return chield.Add(other)+2;
+                        return chield.Add(other) + 2;
                 }
                 Chields.Add(other);
-                return other.Right-other.Left>1? 3:2;
+                return other.Right - other.Left > 1 ? 3 : 2;
             }
         }
         /*
@@ -985,8 +986,8 @@ Explanation: "226" could be decoded as "BZ" (2 26), "VF" (22 6), or "BBF" (2 2 6
             int c1 = 1, c2 = 1; // the number of ways to decode substring [0,i-1)
             char ch1 = '0';
             foreach (var ch in s) {
-                c0 = c1 * (ch == '0' ? 0 : 1) 
-                    + c2 * ((ch1=='1'|| (ch1=='2' && ch-'0'<7))?1:0);
+                c0 = c1 * (ch == '0' ? 0 : 1)
+                    + c2 * ((ch1 == '1' || (ch1 == '2' && ch - '0' < 7)) ? 1 : 0);
                 if (c0 == 0)
                     return 0;
                 ch1 = ch;
@@ -997,8 +998,8 @@ Explanation: "226" could be decoded as "BZ" (2 26), "VF" (22 6), or "BBF" (2 2 6
         }
         private static int Decode(char ch) {
             return ch == '0' ? 0 : 1;
-           
-       
+
+
         }
         private static int Decode(char ch1, char ch) {
             switch (ch1) {
@@ -1046,7 +1047,7 @@ Explanation: "226" could be decoded as "BZ" (2 26), "VF" (22 6), or "BBF" (2 2 6
                 }
             }
             else {
-                foreach (var substr in LetterCasePermutation(s, pos-1)) {
+                foreach (var substr in LetterCasePermutation(s, pos - 1)) {
                     foreach (var ch in GetCaseVariants(s[pos])) {
                         yield return $"{substr}{ch}";
                     }
@@ -1060,6 +1061,62 @@ Explanation: "226" could be decoded as "BZ" (2 26), "VF" (22 6), or "BBF" (2 2 6
             else if (Char.IsUpper(ch))
                 yield return Char.ToLower(ch);
         }
+        /*
+         * 402. Remove K Digits
+         * Medium
+         * Given string num representing a non-negative integer num, and an integer k, 
+         * return the smallest possible integer after removing k digits from num.
+         * 
+         * Constraints:
+    1 <= k <= num.length <= 10^5
+    num consists of only digits.
+    num does not have any leading zeros except for the zero itself.
+         */
+        public static string RemoveKdigits(string s_num, int k) {/*Runtime: 76 ms, faster than 96.75% of C# online*/
+            int m = s_num.Length;
+            if (k == m || s_num == "0")
+                return "0";
+            if (k == 0)
+                return s_num;
+            int[] nums = new int[m];
+            int[] digits = new int[10];
+            int[] shuttle = new int[10];
+            Array.Fill<int>(digits, -1);
+            Array.Fill<int>(nums, -1);
+            int i = 0;
+            foreach (var ch in s_num) {
+                int ch_num = ch - '0';
+                if (digits[ch_num] == -1) {
+                    shuttle[ch_num] = digits[ch_num] = i++;
+                }
+                else {
+                    nums[shuttle[ch_num]] = i;
+                    shuttle[ch_num] = i++;
+                }
+            }
+            StringBuilder sb = new();
+            int length = s_num.Length - k; // длина осташейся части выходной строки
+            int cursor = 0; // текущая позиция курсора исходной строки
+        
+            for (int n = 0; n < digits.Length & length > 0; n++) {
+                int indx = digits[n];
+                while (0 <= indx & indx < cursor) {
+                    indx= digits[n] = nums[indx];
+                }
+                if (indx >= 0 & indx <= s_num.Length - length) {
+                    if(sb.Length>0 | n>0)
+                        sb.Append((char)(n + '0'));
+                    cursor = indx + 1;
+                    indx = nums[indx];
+                    length--;
+                    if (length == 0)
+                        break;
+                    n = -1;
+                }
+            }
+            return sb.Length==0? "0": sb.ToString();
+        }
+
     }
 }
 

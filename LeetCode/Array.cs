@@ -1821,6 +1821,49 @@ Explanation: We have 3 arithmetic slices in nums: [1, 2, 3], [2, 3, 4] and [1,2,
 
             return lists;
         }
+        /*
+         * 376. Wiggle Subsequence
+         * Medium
+         * A wiggle sequence is a sequence where the differences between successive numbers 
+         * strictly alternate between positive and negative. 
+         * The first difference (if one exists) may be either positive or negative. 
+         * A sequence with one element and a sequence with two non-equal elements are trivially wiggle sequences.
+         * For example, [1, 7, 4, 9, 2, 5] is a wiggle sequence because the differences (6, -3, 5, -7, 3) alternate between positive and negative.
+         * In contrast, [1, 4, 7, 2, 5] and [1, 7, 4, 5, 5] are not wiggle sequences. 
+         * The first is not because its first two differences are positive, and the second is not because its last difference is zero.
+         * A subsequence is obtained by deleting some elements (possibly zero) from the original sequence, 
+         * leaving the remaining elements in their original order.
+         * Given an integer array nums, return the length of the longest wiggle subsequence of nums.
+         * 
+         * Input: nums = [1,17,5,10,13,15,10,5,16,8]
+         * Output: 7
+         * 
+         * Constraints:
+    1 <= nums.length <= 1000
+    0 <= nums[i] <= 1000
+         */
+        public static int WiggleMaxLength(int[] nums) {
+            if (nums.Length == 1) {
+                return 1;
+            }
+            int length=1;
+            int n1 = nums[0];
+            int? d1 = null;
+            ;
+            foreach (var n in nums) {
+                int d = n - n1;
+                if(! d1.HasValue & d != 0) {
+                    length++;
+                    d1 = d;
+                } 
+                else if ((d > 0 & d1 < 0) | (d < 0 & d1 > 0)) {
+                    length++;
+                    d1 = d;
+                }
+                n1 = n;
+            }
+            return length;
+        }
     }
 
 }

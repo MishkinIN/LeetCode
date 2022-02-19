@@ -515,7 +515,24 @@ namespace LeetCode {
 Follow up: Suppose there are lots of incoming s, say s1, s2, ..., sk where k >= 10^9, and you want to check one by one to see if t has its subsequence. In this scenario, how would you change your code?
          */
         public static bool IsSubsequence(string s, string t) {
-
+            var sEnumerator = s.GetEnumerator();
+            bool is_s_HaveChar = sEnumerator.MoveNext();
+            var tEnumerator = t.GetEnumerator();
+            while (is_s_HaveChar) {
+                var ch=sEnumerator.Current;
+                while (true) {
+                    if (tEnumerator.MoveNext()) {
+                        if (ch == tEnumerator.Current) {
+                            break;
+                        }
+                    }
+                    else {
+                        return false;
+                    }
+                }
+                is_s_HaveChar = sEnumerator.MoveNext();
+            }
+            return !is_s_HaveChar;
         }
         /*
          * Given two strings s and t, return true if t is an anagram of s, 

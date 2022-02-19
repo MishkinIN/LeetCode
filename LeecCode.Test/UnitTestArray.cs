@@ -1481,6 +1481,15 @@ namespace LeecCode.Test {
                 new char[]{'0','0'},
             };
             Assert.AreEqual(1, Solution.MaximalSquare(matrix));
-       }
+        }
+        [Test]
+        public static void WiggleMaxLength() {
+            int[] nums;
+            int expected, actual;
+            nums = new int[] { 1, 7, 4, 9, 2, 5 };
+            expected = 6;
+            actual = Solution.WiggleMaxLength(nums);
+            Assert.AreEqual(expected, actual);
+        }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -623,6 +624,104 @@ n == matrix[i].length
         public static int MinCostClimbingStairs(int[] costs) {
             var mc = GetMinCostClimbing(costs, costs.Length);
             return mc.n0;
+        }
+        /*
+         * 1675. Minimize Deviation in Array
+         * Hard
+         * You are given an array nums of n positive integers.
+         * You can perform two types of operations on any element of the array any number of times:
+         * If the element is even, divide it by 2.
+         * For example, if the array is [1,2,3,4], then you can do this operation on the last element, and the array will be [1,2,3,2].
+         * If the element is odd, multiply it by 2.
+         * For example, if the array is [1,2,3,4], then you can do this operation on the first element, and the array will be [2,2,3,4].
+         * The deviation of the array is the maximum difference between any two elements in the array.
+         * Return the minimum deviation the array can have after performing some number of operations.
+         *
+         *Constraints:
+    n == nums.length
+    2 <= n <= 10^5
+    1 <= nums[i] <= 10^9
+         */
+        public static int MinimumDeviation(int[] nums) {
+            int dMax = int.MinValue, dMin = int.MaxValue;
+            foreach (var n in nums) {
+                var odd = GetOdd(n);
+                //Assert.IsTrue(odd % 2 == 1);
+                if (dMax < odd) {
+                    dMax = odd;
+                }
+
+                if (n % 2 == 1) {
+                    dMin = dMin < 2 * n ? dMin : 2 * n;
+                }
+                else {
+                    dMin = dMin < n ? dMin : n;
+                }
+            }
+            dMin = dMin > dMax ? dMax : dMin;
+            (int m, int m2)[] diffs = new (int m, int m2)[nums.Length];
+            int[] keys = new int[nums.Length];
+            int l = 0;
+            foreach (var n in nums) {
+                int m = GetNearest(n, dMax);
+                //Assert.IsTrue(m <= dMax);
+                //Assert.IsTrue(2 * m >= dMin);
+                if ((m >= dMin))
+                    continue;
+                int m2 = 2 * m;
+                if (m2 <= dMax)
+                    continue;
+                keys[l] = m;
+                diffs[l++] = (m, m2);
+            }
+            Array.Sort(keys, diffs, 0, l);
+            l--;
+            if (l >= 0) {
+                var d1 = diffs[l--];
+                int dev = d1.m2 - dMin;
+                for (; l >= 0; l--) {
+                    var d = diffs[l];
+                    dev = System.Math.Min(dev, d.m2 - d1.m);
+                    d1 = d;
+                }
+                dev = System.Math.Min(dev, dMax - d1.m);
+                return dev;
+            }
+            return dMax - dMin;
+        }
+        private static int GetNearest(int n, int maxOdd) {
+            if (n % 0b1_000_0000_0000_0000 == 0 && n / 0b1_000_0000_0000_0000 >= maxOdd) {
+                n /= 0b1_000_0000_0000_0000;
+            }
+            if (n % 0b1_0000_0000 == 0 && n / 0b1_0000_0000 >= maxOdd) {
+                n /= 0b1_0000_0000;
+            }
+            if (n % 0b1_0000 == 0 && n / 0b1_0000 >= maxOdd) {
+                n /= 0b1_0000;
+            }
+            if (n % 0b100 == 0 && n / 0b100 >= maxOdd) {
+                n /= 0b100;
+            }
+            if (n % 0b10 == 0 && n / 0b10 >= maxOdd) {
+                n /= 0b10;
+            }
+            if (n % 0b10 == 0)
+                n /= 0b10;
+            return n;
+        }
+        private static int GetOdd(int n) {
+            if (n % 0b1_000_0000_0000_0000 == 0) {//2^16
+                n /= 0b1_000_0000_0000_0000;
+            }
+            if (n % 0b1_0000_0000 == 0)
+                n /= 0b1_0000_0000;
+            if (n % 0b1_0000 == 0)
+                n /= 0b1_0000;
+            if (n % 0b100 == 0)
+                n /= 0b100;
+            if (n % 0b10 == 0)
+                n /= 0b10;
+            return n;
         }
         private static (int n1, int n0) GetMinCostClimbing(int[] costs, int n) {
             switch (n) {
@@ -1635,7 +1734,7 @@ Explanation: We have 3 arithmetic slices in nums: [1, 2, 3], [2, 3, 4] and [1,2,
                 row = matrix[i];
                 for (int j = 0; j < n; j++) {
                     left += (row[j] - '0') & 1;
-                    sums[i, j] = left+ sums[i - 1, j];
+                    sums[i, j] = left + sums[i - 1, j];
                 }
             }
             left = sums[m - 1, n - 1];
@@ -1645,7 +1744,7 @@ Explanation: We have 3 arithmetic slices in nums: [1, 2, 3], [2, 3, 4] and [1,2,
                 return 1;
             }
             var sq = getSquare(left, sqMax);
-            
+
             for (; sq.side > 1; sq = (sq.side - 1, (sq.side - 1) * (sq.side - 1))) {
                 for (int i = m - 1; i >= sq.side - 1; i--) {
                     if (sums[i, n - 1] - (i < sq.side ? 0 : sums[i - sq.side, n - 1]) < sq.sq)
@@ -1662,7 +1761,7 @@ Explanation: We have 3 arithmetic slices in nums: [1, 2, 3], [2, 3, 4] and [1,2,
         }
         private static bool FilledSquare(int[,] sums, (int side, int sq) sq, int bottomRow, int rightCol) {
             var (side, square) = sq;
-            if (rightCol < side-1 | bottomRow < side-1)
+            if (rightCol < side - 1 | bottomRow < side - 1)
                 return false;
             int left = rightCol < side ? 0 : sums[bottomRow, rightCol - side];
             int top = bottomRow < side ? 0 : sums[bottomRow - side, rightCol];
@@ -1699,7 +1798,7 @@ Explanation: We have 3 arithmetic slices in nums: [1, 2, 3], [2, 3, 4] and [1,2,
             Array.Sort<int>(candidates);
             IList<IList<int>> lists = new List<IList<int>>();
             int m = candidates.Length;
-            void GetCombinations (List<int> list, int target, int startIndex) {
+            void GetCombinations(List<int> list, int target, int startIndex) {
                 if (target < candidates[startIndex]) {
                     return;
                 }
@@ -1719,7 +1818,7 @@ Explanation: We have 3 arithmetic slices in nums: [1, 2, 3], [2, 3, 4] and [1,2,
             }
             List<int> list = new();
             GetCombinations(list, target, 0);
-            
+
             return lists;
         }
     }

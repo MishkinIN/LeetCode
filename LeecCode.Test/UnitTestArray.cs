@@ -1053,6 +1053,42 @@ namespace LeecCode.Test {
             Assert.IsTrue(Equal(expectedNums, nums, actual));
         }
         [Test]
+        public void RemoveCoveredIntervals() {
+            int[][] intervals;
+            int expected, actual;
+            intervals = new int[][] {
+                new int[]{5,100_000 },
+                new int[]{6,100_000 },
+                new int[]{1,100_000-5 },
+                new int[]{2,100_000-5 },
+                new int[]{5,100_000-5 },
+                new int[]{10,12 },
+
+            };
+            expected= 2;
+            actual= Solution.RemoveCoveredIntervals(intervals);
+            Assert.AreEqual(expected, actual);
+            intervals = new int[][] {
+                new int[]{1,4 },
+                new int[]{3,6 },
+                new int[]{2,8 },
+            };
+            expected= 2;
+            actual= Solution.RemoveCoveredIntervals(intervals);
+            Assert.AreEqual(expected, actual);             intervals = new int[][] {
+                new int[]{1,4 },
+            };
+            expected= 1;
+            actual= Solution.RemoveCoveredIntervals(intervals);
+            Assert.AreEqual(expected, actual);
+            intervals = new int[][] {
+                new int[]{1,4 },
+                new int[]{2,3 },
+            };
+            expected= 1;
+            actual= Solution.RemoveCoveredIntervals(intervals);
+            Assert.AreEqual(expected, actual);       }
+        [Test]
         public void MaxProduct() {
             int[] nums;
             int expected, actual;

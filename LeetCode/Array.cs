@@ -1,6 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 
@@ -1235,6 +1236,77 @@ n == matrix[i].length
                 }
             }
             return n;
+        }
+        /*
+         * 1288. Remove Covered Intervals
+         * Medium
+         * Given an array intervals where intervals[i] = [li, ri] represent the interval [li, ri), 
+         * remove all intervals that are covered by another interval in the list.
+         * The interval [a, b) is covered by the interval [c, d) if and only if c <= a and b <= d.
+         * Return the number of remaining intervals.
+         * 
+         * Constraints:
+    1 <= intervals.length <= 1000
+    intervals[i].length == 2
+    0 <= li <= ri <= 10^5
+    All the given intervals are unique.
+
+         */
+        public static int RemoveCoveredIntervals(int[][] intervals) {
+            int m = intervals.Length;
+
+            IntervalListNode[] leftSortArray = new IntervalListNode[m];
+            IntervalListNode[] rightSortArray = new IntervalListNode[m];
+            for (int i = 0; i < m; i++) {
+                IntervalListNode node = new IntervalListNode(intervals[i][0], intervals[i][1]);
+                leftSortArray[i] = rightSortArray[i] = node;
+            }
+            Array.Sort(leftSortArray, new Comparer<IntervalListNode>((x, y) =>(x.Interval.min == y.Interval.min? y.Interval.max - x.Interval.max:(x.Interval.min - y.Interval.min))  ));
+            Array.Sort(rightSortArray, new Comparer<IntervalListNode>((x, y) => (x.Interval.max == y.Interval.max? y.Interval.min - x.Interval.min:(x.Interval.max - y.Interval.max)) ));
+            LinkedList<IntervalListNode> leftSortedList = new LinkedList<IntervalListNode>();
+            LinkedList<IntervalListNode> rightSortedList = new LinkedList<IntervalListNode>();
+            for (int i = 0; i < intervals.Length; i++) {
+                var node = leftSortArray[i];
+                var llNode =  leftSortedList.AddLast(node);
+                node.LeftSortListNode = llNode;
+                node = rightSortArray[i];
+                llNode =  rightSortedList.AddLast(node);
+                node.RightSortListNode = llNode;
+            }
+            var listNode = leftSortedList.First;
+            int count = 0;
+            while (listNode != null) {
+                var node = listNode.Value;
+                while (rightSortedList.First.Value!=node) {
+                    var accNode = rightSortedList.First;
+                    leftSortedList.Remove(accNode.Value.LeftSortListNode);
+                    rightSortedList.RemoveFirst();
+                }
+                count++;
+                listNode = listNode.Next;
+            }
+            return count;
+        }
+        private class Comparer<T> : IComparer<T> {
+            private Func<T, T, int> compare;
+            public Comparer(Func<T, T, int> compare) {
+                this.compare = compare;
+            }
+            public int Compare(T x, T y) {
+                return compare(x,y);
+            }
+        }
+        [DebuggerDisplay("{Interval}")]
+        internal class  IntervalListNode {
+            public Interval Interval { get; init; }
+            public IntervalListNode(Interval interval) { 
+                Interval = interval;
+            }
+            public IntervalListNode(int min, int max) { 
+                Interval = new Interval(min,max);
+            }
+            public LinkedListNode<IntervalListNode> LeftSortListNode { get; set; }
+            public LinkedListNode<IntervalListNode> RightSortListNode { get; set; }
         }
         /*
          * 152. Maximum Product Subarray

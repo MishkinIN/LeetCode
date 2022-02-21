@@ -32,22 +32,7 @@ namespace LeecCode.Test {
             Console.WriteLine($"NthUglyNumber({n})= {NthUgly}.");
             Console.WriteLine($"Elapsed time is {sw.Elapsed}.");
         }
-        [Test]
-        public void GetUglyArg() {
-            int n = 1690, argUgly;
-            //argUgly = LeetCode.Math.GetUglyArg(1);
-            //Assert.AreEqual(1, argUgly);
-            argUgly = LeetCode.Math.GetUglyArg(6);
-            Assert.AreEqual(6, argUgly);
-            argUgly = LeetCode.Math.GetUglyArg(8);
-            Assert.AreEqual(7, argUgly);
-            argUgly = LeetCode.Math.GetUglyArg(12);
-            Assert.AreEqual(10, argUgly);
-            argUgly = LeetCode.Math.GetUglyArg(25);
-            Assert.AreEqual(16, argUgly);
-            argUgly = LeetCode.Math.GetUglyArg(576);
-            Assert.AreEqual(70, argUgly);
-        }
+       
         [Test]
         public static void Primes() {
             var primes = LeetCode.Math.primes1;

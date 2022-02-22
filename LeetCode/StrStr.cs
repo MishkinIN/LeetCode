@@ -1116,7 +1116,45 @@ Explanation: "226" could be decoded as "BZ" (2 26), "VF" (22 6), or "BBF" (2 2 6
             }
             return sb.Length==0? "0": sb.ToString();
         }
-
+        /*
+         * 171. Excel Sheet Column Number
+         * Easy
+         * Given a string columnTitle that represents the column title as appear in an Excel sheet, 
+         * return its corresponding column number.
+         * For example:
+A -> 1
+B -> 2
+C -> 3
+...
+Z -> 26
+AA -> 27
+AB -> 28 
+...
+         *Constraints:
+    1 <= columnTitle.length <= 7
+    columnTitle consists only of uppercase English letters.
+    columnTitle is in the range ["A", "FXSHRXW"]
+         */
+        /// <summary>
+        /// Base of column numeric representation in Excell column title
+        /// </summary>
+        public static int TitleToNumber(string columnTitle) {
+            int mul = 1;
+            int titleNumber = 0;
+            for (int i = columnTitle.Length-1; i >=0; i--) {
+                titleNumber += mul * GetCharWeight(columnTitle[i]);
+                mul *= BaseColRepresent;
+            }
+            return titleNumber;
+        }
+        private const int BaseColRepresent = 26;
+        private static int GetCharWeight(char ch) {
+            int cw = ch - 'A' + 1;
+            if (cw<1 |cw>26) {
+                throw new ArgumentOutOfRangeException(nameof(ch));
+            }
+            return cw;
+        }
     }
 }
 

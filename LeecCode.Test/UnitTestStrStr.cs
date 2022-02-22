@@ -416,5 +416,32 @@ namespace LeecCode.Test
             actual = Solution.RemoveKdigits(s_num, k);
             Assert.IsTrue(expected == actual);
         }
+        [Test]
+        public void TitleToNumber() {
+            string title;
+            int expected;
+            title = "A";
+            expected = 1;
+            Assert.AreEqual(expected, Solution.TitleToNumber(title));
+            title = "A";
+            expected = 1;
+            Assert.AreEqual(expected, Solution.TitleToNumber(title));
+            title = "B";
+            expected = 2;
+            Assert.AreEqual(expected, Solution.TitleToNumber(title));
+            title = "Z";
+            expected = 26;
+            Assert.AreEqual(expected, Solution.TitleToNumber(title));
+            title = "AA";
+            expected = 27;
+            Assert.AreEqual(expected, Solution.TitleToNumber(title));
+            title = "ZY";
+            expected = 701;
+            Assert.AreEqual(expected, Solution.TitleToNumber(title));
+            title = "AB";
+            expected = 28;
+            Assert.AreEqual(expected, Solution.TitleToNumber(title));
+        }
+
     }
 }

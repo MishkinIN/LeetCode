@@ -402,6 +402,25 @@ n == matrix[i].length
     0 <= prices[i] <= 1000
 
          */
+        public static int MaxProfit_III(int[] prices) {
+            int profit = 0, profit1 = 0;
+            int sellprice = prices[^2], sell1price = prices[^1];
+            int[] profits = new int[prices.Length];
+            profits[^1] = 0;
+            profits[^2] = sell1price > prices[^2] ? sell1price - prices[^2] : 0;
+            for (int i = prices.Length-3; i >=0; i--) {
+                int price = prices[i];
+                if (sellprice - price + profits[i + 2] > profits[i + 1]) {
+                    profits[i] =   sellprice - price + profits[i + 2];
+                    sell1price = sellprice;
+                    sellprice = price;
+                }
+                else
+                    profits[i]= profits[i + 1];
+
+            }
+            return profits[0];
+        }
         public static int MaxProfit_III_LC(int[] prices) {
             int n = prices.Length;
             if (n < 2) {
@@ -439,43 +458,7 @@ n == matrix[i].length
             int profit1 = MaxProfit_III_Reccurent(prices, day - 1);
             return System.Math.Max(profit0, profit1);
         }
-        private static void TradingSession(Broker br1, Broker br2, ref int pr2, ref int pr1, int pr) {
-            if (!br1.canBuy) {
-                br1.canBuy = true;
-                br1.buyPrice = pr;
-            }
-            else if (pr1 > pr) {
-                if (br1.buyPrice < pr1) {
-                    br1.profit = br1.profit + pr1 - br1.buyPrice;
-                    br1.buyPrice = int.MaxValue;
-                    br1.canBuy = false;
-                }
-                else if (br1.buyPrice > pr)
-                    br1.buyPrice = pr;
-                br1.canBuy = false;
-            }
-
-            if (!br2.canBuy) {
-                br2.canBuy = true;
-            }
-            else if (br2.buyPrice > pr2)
-                br2.buyPrice = pr2;
-            else if (pr2 > pr) {
-                if (br2.buyPrice < pr2) {
-                    br2.profit = br2.profit + pr2 - br2.buyPrice;
-                    br2.buyPrice = int.MaxValue;
-                    br2.canBuy = false;
-                }
-
-            }
-            pr2 = pr1;
-            pr1 = pr;
-        }
-        private record Broker() {
-            public int profit { get; set; }
-            public int buyPrice { get; set; }
-            public bool canBuy { get; set; }
-        }
+    
         public static int MaxProfit_III_v1(int[] prices) {
             Broker_v1 br1 = new(0, int.MaxValue, true), br2 = new(0, int.MaxValue, true);
             int pr2 = int.MaxValue, pr1 = int.MaxValue;
@@ -1502,6 +1485,47 @@ Explanation: We have 3 arithmetic slices in nums: [1, 2, 3], [2, 3, 4] and [1,2,
             if (n2 != n1)
                 return n1;
             throw new ArgumentOutOfRangeException();
+        }
+        /*
+         * 169. Majority Element
+         * Easy
+         * Given an array nums of size n, return the majority element.
+         * The majority element is the element that appears more than ⌊n / 2⌋ times.
+         * You may assume that the majority element always exists in the array.
+         * 
+         * Example 1:
+Input: nums = [3,2,3]
+Output: 3
+         *
+         *Constraints:
+    n == nums.length
+    1 <= n <= 5 * 10^4
+    -2^31 <= nums[i] <= 2^31 - 1
+         */
+        public static int MajorityElement(int[] nums) {
+            int majorityElCount = 1;
+            int majorityValue = nums[0];
+            Dictionary<int, int> dic = new(nums.Length);
+            int n_count;
+            foreach (var n in nums) {
+                if (dic.TryGetValue(n, out n_count)) {
+                    dic[n] = ++n_count;
+                    if (majorityElCount < n_count) {
+                        majorityElCount = n_count;
+                        majorityValue = n;
+                    }
+
+                }
+                else {
+                    dic[n] = 1;
+                }
+            }
+            if (majorityElCount>nums.Length/2) {
+                return majorityValue;
+            }
+            else {
+                throw new ArgumentOutOfRangeException(nameof(nums));
+            }
         }
         /*
          * 1314. Matrix Block Sum

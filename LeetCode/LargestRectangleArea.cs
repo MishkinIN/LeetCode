@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using System.Linq;
+using System.Diagnostics;
 
 namespace LeetCode {
     public static partial class Solution {
@@ -34,10 +35,16 @@ namespace LeetCode {
                 Value = value;
             }
         }
-
+        [DebuggerDisplay("[{min}, {max}]")]
         public struct Interval {
             public int min;
             public int max;
+
+            public Interval(int[] vs) : this() {
+                this.min=vs[0];
+                this.max=vs[1];
+            }
+
             public Interval(int min, int max) {
                 this.min = min;
                 this.max = max;

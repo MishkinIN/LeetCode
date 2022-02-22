@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 
@@ -607,6 +609,104 @@ n == matrix[i].length
             var mc = GetMinCostClimbing(costs, costs.Length);
             return mc.n0;
         }
+        /*
+         * 1675. Minimize Deviation in Array
+         * Hard
+         * You are given an array nums of n positive integers.
+         * You can perform two types of operations on any element of the array any number of times:
+         * If the element is even, divide it by 2.
+         * For example, if the array is [1,2,3,4], then you can do this operation on the last element, and the array will be [1,2,3,2].
+         * If the element is odd, multiply it by 2.
+         * For example, if the array is [1,2,3,4], then you can do this operation on the first element, and the array will be [2,2,3,4].
+         * The deviation of the array is the maximum difference between any two elements in the array.
+         * Return the minimum deviation the array can have after performing some number of operations.
+         *
+         *Constraints:
+    n == nums.length
+    2 <= n <= 10^5
+    1 <= nums[i] <= 10^9
+         */
+        public static int MinimumDeviation(int[] nums) {
+            int dMax = int.MinValue, dMin = int.MaxValue;
+            foreach (var n in nums) {
+                var odd = GetOdd(n);
+                //Assert.IsTrue(odd % 2 == 1);
+                if (dMax < odd) {
+                    dMax = odd;
+                }
+
+                if (n % 2 == 1) {
+                    dMin = dMin < 2 * n ? dMin : 2 * n;
+                }
+                else {
+                    dMin = dMin < n ? dMin : n;
+                }
+            }
+            dMin = dMin > dMax ? dMax : dMin;
+            (int m, int m2)[] diffs = new (int m, int m2)[nums.Length];
+            int[] keys = new int[nums.Length];
+            int l = 0;
+            foreach (var n in nums) {
+                int m = GetNearest(n, dMax);
+                //Assert.IsTrue(m <= dMax);
+                //Assert.IsTrue(2 * m >= dMin);
+                if ((m >= dMin))
+                    continue;
+                int m2 = 2 * m;
+                if (m2 <= dMax)
+                    continue;
+                keys[l] = m;
+                diffs[l++] = (m, m2);
+            }
+            Array.Sort(keys, diffs, 0, l);
+            l--;
+            if (l >= 0) {
+                var d1 = diffs[l--];
+                int dev = d1.m2 - dMin;
+                for (; l >= 0; l--) {
+                    var d = diffs[l];
+                    dev = System.Math.Min(dev, d.m2 - d1.m);
+                    d1 = d;
+                }
+                dev = System.Math.Min(dev, dMax - d1.m);
+                return dev;
+            }
+            return dMax - dMin;
+        }
+        private static int GetNearest(int n, int maxOdd) {
+            if (n % 0b1_000_0000_0000_0000 == 0 && n / 0b1_000_0000_0000_0000 >= maxOdd) {
+                n /= 0b1_000_0000_0000_0000;
+            }
+            if (n % 0b1_0000_0000 == 0 && n / 0b1_0000_0000 >= maxOdd) {
+                n /= 0b1_0000_0000;
+            }
+            if (n % 0b1_0000 == 0 && n / 0b1_0000 >= maxOdd) {
+                n /= 0b1_0000;
+            }
+            if (n % 0b100 == 0 && n / 0b100 >= maxOdd) {
+                n /= 0b100;
+            }
+            if (n % 0b10 == 0 && n / 0b10 >= maxOdd) {
+                n /= 0b10;
+            }
+            if (n % 0b10 == 0)
+                n /= 0b10;
+            return n;
+        }
+        private static int GetOdd(int n) {
+            if (n % 0b1_000_0000_0000_0000 == 0) {//2^16
+                n /= 0b1_000_0000_0000_0000;
+            }
+            if (n % 0b1_0000_0000 == 0)
+                n /= 0b1_0000_0000;
+            if (n % 0b1_0000 == 0)
+                n /= 0b1_0000;
+            if (n % 0b100 == 0)
+                n /= 0b100;
+            if (n % 0b10 == 0)
+                n /= 0b10;
+            return n;
+        }
         private static (int n1, int n0) GetMinCostClimbing(int[] costs, int n) {
             switch (n) {
                 case 1:
@@ -1119,6 +1219,77 @@ n == matrix[i].length
                 }
             }
             return n;
+        }
+        /*
+         * 1288. Remove Covered Intervals
+         * Medium
+         * Given an array intervals where intervals[i] = [li, ri] represent the interval [li, ri), 
+         * remove all intervals that are covered by another interval in the list.
+         * The interval [a, b) is covered by the interval [c, d) if and only if c <= a and b <= d.
+         * Return the number of remaining intervals.
+         * 
+         * Constraints:
+    1 <= intervals.length <= 1000
+    intervals[i].length == 2
+    0 <= li <= ri <= 10^5
+    All the given intervals are unique.
+
+         */
+        public static int RemoveCoveredIntervals(int[][] intervals) {
+            int m = intervals.Length;
+
+            IntervalListNode[] leftSortArray = new IntervalListNode[m];
+            IntervalListNode[] rightSortArray = new IntervalListNode[m];
+            for (int i = 0; i < m; i++) {
+                IntervalListNode node = new IntervalListNode(intervals[i][0], intervals[i][1]);
+                leftSortArray[i] = rightSortArray[i] = node;
+            }
+            Array.Sort(leftSortArray, new Comparer<IntervalListNode>((x, y) =>(x.Interval.min == y.Interval.min? y.Interval.max - x.Interval.max:(x.Interval.min - y.Interval.min))  ));
+            Array.Sort(rightSortArray, new Comparer<IntervalListNode>((x, y) => (x.Interval.max == y.Interval.max? y.Interval.min - x.Interval.min:(x.Interval.max - y.Interval.max)) ));
+            LinkedList<IntervalListNode> leftSortedList = new LinkedList<IntervalListNode>();
+            LinkedList<IntervalListNode> rightSortedList = new LinkedList<IntervalListNode>();
+            for (int i = 0; i < intervals.Length; i++) {
+                var node = leftSortArray[i];
+                var llNode =  leftSortedList.AddLast(node);
+                node.LeftSortListNode = llNode;
+                node = rightSortArray[i];
+                llNode =  rightSortedList.AddLast(node);
+                node.RightSortListNode = llNode;
+            }
+            var listNode = leftSortedList.First;
+            int count = 0;
+            while (listNode != null) {
+                var node = listNode.Value;
+                while (rightSortedList.First.Value!=node) {
+                    var accNode = rightSortedList.First;
+                    leftSortedList.Remove(accNode.Value.LeftSortListNode);
+                    rightSortedList.RemoveFirst();
+                }
+                count++;
+                listNode = listNode.Next;
+            }
+            return count;
+        }
+        private class Comparer<T> : IComparer<T> {
+            private Func<T, T, int> compare;
+            public Comparer(Func<T, T, int> compare) {
+                this.compare = compare;
+            }
+            public int Compare(T x, T y) {
+                return compare(x,y);
+            }
+        }
+        [DebuggerDisplay("{Interval}")]
+        internal class  IntervalListNode {
+            public Interval Interval { get; init; }
+            public IntervalListNode(Interval interval) { 
+                Interval = interval;
+            }
+            public IntervalListNode(int min, int max) { 
+                Interval = new Interval(min,max);
+            }
+            public LinkedListNode<IntervalListNode> LeftSortListNode { get; set; }
+            public LinkedListNode<IntervalListNode> RightSortListNode { get; set; }
         }
         /*
          * 152. Maximum Product Subarray
@@ -1659,7 +1830,7 @@ Output: 3
                 row = matrix[i];
                 for (int j = 0; j < n; j++) {
                     left += (row[j] - '0') & 1;
-                    sums[i, j] = left+ sums[i - 1, j];
+                    sums[i, j] = left + sums[i - 1, j];
                 }
             }
             left = sums[m - 1, n - 1];
@@ -1669,7 +1840,7 @@ Output: 3
                 return 1;
             }
             var sq = getSquare(left, sqMax);
-            
+
             for (; sq.side > 1; sq = (sq.side - 1, (sq.side - 1) * (sq.side - 1))) {
                 for (int i = m - 1; i >= sq.side - 1; i--) {
                     if (sums[i, n - 1] - (i < sq.side ? 0 : sums[i - sq.side, n - 1]) < sq.sq)
@@ -1686,7 +1857,7 @@ Output: 3
         }
         private static bool FilledSquare(int[,] sums, (int side, int sq) sq, int bottomRow, int rightCol) {
             var (side, square) = sq;
-            if (rightCol < side-1 | bottomRow < side-1)
+            if (rightCol < side - 1 | bottomRow < side - 1)
                 return false;
             int left = rightCol < side ? 0 : sums[bottomRow, rightCol - side];
             int top = bottomRow < side ? 0 : sums[bottomRow - side, rightCol];
@@ -1723,7 +1894,7 @@ Output: 3
             Array.Sort<int>(candidates);
             IList<IList<int>> lists = new List<IList<int>>();
             int m = candidates.Length;
-            void GetCombinations (List<int> list, int target, int startIndex) {
+            void GetCombinations(List<int> list, int target, int startIndex) {
                 if (target < candidates[startIndex]) {
                     return;
                 }
@@ -1743,8 +1914,51 @@ Output: 3
             }
             List<int> list = new();
             GetCombinations(list, target, 0);
-            
+
             return lists;
+        }
+        /*
+         * 376. Wiggle Subsequence
+         * Medium
+         * A wiggle sequence is a sequence where the differences between successive numbers 
+         * strictly alternate between positive and negative. 
+         * The first difference (if one exists) may be either positive or negative. 
+         * A sequence with one element and a sequence with two non-equal elements are trivially wiggle sequences.
+         * For example, [1, 7, 4, 9, 2, 5] is a wiggle sequence because the differences (6, -3, 5, -7, 3) alternate between positive and negative.
+         * In contrast, [1, 4, 7, 2, 5] and [1, 7, 4, 5, 5] are not wiggle sequences. 
+         * The first is not because its first two differences are positive, and the second is not because its last difference is zero.
+         * A subsequence is obtained by deleting some elements (possibly zero) from the original sequence, 
+         * leaving the remaining elements in their original order.
+         * Given an integer array nums, return the length of the longest wiggle subsequence of nums.
+         * 
+         * Input: nums = [1,17,5,10,13,15,10,5,16,8]
+         * Output: 7
+         * 
+         * Constraints:
+    1 <= nums.length <= 1000
+    0 <= nums[i] <= 1000
+         */
+        public static int WiggleMaxLength(int[] nums) {
+            if (nums.Length == 1) {
+                return 1;
+            }
+            int length=1;
+            int n1 = nums[0];
+            int? d1 = null;
+            ;
+            foreach (var n in nums) {
+                int d = n - n1;
+                if(! d1.HasValue & d != 0) {
+                    length++;
+                    d1 = d;
+                } 
+                else if ((d > 0 & d1 < 0) | (d < 0 & d1 > 0)) {
+                    length++;
+                    d1 = d;
+                }
+                n1 = n;
+            }
+            return length;
         }
     }
 

@@ -519,7 +519,7 @@ Follow up: Suppose there are lots of incoming s, say s1, s2, ..., sk where k >= 
             bool is_s_HaveChar = sEnumerator.MoveNext();
             var tEnumerator = t.GetEnumerator();
             while (is_s_HaveChar) {
-                var ch=sEnumerator.Current;
+                var ch = sEnumerator.Current;
                 while (true) {
                     if (tEnumerator.MoveNext()) {
                         if (ch == tEnumerator.Current) {
@@ -658,64 +658,86 @@ Follow up: Suppose there are lots of incoming s, say s1, s2, ..., sk where k >= 
     s consists only of lowercase English letters.
          */
         public static int LongestPalindromeSubseq(string s) {
-            int maxLength = 1;
-            if (s.Length == 1) {
+            int m = s.Length;
+            if (m == 1) {
                 return 1;
             }
-            int[] leftChars = new int['z' - 'a' + 1];
-            Array.Fill(leftChars, -1);
-            int[] distances = new int[s.Length];
+            int[] next = new int[m];
+            int[] previous = new int[m];
+            Array.Fill(next, m);
+            Array.Fill(previous, -1);
+            int[] acc = new int['z' - 'a' + 1];
+            Array.Fill(acc, -1);
             int i = 0;
             foreach (var ch in s) {
-                if (leftChars[ch - 'a'] >= 0)
-                    distances[leftChars[ch - 'a']] = i;
-                leftChars[ch - 'a'] = i;
+                int j = ch - 'a';
+                int indx = acc[j];
+                if (indx >= 0) {
+                    next[indx] = i;
+                    previous[i] = indx;
+                }
+                else {
+
+                }
+                acc[j] = i;
                 i++;
             }
-            Container root = new Container(0, 1000);
-            for (i = 0; i < distances.Length; i++) {
-                int right = distances[i];
-                while (right > 0) {
-                    var dept = root.Add(new Container(i, right));
-                    right = distances[right];
-                    maxLength = System.Math.Max(maxLength, dept);
-                }
-            }
-            return maxLength;
+            cachePalindromeSubseq.Clear();
+
+            int p_len = LongestPalindromeSubseq(next, previous, 0, m);
+            return p_len;
         }
-        private static int AddChields(int[] distances, Container container) {
-            int min = container.Left;
-            int max = container.Right;
-            if (min == max - 1)
+        private static Dictionary<int, int> cachePalindromeSubseq = new();
+        private static int LongestPalindromeSubseq(int[] next, int[] previous, int min, int max) {
+            var len = max - min;
+            if (len < 1) {
                 return 0;
-            int maxDept = 1;
-            for (int i = min + 1; i < max; i++) {
-                int right = distances[i];
-                while (right > 0 & distances[right] < max) { right = distances[right]; }
-                if (right > 0)
-                    return container.Add(new Container(i, right)) + 2;
             }
-            throw new NotImplementedException();
-        }
-        private class Container {
-            public int Left { get; init; }
-            public int Right { get; init; }
-            public Container(int left, int right) {
-                Left = left;
-                Right = right;
+            else if (len == 1) {
+                return 1;
             }
-            List<Container> Chields { get; init; } = new();
-            public bool IsCover(Container other) {
-                return Left <= other.Left & Right >= other.Right;
+            int key = GetKey(min, max);
+            if (cachePalindromeSubseq.ContainsKey(key)) {
+                return cachePalindromeSubseq[key];
             }
-            public int Add(Container other) {
-                foreach (var chield in Chields) {
-                    if (chield.IsCover(other))
-                        return chield.Add(other) + 2;
+            int p_len = 1;
+            int palEnd = min;
+            while (palEnd < max) {
+                palEnd = GetLast(next, min, max);
+                if (palEnd > min) {
+                    p_len = System.Math.Max(p_len, LongestPalindromeSubseq(next, previous, min + 1, palEnd) + 2);
+                    pal
                 }
-                Chields.Add(other);
-                return other.Right - other.Left > 1 ? 3 : 2;
+                else {
+                    p_len = 1;
+                    palEnd++;
+                }
             }
+            //max--;
+            while (palEnd < max) {
+                min = GetFirst(previous, palEnd, max - 1);
+                if (min < max - 1) {
+                    p_len = System.Math.Max(p_len, LongestPalindromeSubseq(next, previous, min + 1, max - 1) + 2);
+                    max = min;
+                }
+                else {
+                    max--;
+                }
+            }
+            cachePalindromeSubseq[key] = p_len;
+            return p_len;
+        }
+        private static int GetKey(int min, int max) => min * 1000 + max;
+        private static int GetLast(int[] next, int start, int end) {
+            while (next[start] < end) {
+                start = next[start];
+            }
+            return start;
+        }
+        private static int GetFirst(int[] previous, int start, int end) {
+            while (previous[end] >= start)
+                end = previous[end];
+            return end;
         }
         /*
          * 567. Permutation in String
@@ -1132,14 +1154,14 @@ Explanation: "226" could be decoded as "BZ" (2 26), "VF" (22 6), or "BBF" (2 2 6
             StringBuilder sb = new();
             int length = s_num.Length - k; // длина осташейся части выходной строки
             int cursor = 0; // текущая позиция курсора исходной строки
-        
+
             for (int n = 0; n < digits.Length & length > 0; n++) {
                 int indx = digits[n];
                 while (0 <= indx & indx < cursor) {
-                    indx= digits[n] = nums[indx];
+                    indx = digits[n] = nums[indx];
                 }
                 if (indx >= 0 & indx <= s_num.Length - length) {
-                    if(sb.Length>0 | n>0)
+                    if (sb.Length > 0 | n > 0)
                         sb.Append((char)(n + '0'));
                     cursor = indx + 1;
                     indx = nums[indx];
@@ -1149,7 +1171,7 @@ Explanation: "226" could be decoded as "BZ" (2 26), "VF" (22 6), or "BBF" (2 2 6
                     n = -1;
                 }
             }
-            return sb.Length==0? "0": sb.ToString();
+            return sb.Length == 0 ? "0" : sb.ToString();
         }
         /*
          * 171. Excel Sheet Column Number
@@ -1176,7 +1198,7 @@ AB -> 28
         public static int TitleToNumber(string columnTitle) {
             int mul = 1;
             int titleNumber = 0;
-            for (int i = columnTitle.Length-1; i >=0; i--) {
+            for (int i = columnTitle.Length - 1; i >= 0; i--) {
                 titleNumber += mul * GetCharWeight(columnTitle[i]);
                 mul *= BaseColRepresent;
             }
@@ -1185,7 +1207,7 @@ AB -> 28
         private const int BaseColRepresent = 26;
         private static int GetCharWeight(char ch) {
             int cw = ch - 'A' + 1;
-            if (cw<1 |cw>26) {
+            if (cw < 1 | cw > 26) {
                 throw new ArgumentOutOfRangeException(nameof(ch));
             }
             return cw;

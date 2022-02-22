@@ -164,6 +164,10 @@ namespace LeecCode.Test
             expected = 1;
             actual = Solution.LongestPalindromeSubseq(s);
             Assert.AreEqual(expected, actual);
+            s = "cbbd";
+            expected = 2;
+            actual = Solution.LongestPalindromeSubseq(s);
+            Assert.AreEqual(expected, actual);
              s = "gabbabba";
             expected = 7;
             actual = Solution.LongestPalindromeSubseq(s);

@@ -35,7 +35,10 @@ namespace LeetCode {
                 Value = value;
             }
         }
-        [DebuggerDisplay("[{min}, {max}]")]
+        /// <summary>
+        /// Represent interval [min, max)
+        /// </summary>
+        [DebuggerDisplay("[{min}, {max})")]
         public struct Interval {
             public int min;
             public int max;
